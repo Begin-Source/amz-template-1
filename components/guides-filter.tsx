@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,25 +25,29 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
   })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "")
 
-  // Filter guides based on category and search
-  let filteredGuides = guides
+  // Filter guides based on category and search using useMemo
+  const filteredGuides = useMemo(() => {
+    let result = guides
 
-  // Category filter
-  if (selectedCategory !== "all") {
-    filteredGuides = filteredGuides.filter((guide) => guide.frontmatter.category === selectedCategory)
-  }
+    // Category filter
+    if (selectedCategory !== "all") {
+      result = result.filter((guide) => guide.frontmatter.category === selectedCategory)
+    }
 
-  // Search filter
-  if (searchQuery.trim()) {
-    const query = searchQuery.toLowerCase()
-    filteredGuides = filteredGuides.filter(
-      (guide) =>
-        guide.frontmatter.title.toLowerCase().includes(query) ||
-        guide.frontmatter.description.toLowerCase().includes(query) ||
-        guide.frontmatter.category.toLowerCase().includes(query) ||
-        (guide.frontmatter.tags && guide.frontmatter.tags.some((tag) => tag.toLowerCase().includes(query)))
-    )
-  }
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(
+        (guide) =>
+          guide.frontmatter.title.toLowerCase().includes(query) ||
+          guide.frontmatter.description.toLowerCase().includes(query) ||
+          guide.frontmatter.category.toLowerCase().includes(query) ||
+          (guide.frontmatter.tags && guide.frontmatter.tags.some((tag) => tag.toLowerCase().includes(query)))
+      )
+    }
+
+    return result
+  }, [guides, selectedCategory, searchQuery])
 
   // Update URL when category changes
   const handleCategoryChange = (category: string) => {
