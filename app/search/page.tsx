@@ -1,3 +1,6 @@
+"use client"
+
+import { useSearchParams } from "next/navigation"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -5,13 +8,9 @@ import Link from "next/link"
 import { Search, BookOpen } from "lucide-react"
 import { getAllReviews, getAllGuides } from "@/lib/api"
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>
-}) {
-  const params = await searchParams
-  const query = params.q || ""
+export default function SearchPage() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get("q") || ""
 
   const allReviews = getAllReviews()
   const allGuides = getAllGuides()
