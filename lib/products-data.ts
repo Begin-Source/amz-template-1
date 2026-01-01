@@ -1,4 +1,6 @@
 import { siteConfig } from './site.config'
+import { directusClient } from './directus-client'
+import { transformDirectusProduct } from './types/directus'
 
 export interface Product {
   asin: string
@@ -14,7 +16,8 @@ export interface Product {
   slug?: string // Added slug for review article URLs
 }
 
-export const productsData: Product[] = [
+// Fallback data - used when Directus is disabled or unavailable
+export const productsDataFallback: Product[] = [
   {
     asin: "B0D7QHY574",
     title: "Coleman Sundome Camping Tent with Rainfly, 2/3/4/6 Person",
@@ -557,6 +560,41 @@ export const productsData: Product[] = [
   },
 ]
 
+// Feature flag check
+const isDirectusEnabled = process.env.NEXT_PUBLIC_ENABLE_DIRECTUS === 'true'
+
+/**
+ * Fetch products from Directus with fallback to local data
+ */
+export async function getProductsData(): Promise<Product[]> {
+  if (!isDirectusEnabled) {
+    console.log('Directus disabled, using fallback data')
+    return productsDataFallback
+  }
+
+  try {
+    const directusProducts = await directusClient.getProducts({ limit: 50 })
+
+    if (directusProducts.length === 0) {
+      console.warn('No products from Directus, using fallback')
+      return productsDataFallback
+    }
+
+    const products = directusProducts.map(dp =>
+      transformDirectusProduct(dp, 'Camp Essentials')
+    )
+
+    console.log(`Fetched ${products.length} products from Directus`)
+    return products
+  } catch (error) {
+    console.error('Failed to fetch from Directus, using fallback:', error)
+    return productsDataFallback
+  }
+}
+
+// Backward compatible synchronous version (returns fallback)
+export const productsData: Product[] = productsDataFallback
+
 // 从配置文件动态生成分类映射
 export const categoryMap: Record<string, string> = Object.fromEntries(
   siteConfig.homepage.categories.items.map(cat => [cat.slug, cat.name])
@@ -575,18 +613,32 @@ export const categoryInfo: Record<string, { name: string; description: string; i
     ])
   )
 
-export function getProductsByCategory(categorySlug: string): Product[] {
+export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
+  const products = await getProductsData()
   const categoryName = categoryMap[categorySlug]
   if (!categoryName) return []
-  return productsData.filter((product) => product.category === categoryName)
+  return products.filter((product) => product.category === categoryName)
 }
 
-export function getProductByAsin(asin: string): Product | undefined {
-  return productsData.find((p) => p.asin === asin)
+export async function getProductByAsin(asin: string): Promise<Product | undefined> {
+  if (isDirectusEnabled) {
+    try {
+      const directusProduct = await directusClient.getProductByAsin(asin)
+      if (directusProduct) {
+        return transformDirectusProduct(directusProduct)
+      }
+    } catch (error) {
+      console.error(`Failed to fetch product ${asin} from Directus:`, error)
+    }
+  }
+
+  const products = await getProductsData()
+  return products.find((p) => p.asin === asin)
 }
 
-export function getFeaturedProducts(count = 6): Product[] {
-  return productsData.slice(0, count)
+export async function getFeaturedProducts(count = 6): Promise<Product[]> {
+  const products = await getProductsData()
+  return products.slice(0, count)
 }
 
 export function getAllCategories() {
@@ -596,6 +648,6 @@ export function getAllCategories() {
   }))
 }
 
-export function getAllProducts(): Product[] {
-  return productsData
+export async function getAllProducts(): Promise<Product[]> {
+  return getProductsData()
 }

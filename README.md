@@ -1,15 +1,34 @@
 # Affiliate Marketing Website Template
 
-A modern, configuration-driven affiliate marketing website built with Next.js 16, featuring product reviews, buying guides, and Amazon affiliate integration. **Fully customizable through a single configuration file.**
+A modern, **fully configuration-driven** affiliate marketing website built with Next.js 16. Transform this template into ANY niche (cameras, camping, tech, fitness, etc.) by simply editing one configuration file - **no code changes required**.
 
-## 🎯 Project Overview
+## 🎯 Project Philosophy: Complete Customization Through Configuration
 
-This is a production-ready affiliate marketing website template with a **configuration-driven architecture**. Customize your entire site (branding, colors, content, navigation) by editing one file: `lib/site.config.ts`.
+This template is designed with a **configuration-first architecture**. Every aspect of the website - from branding and colors to content and navigation - is controlled through a single configuration file: `lib/site.config.ts`.
+
+### Why Configuration-Driven?
+
+**Traditional approach:** Edit multiple component files, search for hardcoded text, modify CSS variables
+**Our approach:** Edit ONE file (`lib/site.config.ts`), and the entire site updates automatically
+
+### What Can You Customize?
+
+✅ **Brand Identity** - Site name, tagline, logo (Lucide icon, SVG, or image)
+✅ **Color Theme** - Complete light/dark mode color schemes (OKLCH color space)
+✅ **Typography** - Font families for the entire site
+✅ **SEO Settings** - Meta titles, descriptions, keywords, social media
+✅ **Navigation** - Header menu items and links
+✅ **Homepage Content** - Hero section, category cards, featured products, CTA
+✅ **Page Descriptions** - Reviews page, guides page content
+✅ **Footer Content** - About section, link groups, copyright, affiliate notice
+✅ **Categories** - Define your product categories with names, descriptions, icons
 
 ### Key Features
 
-- **🎨 Configuration-Driven Design** - Customize everything from one central config file
-- **30+ Product Reviews** - Pre-built product catalog with MDX content
+- **🎨 100% Configuration-Driven** - Zero code changes needed for customization
+- **🔄 Theme Flexibility** - Switch from camping → cameras → tech → any niche instantly
+- **🗄️ Directus CMS Integration** - Optional dynamic product management
+- **🔄 Hybrid Data Architecture** - Combines MDX reviews with Directus products
 - **📱 Fully Responsive** - Mobile-first design with Tailwind CSS 4
 - **🚀 Static Export** - Deploy to any static hosting (Cloudflare, Netlify, Vercel)
 - **🔍 SEO Optimized** - Structured data, sitemaps, and meta tags
@@ -31,6 +50,7 @@ This is a production-ready affiliate marketing website template with a **configu
 - **MDX** - Markdown with JSX for rich content
 - **next-mdx-remote** - Server-side MDX rendering
 - **JSON-LD** - Structured data for search engines
+- **Directus** - Headless CMS for dynamic product management
 
 ### Development Tools
 - **ESLint** - Code linting
@@ -42,7 +62,7 @@ This is a production-ready affiliate marketing website template with a **configu
 ```
 camping-website-template/
 ├── app/                          # Next.js App Router pages
-│   ├── page.tsx                  # Homepage
+│   ├── page.tsx                  # Homepage (reads from config)
 │   ├── product/[asin]/          # Dynamic product pages
 │   ├── review/[slug]/           # MDX review articles
 │   ├── category/[category]/     # Category listing pages
@@ -50,19 +70,20 @@ camping-website-template/
 │   └── layout.tsx               # Root layout
 ├── components/                   # React components
 │   ├── ui/                      # shadcn/ui components
-│   ├── amazon-button.tsx        # Affiliate CTA button
-│   ├── affiliate-disclosure.tsx # FTC compliance disclosure
-│   ├── pros-cons.tsx            # Product pros/cons display
-│   ├── site-header.tsx          # Site header
-│   └── site-footer.tsx          # Site footer
-├── lib/                         # Utilities and data
+│   ├── site-header.tsx          # Header (reads from config)
+│   ├── site-footer.tsx          # Footer (reads from config)
+│   └── ...                      # Other components
+├── lib/                         # Core configuration & utilities
 │   ├── site.config.ts           # ⭐ CENTRAL CONFIGURATION FILE
-│   ├── products-data.ts         # Product catalog (30 products)
+│   ├── products-data.ts         # Product catalog with Directus integration
+│   ├── directus-client.ts       # Directus API client
+│   ├── types/directus.ts        # Directus type definitions
+│   ├── api.ts                   # Data fetching (MDX + Directus)
 │   ├── theme-generator.ts       # Dynamic theme generation
 │   └── utils.ts                 # Helper functions
 ├── content/                     # MDX content files
 │   ├── reviews/                 # Review articles (30+ files)
-│   └── guides/                  # Buying guides (15+ files)
+│   └── guides/                  # Buying guides (10+ files)
 ├── public/                      # Static assets
 │   └── images/                  # Product images
 └── next.config.mjs              # Next.js configuration
@@ -74,43 +95,44 @@ camping-website-template/
 
 **This is the most important file in the project.** All site customization happens here - no need to edit individual components.
 
-#### What You Can Configure:
+#### Configuration Sections:
 
-1. **Brand Settings**
+1. **Brand Settings** (`brand`)
    - Site name, tagline, description
-   - Logo (Lucide icon, SVG, or image)
+   - Logo configuration (Lucide icon, SVG, or image)
 
-2. **Color Theme**
+2. **Color Theme** (`theme.colors`)
    - Light and dark mode colors
    - Uses OKLCH color space for better color accuracy
    - Automatically generates CSS variables
 
-3. **Typography**
+3. **Typography** (`fonts`)
    - Font families for sans and mono
 
-4. **SEO Settings**
+4. **SEO Settings** (`seo`)
    - Meta titles, descriptions, keywords
    - Site URL, author, social media handles
 
-5. **Navigation Menu**
+5. **Navigation Menu** (`navigation.main`)
    - Header navigation items
    - Labels and links
 
-6. **Homepage Content**
+6. **Homepage Content** (`homepage`)
    - Hero section (title, subtitle, search placeholder)
-   - Category cards (name, description, icon)
+   - Category cards (name, description, icon, slug)
    - Featured products section
    - CTA/Newsletter section
 
-7. **Page Content**
+7. **Page Content** (`pages`)
    - Reviews page title and description
-   - Guides page title and description
+   - Guides page title, description, and categories
    - Supports dynamic placeholders like `{count}`
 
-8. **Footer Content**
+8. **Footer Content** (`footer`)
    - About section
-   - Link groups (categories, guides, resources, legal)
+   - Resources and legal links
    - Copyright and affiliate notice
+
 
 ### Example Configuration:
 
@@ -137,10 +159,21 @@ export const siteConfig = {
     }
   },
 
-  pages: {
-    reviews: {
-      title: "All Product Reviews",
-      description: "Browse our complete collection of {count} camera and lens reviews...",
+  homepage: {
+    hero: {
+      title: "Find Your Perfect Camera & Lens",
+      subtitle: "Expert reviews and honest recommendations...",
+    },
+    categories: {
+      items: [
+        {
+          name: "DSLR Cameras",
+          slug: "dslr-cameras",
+          description: "Professional DSLR cameras",
+          icon: "Camera",
+        },
+        // ... more categories
+      ]
     }
   },
 
@@ -168,49 +201,11 @@ export const siteConfig = {
 # Edit: siteConfig.navigation.main
 
 # 4. Customize homepage
-# Edit: siteConfig.homepage.hero, categories, featuredProducts
+# Edit: siteConfig.homepage.hero, categories, featuredProducts, cta
 
 # 5. Update page descriptions
 # Edit: siteConfig.pages.reviews, guides
 ```
-
-## 🎨 Key Features
-
-### Product Catalog
-- **30 Products** across 4 categories:
-  - Tents (8 products)
-  - Sleeping Bags (8 products)
-  - Backpacks (7 products)
-  - Camping Stoves (7 products)
-
-### Product Data Structure
-```typescript
-interface Product {
-  asin: string          // Amazon ASIN
-  title: string         // Full product name
-  brand: string         // Manufacturer
-  features: string[]    // Key features
-  amazonUrl: string     // Affiliate link
-  imageUrl: string      // Product image
-  rating?: number       // Star rating
-  category: string      // Product category
-  shortTitle?: string   // Display name
-  summary?: string      // Brief description
-  slug?: string         // URL slug
-}
-```
-
-### Amazon Affiliate Components
-- **AmazonButton**: Styled CTA with `rel="nofollow sponsored"` and `target="_blank"`
-- **AffiliateDisclosure**: FTC-compliant disclosure notice
-- **ProsCons**: Two-column pros/cons comparison display
-
-### SEO Optimization
-- Dynamic metadata generation for all pages
-- JSON-LD structured data (Product, Review, BreadcrumbList)
-- Semantic HTML with proper heading hierarchy
-- Open Graph and Twitter Card meta tags
-- Sitemap generation
 
 ## 🚀 Getting Started
 
@@ -246,30 +241,24 @@ Open [http://localhost:8080](http://localhost:8080) to view the site.
    }
    ```
 
-3. **Update colors (optional):**
+3. **Update categories for your niche:**
    ```typescript
-   theme: {
-     colors: {
-       light: {
-         primary: "oklch(0.30 0.02 240)",  // Your primary color
-         accent: "oklch(0.60 0.20 25)",     // Your accent color
-       }
+   homepage: {
+     categories: {
+       items: [
+         {
+           name: "Your Category 1",
+           slug: "category-1",
+           description: "Description here",
+           icon: "Camera", // Any Lucide icon
+         },
+         // Add more categories
+       ]
      }
    }
    ```
 
-4. **Customize navigation:**
-   ```typescript
-   navigation: {
-     main: [
-       { label: "Home", href: "/" },
-       { label: "Reviews", href: "/reviews" },
-       // Add your menu items
-     ]
-   }
-   ```
-
-5. **Save and refresh** - Changes apply immediately in dev mode!
+4. **Save and refresh** - Changes apply immediately in dev mode!
 
 ### Available Scripts
 
@@ -282,15 +271,27 @@ npm run lint     # Run ESLint
 
 ## 📦 Build & Deployment
 
-The project is configured for **static export** (JAMstack):
+The project is configured for **conditional static export**:
 
 ```javascript
 // next.config.mjs
-export default {
-  output: 'export',
-  images: { unoptimized: true }
+const nextConfig = {
+  // Only use static export for production builds
+  ...(process.env.NODE_ENV === "production" && { output: "export" }),
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
 }
 ```
+
+**Key features:**
+- ✅ Static export enabled in production (`npm run build`)
+- ✅ Dynamic routes work in development (`npm run dev`)
+- ✅ TypeScript errors don't block builds
+- ✅ Images are unoptimized for static hosting
 
 ### Build Output
 ```bash
@@ -300,26 +301,147 @@ npm run build
 Generates static files in the `out/` directory, ready for deployment to:
 - Netlify
 - Vercel
+- Cloudflare Pages
 - GitHub Pages
 - AWS S3 + CloudFront
 - Any static hosting service
 
-## 🎯 Page Routes
+## 🗄️ Directus CMS Integration
 
-The site includes 15+ routes:
+### Overview
 
-### Static Pages
-- `/` - Homepage with hero, categories, featured products
-- `/about` - About page
-- `/contact` - Contact page
-- `/guides/tent-buying-guide` - Tent buying guide
-- `/guides/sleeping-bag-guide` - Sleeping bag guide
-- `/guides/backpack-guide` - Backpack guide
+This template integrates with **Directus**, a powerful open-source headless CMS, enabling dynamic product management without code changes.
 
-### Dynamic Pages
-- `/product/[asin]` - Individual product pages (30 products)
-- `/category/[category]` - Category listing pages (4 categories)
-- `/review/[slug]` - MDX review articles
+### Key Benefits
+
+- **Dynamic Product Management** - Add/edit/delete products via Directus admin interface
+- **Hybrid Data Architecture** - Seamlessly combines MDX reviews with Directus products
+- **Automatic Categorization** - Smart category inference with manual override support
+- **Real-time Updates** - Changes in Directus reflect immediately on the website
+- **Fallback Mechanism** - Gracefully degrades to local data if Directus is unavailable
+
+### Configuration
+
+Create a `.env.local` file in the project root:
+
+```bash
+DIRECTUS_API_URL=https://your-directus-instance.com
+DIRECTUS_API_TOKEN=your-api-token-here
+NEXT_PUBLIC_ENABLE_DIRECTUS=true
+```
+
+### How It Works
+
+1. **Data Fetching**: System fetches products from Directus API
+2. **Category Assignment**: Uses manual category field or auto-infers from title
+3. **Deduplication**: Merges with MDX reviews (MDX takes priority if same ASIN)
+4. **Sorting**: Displays newest products first
+5. **Fallback**: Uses local data if Directus is unavailable
+
+### Product Data Architecture
+
+The `lib/products-data.ts` file provides a **hybrid data system**:
+
+**When Directus is DISABLED** (`NEXT_PUBLIC_ENABLE_DIRECTUS=false` or not set):
+- Uses `productsDataFallback` array (30+ pre-configured camping products)
+- Perfect for development and testing
+- No external dependencies
+
+**When Directus is ENABLED** (`NEXT_PUBLIC_ENABLE_DIRECTUS=true`):
+- Fetches products from Directus `products` table via API
+- Automatically transforms Directus data to match Product interface
+- Maps categories from your `site.config.ts` categories
+- Falls back to local data if API fails
+
+**Key Functions:**
+- `getProductsData()` - Main function that returns products (Directus or fallback)
+- `getProductByAsin(asin)` - Get single product by Amazon ASIN
+- `getProductsByCategory(slug)` - Filter products by category slug
+- `getFeaturedProducts(count)` - Get featured products for homepage
+- `getAllCategories()` - Get all categories from config
+
+### Directus Products Table Schema
+
+Your Directus `products` table should have these fields:
+
+**Required fields:**
+- `id` (integer, primary key)
+- `asin` (string) - Amazon ASIN identifier
+- `title` (string) - Product title
+- `images` (JSON) - Product images array
+- `features` (array) - Product features list
+- `status` (string) - Product status (e.g., "fetched")
+- `date_created` (timestamp)
+- `raw_paapi` (JSON) - Amazon PA-API response data
+
+**Optional fields:**
+- `category` (string) - Manual category override (recommended)
+  - If not provided, system auto-infers from title
+  - Should match category names in `site.config.ts`
+
+### Example: Adding Products via Directus
+
+1. **Set up Directus connection** (see Configuration section above)
+2. **Create products in Directus admin panel:**
+   - Add ASIN, title, images, features
+   - Set category to match your config categories
+   - Set status to "fetched"
+3. **Products automatically appear on your site** - No code changes needed!
+
+### Example: Adding Products Manually
+
+Edit `lib/products-data.ts` and add to `productsDataFallback` array:
+
+```typescript
+{
+  asin: "B0XXXXXX",
+  title: "Your Product Name",
+  shortTitle: "Short Name",
+  brand: "Brand Name",
+  features: [
+    "Feature 1",
+    "Feature 2",
+    "Feature 3",
+  ],
+  amazonUrl: "https://www.amazon.com/dp/B0XXXXXX?tag=your-tag-20",
+  imageUrl: "https://m.media-amazon.com/images/I/image.jpg",
+  rating: 4.5,
+  category: "Your Category Name", // Must match category name in site.config.ts
+  summary: "Brief product description",
+  slug: "product-slug",
+}
+```
+
+## 📝 Content Management
+
+### What's Configurable vs What's Content
+
+**Configurable (via `lib/site.config.ts`):**
+- ✅ Site name, tagline, description
+- ✅ Navigation menu items
+- ✅ Homepage hero section
+- ✅ Category cards and descriptions
+- ✅ Page titles and descriptions
+- ✅ Footer content and links
+- ✅ SEO metadata
+
+**Content (via files):**
+- 📄 Product data (`lib/products-data.ts` or Directus)
+- 📄 Review articles (`content/reviews/*.mdx`)
+- 📄 Guide articles (`content/guides/*.mdx`)
+
+### Example: Switching from Camping to Camera Niche
+
+**Current state:** Template comes with camping gear example
+**Your niche:** Camera equipment
+
+**Steps:**
+1. Edit `lib/site.config.ts` - Change all text to camera-related
+2. Update categories to: DSLR Cameras, Mirrorless, Lenses, Accessories
+3. Replace product data in `lib/products-data.ts` with camera products
+4. Write new MDX reviews for cameras (or keep existing structure)
+
+**Result:** Entire site transforms to camera niche without touching component code!
 
 ## 🎨 Design System
 
@@ -334,58 +456,6 @@ The site includes 15+ routes:
 - Radix UI primitives for accessibility
 - Customizable via `components.json`
 - Components in `components/ui/`
-
-## 📝 Content Management
-
-### Site-Wide Content (via Configuration)
-
-**Most content is managed through `lib/site.config.ts`:**
-
-- ✅ Site name, tagline, description
-- ✅ Navigation menu items
-- ✅ Homepage hero section
-- ✅ Category cards and descriptions
-- ✅ Page titles and descriptions (Reviews, Guides)
-- ✅ Footer content and links
-- ✅ SEO metadata
-
-**No need to edit individual component files!**
-
-### MDX Content Files
-
-Review articles are stored in `content/reviews/` as MDX files with frontmatter:
-
-```mdx
----
-title: "Product Review Title"
-description: "SEO description"
-date: "2024-01-15"
-author: "Author Name"
-category: "tents"
----
-
-# Review Content
-
-Your MDX content with React components...
-```
-
-### Adding New Products
-Edit `lib/products-data.ts` to add products to the catalog:
-
-```typescript
-export const products: Product[] = [
-  {
-    asin: "B0XXXXXX",
-    title: "Product Name",
-    brand: "Brand Name",
-    category: "tents",
-    features: ["Feature 1", "Feature 2"],
-    amazonUrl: "https://amazon.com/...",
-    imageUrl: "/images/product.jpg",
-    rating: 4.5
-  }
-]
-```
 
 ## 🔗 Amazon Associates Integration
 
@@ -408,19 +478,6 @@ All Amazon links include:
 - **Image Optimization**: Alt text, lazy loading
 - **Performance**: Static generation, optimized assets
 
-## 🤝 Contributing
-
-This is a template project. Feel free to:
-- Customize the design and branding
-- Add more products and categories
-- Create additional review articles
-- Modify the component library
-- Enhance SEO and performance
-
-## 📄 License
-
-This project is open source and available for personal and commercial use.
-
 ## 🔧 Configuration Files
 
 ### Primary Configuration
@@ -441,7 +498,11 @@ This project is open source and available for personal and commercial use.
 - `components.json` - shadcn/ui configuration
 
 ### Data Files
-- `lib/products-data.ts` - Product catalog (add/edit products here)
+- `lib/products-data.ts` - **Smart product catalog with Directus integration**
+  - Contains fallback product data (30+ camping products)
+  - Automatically fetches products from Directus when enabled
+  - Merges Directus products with local fallback data
+  - Handles category mapping from config
 - `lib/theme-generator.ts` - Converts config colors to CSS variables (auto-generated)
 
 ## 🎯 Customization Workflow
@@ -450,15 +511,6 @@ This project is open source and available for personal and commercial use.
 2. **Edit `lib/products-data.ts`** to add/modify products
 3. **Add MDX files** in `content/` for reviews and guides
 4. **Deploy** - Changes automatically apply across the entire site
-
-## 📞 Support
-
-For questions or issues with this template, please refer to the official documentation:
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Documentation](https://ui.shadcn.com)
-
----
 
 ## 🌟 Quick Start Summary
 
@@ -472,6 +524,27 @@ For questions or issues with this template, please refer to the official documen
 
 **That's it!** No need to edit individual component files.
 
+## 🤝 Contributing
+
+This is a template project. Feel free to:
+- Customize the design and branding
+- Add more products and categories
+- Create additional review articles
+- Modify the component library
+- Enhance SEO and performance
+
+## 📄 License
+
+This project is open source and available for personal and commercial use.
+
+## 📞 Support
+
+For questions or issues with this template, please refer to the official documentation:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com)
+
 ---
 
 Built with ❤️ for affiliate marketers and content creators
+

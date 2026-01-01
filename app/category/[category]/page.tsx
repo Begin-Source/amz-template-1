@@ -61,9 +61,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 key={product.asin}
                 title={product.shortTitle || product.title}
                 image={product.imageUrl}
-                rating={product.rating || 4.5}
-                reviewCount={0}
-                price=""
                 summary={product.summary || `Expert-tested and reviewed. ${product.features[0]}`}
                 amazonUrl={product.amazonUrl}
                 asin={product.asin}

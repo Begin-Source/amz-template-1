@@ -8,8 +8,8 @@ import Link from "next/link"
 import { getFeaturedProducts } from "@/lib/products-data"
 import { siteConfig } from "@/lib/site.config"
 
-export default function HomePage() {
-  const featuredProducts = getFeaturedProducts(6)
+export default async function HomePage() {
+  const featuredProducts = await getFeaturedProducts(6)
 
   return (
     <main className="flex-1">
@@ -136,9 +136,6 @@ export default function HomePage() {
                   key={product.asin}
                   title={product.shortTitle || product.title}
                   image={product.imageUrl}
-                  rating={product.rating || 4.5}
-                  reviewCount={0}
-                  price=""
                   summary={product.summary || `Tested and reviewed for outdoor enthusiasts. ${product.features[0]}`}
                   amazonUrl={product.amazonUrl}
                   asin={product.asin}
@@ -153,19 +150,19 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center bg-primary rounded-2xl p-8 md:p-12">
               <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4 text-balance">
-                Never Miss a Review
+                {siteConfig.homepage.cta.title}
               </h2>
               <p className="text-lg text-primary-foreground/90 mb-8 leading-relaxed">
-                Get our latest gear reviews and buying guides delivered to your inbox
+                {siteConfig.homepage.cta.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <Input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={siteConfig.homepage.cta.emailPlaceholder}
                   className="flex-1 h-12 bg-background text-foreground"
                 />
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground whitespace-nowrap">
-                  Subscribe
+                  {siteConfig.homepage.cta.buttonText}
                 </Button>
               </div>
             </div>

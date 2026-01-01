@@ -111,15 +111,13 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
   const { frontmatter, content } = review
   const image = frontmatter.image || "/placeholder.svg"
   
-  // Get related products from MDX reviews (same category, high rated, excluding current)
+  // Get related products from MDX reviews (same category, excluding current)
   const allReviews = getAllReviews()
   const relatedProducts = allReviews
-    .filter((reviewItem) => 
-      reviewItem.frontmatter.category === frontmatter.category && 
-      reviewItem.slug !== slug &&
-      (reviewItem.frontmatter.rating || 0) >= 4.0
+    .filter((reviewItem) =>
+      reviewItem.frontmatter.category === frontmatter.category &&
+      reviewItem.slug !== slug
     )
-    .sort((a, b) => (b.frontmatter.rating || 0) - (a.frontmatter.rating || 0))
     .slice(0, 3)
 
   // Schema.org structured data for SEO
@@ -133,21 +131,8 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       '@type': 'Brand',
       name: frontmatter.brand || 'Unknown',
     },
-    aggregateRating: frontmatter.rating ? {
-      '@type': 'AggregateRating',
-      ratingValue: frontmatter.rating,
-      reviewCount: 1,
-      bestRating: 5,
-      worstRating: 1,
-    } : undefined,
     review: {
       '@type': 'Review',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: frontmatter.rating || 4.5,
-        bestRating: 5,
-        worstRating: 1,
-      },
       author: {
       '@type': 'Organization',
       name: 'Wild Nature Journey',
@@ -304,7 +289,6 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
                     key={relatedProduct.slug}
                     title={relatedProduct.frontmatter.title}
                     image={relatedProduct.frontmatter.image || "/placeholder.svg"}
-                    rating={relatedProduct.frontmatter.rating || 4.5}
                     summary={relatedProduct.frontmatter.description}
                     amazonUrl={relatedProduct.frontmatter.amazonUrl || "#"}
                     asin={relatedProduct.frontmatter.asin}

@@ -35,7 +35,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
   const router = useRouter()
   
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<string>("rating")
+  const [sortBy, setSortBy] = useState<string>("date")
 
   // Initialize from URL params
   useEffect(() => {
@@ -54,14 +54,9 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
         })
 
   const sortedReviews = [...filteredReviews].sort((a, b) => {
-    if (sortBy === "rating") {
-      return (b.frontmatter.rating || 0) - (a.frontmatter.rating || 0)
-    } else if (sortBy === "date") {
-      const dateA = new Date(a.frontmatter.date).getTime()
-      const dateB = new Date(b.frontmatter.date).getTime()
-      return dateB - dateA
-    }
-    return 0
+    const dateA = new Date(a.frontmatter.date).getTime()
+    const dateB = new Date(b.frontmatter.date).getTime()
+    return dateB - dateA
   })
 
   // Update URL when category changes
@@ -102,16 +97,9 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
             <p className="text-sm font-medium text-foreground">Sort by</p>
             <div className="flex gap-2">
               <Button
-                variant={sortBy === "rating" ? "default" : "outline"}
+                variant="default"
                 size="sm"
-                onClick={() => setSortBy("rating")}
-              >
-                Highest Rated
-              </Button>
-              <Button
-                variant={sortBy === "date" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSortBy("date")}
+                disabled
               >
                 Newest
               </Button>
@@ -139,9 +127,6 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
             key={review.slug}
             title={review.frontmatter.title}
             image={review.frontmatter.image || "/placeholder.svg"}
-            rating={review.frontmatter.rating || 4.5}
-            reviewCount={0}
-            price=""
             summary={review.frontmatter.description}
             amazonUrl={review.frontmatter.amazonUrl || "#"}
             asin={review.frontmatter.asin}

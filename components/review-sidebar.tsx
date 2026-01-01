@@ -14,15 +14,13 @@ interface ReviewSidebarProps {
 export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
   const allReviews = getAllReviews()
 
-  // Get related products from same category (high rated, excluding current)
+  // Get related products from same category (excluding current)
   const relatedProducts = category
     ? allReviews
-        .filter(review => 
-          review.frontmatter.category === category && 
-          review.slug !== currentSlug &&
-          (review.frontmatter.rating || 0) >= 4.5
+        .filter(review =>
+          review.frontmatter.category === category &&
+          review.slug !== currentSlug
         )
-        .sort((a, b) => (b.frontmatter.rating || 0) - (a.frontmatter.rating || 0))
         .slice(0, 3)
     : []
 
@@ -58,12 +56,6 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
                         <h5 className="font-medium text-sm text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                           {product.frontmatter.title}
                         </h5>
-                        <div className="flex items-center gap-1 mt-1">
-                          <span className="text-xs font-semibold text-foreground">
-                            {product.frontmatter.rating?.toFixed(1)}
-                          </span>
-                          <span className="text-xs text-muted-foreground">★</span>
-                        </div>
                       </div>
                     </div>
                   </Link>

@@ -1,6 +1,8 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import { directusClient } from './directus-client'
+import { transformDirectusProduct, inferProductCategory } from './types/directus'
 
 const reviewsDirectory = path.join(process.cwd(), "content/reviews")
 const guidesDirectory = path.join(process.cwd(), "content/guides")
@@ -148,3 +150,65 @@ export function getGuideCategories(): string[] {
   return Array.from(categories).sort()
 }
 
+/**
+ * Get all reviews from both MDX files and Directus
+ * Deduplicates by ASIN (MDX takes priority)
+ * Sorts by date (newest first)
+ */
+export async function getAllReviewsWithDirectus(): Promise<Review[]> {
+  // 1. Get MDX reviews
+  const mdxReviews = getAllReviews()
+
+  // 2. Get Directus products
+  let directusProducts: Review[] = []
+  try {
+    const products = await directusClient.getProducts({ limit: 100 })
+
+    // Transform Directus products to Review format
+    directusProducts = products.map(product => {
+      const category = inferProductCategory(product.title, product.category)
+      const transformed = transformDirectusProduct(product, category)
+
+      return {
+        slug: product.asin.toLowerCase(),
+        frontmatter: {
+          title: transformed.title,
+          date: product.date_created,
+          description: transformed.summary || `Expert review of ${transformed.title}`,
+          asin: product.asin,
+          brand: transformed.brand,
+          category: category,
+          rating: transformed.rating,
+          image: transformed.imageUrl,
+          amazonUrl: transformed.amazonUrl,
+        },
+        content: '', // Directus products don't have detailed content
+      }
+    })
+  } catch (error) {
+    console.error('Failed to fetch Directus products for reviews:', error)
+    // Continue with MDX only if Directus fails
+  }
+
+  // 3. Deduplicate by ASIN (MDX takes priority)
+  const mdxAsins = new Set(
+    mdxReviews
+      .map(r => r.frontmatter.asin)
+      .filter(Boolean)
+  )
+
+  const uniqueDirectusProducts = directusProducts.filter(
+    product => !mdxAsins.has(product.frontmatter.asin)
+  )
+
+  // 4. Combine and sort by date (newest first)
+  const allReviews = [...mdxReviews, ...uniqueDirectusProducts]
+
+  allReviews.sort((a, b) => {
+    const dateA = new Date(a.frontmatter.date).getTime()
+    const dateB = new Date(b.frontmatter.date).getTime()
+    return dateB - dateA
+  })
+
+  return allReviews
+}

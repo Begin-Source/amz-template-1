@@ -4,7 +4,7 @@ import { ProsCons } from "@/components/pros-cons"
 import { ProductCard } from "@/components/product-card"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Star, Package, Shield, Truck } from "lucide-react"
+import { Package, Shield, Truck } from "lucide-react"
 import { getProductByAsin, getFeaturedProducts, getAllProducts } from "@/lib/products-data"
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -74,22 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">{product.title}</h1>
-
-              <div className="flex items-center gap-2 mb-6">
-                <div className="flex items-center">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < Math.floor(product.rating || 4.5) ? "fill-accent text-accent" : "fill-none text-muted"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-lg font-semibold text-foreground">{(product.rating || 4.5).toFixed(1)}</span>
-                <span className="text-muted-foreground">({Math.floor(Math.random() * 500) + 100} reviews)</span>
-              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">{product.title}</h1>
 
               {product.brand && (
                 <div className="mb-6">
@@ -168,9 +153,6 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
                   key={relatedProduct.asin}
                   title={relatedProduct.shortTitle || relatedProduct.title}
                   image={relatedProduct.imageUrl}
-                  rating={relatedProduct.rating || 4.5}
-                  reviewCount={Math.floor(Math.random() * 500) + 100}
-                  price="See on Amazon"
                   summary={relatedProduct.summary || relatedProduct.features[0]}
                   amazonUrl={relatedProduct.amazonUrl}
                   asin={relatedProduct.asin}

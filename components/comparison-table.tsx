@@ -1,12 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Star, ExternalLink, Check } from "lucide-react"
+import { ExternalLink, Check } from "lucide-react"
 
 interface Product {
   rank: number
   name: string
   image: string
-  rating: number
   price: string
   weight?: string
   capacity?: string
@@ -33,7 +32,6 @@ export function ComparisonTable({ products, title = "Top 3 Recommended Products"
               <tr className="border-b border-border">
                 <th className="text-left p-4 font-semibold text-foreground">Rank</th>
                 <th className="text-left p-4 font-semibold text-foreground">Product</th>
-                <th className="text-left p-4 font-semibold text-foreground">Rating</th>
                 <th className="text-left p-4 font-semibold text-foreground">Key Features</th>
                 <th className="text-center p-4 font-semibold text-foreground">Action</th>
               </tr>
@@ -56,12 +54,6 @@ export function ComparisonTable({ products, title = "Top 3 Recommended Products"
                       <div>
                         <div className="font-semibold text-foreground">{product.name}</div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-accent text-accent" />
-                      <span className="font-semibold text-foreground">{product.rating}</span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -101,10 +93,6 @@ export function ComparisonTable({ products, title = "Top 3 Recommended Products"
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-lg">
                     {product.rank}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-accent text-accent" />
-                    <span className="font-semibold">{product.rating}</span>
                   </div>
                 </div>
 

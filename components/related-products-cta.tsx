@@ -1,13 +1,12 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShoppingBag, ArrowRight, Star } from "lucide-react"
+import { ShoppingBag, ArrowRight } from "lucide-react"
 
 interface Product {
   title: string
   slug: string
   image?: string
-  rating?: number
 }
 
 interface RelatedProductsCTAProps {
@@ -57,12 +56,6 @@ export function RelatedProductsCTA({
                 <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1">
                   {product.title}
                 </h4>
-                {product.rating && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                    <span>{product.rating.toFixed(1)} Editor Rating</span>
-                  </div>
-                )}
                 <div className="flex items-center text-xs text-primary mt-1">
                   <span>Read Review</span>
                   <ArrowRight className="ml-1 h-3 w-3" />

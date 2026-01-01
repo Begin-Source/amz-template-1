@@ -37,7 +37,9 @@
       "Bash(rm -rf \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\app\\\\checklists\")",
       "Bash(rm -rf \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\content\\\\checklists\")",
       "Bash(ls components/checklist*.tsx)",
-      "Bash(rm \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\components\\\\checklist.tsx\" \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\components\\\\checklist-reset.tsx\")"
+      "Bash(rm \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\components\\\\checklist.tsx\" \"d:\\\\yourprojects\\\\AmazonSite\\\\camping-website-template\\\\components\\\\checklist-reset.tsx\")",
+      "Bash(taskkill /F /PID 32124)",
+      "Bash(taskkill //F //PID 32124)"
     ]
   }
 }
