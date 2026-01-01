@@ -18,25 +18,12 @@ interface GuidesFilterProps {
 export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [searchQuery, setSearchQuery] = useState("")
 
-  // Read initial category and search from URL
-  useEffect(() => {
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
     const categoryParam = searchParams.get("category")
-    const searchParam = searchParams.get("search")
-
-    if (categoryParam && categories.includes(categoryParam)) {
-      setSelectedCategory(categoryParam)
-    } else {
-      setSelectedCategory("all")
-    }
-
-    if (searchParam) {
-      setSearchQuery(searchParam)
-    }
-  }, [searchParams, categories])
+    return categoryParam && categories.includes(categoryParam) ? categoryParam : "all"
+  })
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "")
 
   // Filter guides based on category and search
   let filteredGuides = guides
@@ -68,20 +55,12 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
       params.set("category", encodeURIComponent(category))
     }
     const newUrl = params.toString() ? `/guides?${params.toString()}` : "/guides"
-    router.push(newUrl, { scroll: false })
+    router.replace(newUrl, { scroll: false })
   }
 
-  // Update URL when search query changes
+  // Update search query
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
-    const params = new URLSearchParams(searchParams.toString())
-    if (value.trim()) {
-      params.set("search", value)
-    } else {
-      params.delete("search")
-    }
-    const newUrl = params.toString() ? `/guides?${params.toString()}` : "/guides"
-    router.push(newUrl, { scroll: false })
   }
 
   return (
