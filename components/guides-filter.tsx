@@ -71,16 +71,6 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
     <div className="space-y-8">
       {/* Search and Filter Bar */}
       <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search guides..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10 w-full"
-          />
-        </div>
         <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
           <Button
             variant={selectedCategory === "all" ? "default" : "outline"}
@@ -104,6 +94,16 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
               </Button>
             )
           })}
+        </div>
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search guides..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10 w-full"
+          />
         </div>
       </div>
 
