@@ -5,14 +5,13 @@ import Link from "next/link"
 import { Search, BookOpen } from "lucide-react"
 import { getAllReviews, getAllGuides } from "@/lib/api"
 
-export const dynamic = 'force-static'
-
-export default function SearchPage({
+export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string }
+  searchParams: Promise<{ q?: string }>
 }) {
-  const query = searchParams.q || ""
+  const params = await searchParams
+  const query = params.q || ""
 
   const allReviews = getAllReviews()
   const allGuides = getAllGuides()
