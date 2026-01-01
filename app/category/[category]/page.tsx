@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
   const info = categoryInfo[category]
-  const products = getProductsByCategory(category)
+  const products = await getProductsByCategory(category)
 
   if (!info || products.length === 0) {
     notFound()

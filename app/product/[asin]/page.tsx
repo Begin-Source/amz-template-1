@@ -11,7 +11,7 @@ import Link from "next/link"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 
 export async function generateStaticParams() {
-  const products = getAllProducts()
+  const products = await getAllProducts()
   return products.map((product) => ({
     asin: product.asin,
   }))
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ asin: string }> }): Promise<Metadata> {
   const { asin } = await params
-  const product = getProductByAsin(asin)
+  const product = await getProductByAsin(asin)
   if (!product) {
     return {
       title: "Product Not Found",
@@ -34,13 +34,13 @@ export async function generateMetadata({ params }: { params: Promise<{ asin: str
 
 export default async function ProductPage({ params }: { params: Promise<{ asin: string }> }) {
   const { asin } = await params
-  const product = getProductByAsin(asin)
+  const product = await getProductByAsin(asin)
 
   if (!product) {
     notFound()
   }
 
-  const relatedProducts = getFeaturedProducts(3).filter((p) => p.asin !== product.asin)
+  const relatedProducts = (await getFeaturedProducts(3)).filter((p) => p.asin !== product.asin)
 
   return (
     <main className="flex-1">
