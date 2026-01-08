@@ -28,3 +28,10 @@ next-env.d.ts
 
 # mcp config
 .mcp.json
+
+# claude settings
+.claude/settings.local.json
+
+# temp files
+temp-template-check/
+*.csv
