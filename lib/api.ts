@@ -159,6 +159,12 @@ export async function getAllReviewsWithDirectus(): Promise<Review[]> {
   // 1. Get MDX reviews
   const mdxReviews = getAllReviews()
 
+  // Check if Directus is enabled
+  const isDirectusEnabled = process.env.NEXT_PUBLIC_ENABLE_DIRECTUS === 'true'
+  if (!isDirectusEnabled) {
+    return mdxReviews
+  }
+
   // 2. Get Directus products
   let directusProducts: Review[] = []
   try {
