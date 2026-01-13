@@ -11,13 +11,13 @@ export const siteConfig = {
   // 网站的基本品牌信息
   brand: {
     // 网站名称 - 会显示在 header、footer、SEO 标题等位置
-    name: "Camera Lens Pro",
+    name: "ErgoSeat Pro",
 
     // 网站标语 - 简短的品牌口号
-    tagline: "Find Your Perfect Camera & Lens",
+    tagline: "Ultimate Comfort, Optimal Posture, Peak Productivity",
 
     // 网站描述 - 用于 SEO 和页脚简介
-    description: "Expert reviews and honest recommendations for digital cameras, lenses, and photography equipment.",
+    description: "Your ultimate source for high-performance, multi-functional, and comfortable ergonomic seating solutions, perfect for home offices, professional work, and long gaming sessions.",
 
     // Logo 配置
     logo: {
@@ -29,7 +29,7 @@ export const siteConfig = {
 
       // 当 type 为 "lucide" 时，指定图标名称
       // 可用图标：https://lucide.dev/icons/
-      icon: "Camera",
+      icon: "Chair",
 
       // 当 type 为 "svg" 时，提供 SVG 路径数据
       svgPath: "",
@@ -46,14 +46,14 @@ export const siteConfig = {
   theme: {
     colors: {
       light: {
-        // 主色 - 专业深灰色，适合摄影器材网站
-        primary: "oklch(0.30 0.02 240)",
+        // 主色 - 专业的深灰色/蓝紫色，用于强调舒适和科技感
+        primary: "oklch(0.25 0.05 240)",
 
         // 次色 - 用于次要元素
         secondary: "oklch(0.45 0.02 240)",
 
-        // 强调色 - 橙红色用于 CTA 按钮，代表快门按钮
-        accent: "oklch(0.60 0.20 25)",
+        // 强调色 - 活力的绿色，代表健康和舒适
+        accent: "oklch(0.60 0.15 150)",
 
         // 背景色
         background: "oklch(0.99 0 0)",
@@ -102,35 +102,37 @@ export const siteConfig = {
   // 搜索引擎优化相关配置
   seo: {
     // 网站标题 - 显示在浏览器标签和搜索结果中
-    title: "Camera Lens Pro - Best Digital Camera & Lens Reviews 2025",
+    title: "ErgoSeat Pro - Best Ergonomic Chairs & Office Solutions 2025",
 
     // 标题模板 - %s 会被页面标题替换
-    titleTemplate: "%s | Camera Lens Pro",
+    titleTemplate: "%s | ErgoSeat Pro",
 
     // 网站描述 - 显示在搜索结果中
-    description: "Expert reviews and buying guides for digital cameras, lenses, and photography equipment. Honest, in-depth analysis to help you make informed decisions.",
+    description: "Expert reviews and buying guides for ergonomic chairs, standing desks, and office accessories. Find the perfect setup for comfort, health, and productivity.",
 
     // SEO 关键词 - 帮助搜索引擎理解网站内容
     keywords: [
-      "camera reviews",
-      "lens reviews",
-      "digital camera",
-      "photography equipment",
-      "camera buying guide",
-      "best cameras 2025",
-      "DSLR reviews",
-      "mirrorless camera",
+      "ergonomic chair reviews",
+      "standing desk",
+      "office chair",
+      "gaming chair",
+      "lumbar support",
+      "home office setup",
+      "ergonomic workspace",
+      "best office chairs 2025",
+      "adjustable chair",
+      "posture support",
     ],
 
     // 作者信息
-    author: "Camera Lens Pro",
+    author: "ErgoSeat Pro",
 
     // 网站 URL - 修改为你的实际域名
-    siteUrl: "http://localhost:3000",
+    siteUrl: "https://ergoseat.com",
 
     // 社交媒体账号
     social: {
-      twitter: "@cameralenspro",
+      twitter: "@ergoseatpro",
     }
   },
 
@@ -152,62 +154,62 @@ export const siteConfig = {
     // Hero 区域（首屏大标题区域）
     hero: {
       // 主标题
-      title: "Find Your Perfect Camera & Lens",
+      title: "Your Ultimate Ergonomic Workspace Starts Here",
 
       // 副标题/描述
-      subtitle: "Expert reviews and honest recommendations for digital cameras, lenses, and photography equipment. Capture your best moments with confidence.",
+      subtitle: "Discover expert reviews and honest recommendations for ergonomic chairs, standing desks, and accessories that boost comfort and productivity.",
 
       // 搜索框占位符文本
-      searchPlaceholder: "Search for cameras, lenses, accessories...",
+      searchPlaceholder: "Search for ergonomic chairs, standing desks, monitor arms...",
     },
 
     // 分类区域
     categories: {
       // 分类区域标题
-      title: "Shop by Category",
+      title: "Explore Ergonomic Solutions",
 
       // 分类区域描述
-      subtitle: "Browse our expertly curated photography equipment collections",
+      subtitle: "Browse our expertly curated collections for a healthier and more productive workspace.",
 
       // 分类列表
       items: [
         {
-          name: "DSLR Cameras",
-          slug: "dslr-cameras",
-          description: "Professional DSLR cameras for all skill levels",
-          icon: "Camera",
+          slug: "ergonomic-chairs",
+          name: "Ergonomic Chairs",
+          description: "High-performance seating for comfort and support.",
+          icon: "Chair",
         },
         {
-          name: "Mirrorless Cameras",
-          slug: "mirrorless-cameras",
-          description: "Compact and powerful mirrorless camera systems",
-          icon: "Video",
+          slug: "standing-desks",
+          name: "Standing Desks",
+          description: "Adjustable desks for a dynamic and healthy workspace.",
+          icon: "Desk",
         },
         {
-          name: "Camera Lenses",
-          slug: "camera-lenses",
-          description: "Prime, zoom, and specialty lenses for every need",
-          icon: "Focus",
+          slug: "monitor-arms",
+          name: "Monitor Arms",
+          description: "Optimize your screen position for ergonomic viewing.",
+          icon: "Monitor",
         },
         {
-          name: "Accessories",
-          slug: "accessories",
-          description: "Tripods, bags, filters, and essential gear",
-          icon: "Package",
+          slug: "ergonomic-keyboards-mice",
+          name: "Ergonomic Keyboards & Mice",
+          description: "Reduce strain with ergonomically designed peripherals.",
+          icon: "Keyboard",
         },
       ],
     },
 
     // 特色产品区域
     featuredProducts: {
-      title: "Featured Cameras & Lenses",
-      subtitle: "Top-rated photography gear from real Amazon data",
+      title: "Top-Rated Ergonomic Gear",
+      subtitle: "Discover the best ergonomic chairs and accessories from real Amazon data",
     },
 
     // CTA 区域（邮件订阅）
     cta: {
-      title: "Never Miss a Review",
-      subtitle: "Get our latest camera reviews and buying guides delivered to your inbox",
+      title: "Stay Ahead in Ergonomics",
+      subtitle: "Get our latest reviews and guides on ergonomic workspace solutions delivered to your inbox.",
       emailPlaceholder: "Enter your email",
       buttonText: "Subscribe",
     },
@@ -218,24 +220,24 @@ export const siteConfig = {
   pages: {
     // Reviews 页面
     reviews: {
-      title: "All Product Reviews",
-      description: "Browse our complete collection of {count} camera and lens reviews, all tested and evaluated by our photography experts.",
+      title: "All Ergonomic Product Reviews",
+      description: "Browse our complete collection of {count} ergonomic chair, desk, and accessory reviews, all tested and evaluated by our experts.",
     },
 
     // Guides 页面
     guides: {
-      title: "Photography Buying Guides",
-      description: "Expert tips and comprehensive guides to help you choose the perfect camera and lens for your photography needs.",
+      title: "Ergonomic Workspace Guides",
+      description: "Expert tips and comprehensive guides to help you choose the perfect ergonomic setup for your health and productivity.",
       categories: [
-        "Camera Basics",
-        "Photography Techniques",
-        "Gear Maintenance",
-        "Buying Guides",
+        "Ergonomic Chair Buying Guides",
+        "Standing Desk Benefits",
+        "Posture & Health Tips",
+        "Workspace Optimization",
       ],
       // CTA 区域配置
       cta: {
-        title: "Ready to Gear Up?",
-        description: "Check out our expert reviews to find the perfect equipment for your needs.",
+        title: "Ready to Upgrade Your Workspace?",
+        description: "Check out our expert reviews to find the perfect ergonomic equipment for your needs.",
         primaryButton: {
           text: "Browse Product Reviews",
           href: "/reviews",
@@ -250,8 +252,8 @@ export const siteConfig = {
   footer: {
     // 关于区域
     about: {
-      title: "Camera Lens Pro",
-      description: "Your trusted source for honest camera and lens reviews. We help photographers find the perfect equipment for their creative vision.",
+      title: "ErgoSeat Pro",
+      description: "Your trusted source for honest ergonomic chair, desk, and accessory reviews. We help you create a healthier, more productive workspace.",
     },
 
     // 注意：分类链接现在从 homepage.categories.items 动态生成，无需在此配置
@@ -271,7 +273,7 @@ export const siteConfig = {
     ],
 
     // 版权信息
-    copyright: "Camera Lens Pro. All rights reserved.",
+    copyright: "ErgoSeat Pro. All rights reserved.",
 
     // 联盟声明
     affiliateNotice: "We earn from qualifying purchases as an Amazon Associate.",
