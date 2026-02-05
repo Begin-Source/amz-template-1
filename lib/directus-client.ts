@@ -77,7 +77,7 @@ export class DirectusClient {
     params.append('sort', '-date_created')
 
     const response = await this.fetch<DirectusProductsResponse>(
-      `/items/products?${params.toString()}`
+      `/items/seed_inputs?${params.toString()}`
     )
 
     return response.data
@@ -99,7 +99,7 @@ export class DirectusClient {
       }
       params.append('limit', '1')
       const response = await this.fetch<DirectusProductsResponse>(
-        `/items/products?${params.toString()}`
+        `/items/seed_inputs?${params.toString()}`
       )
       return response.data[0] || null
     } catch (error) {

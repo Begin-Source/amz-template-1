@@ -28,7 +28,7 @@ This template is designed with a **configuration-first architecture**. Every asp
 - **🎨 100% Configuration-Driven** - Zero code changes needed for customization
 - **🔄 Theme Flexibility** - Switch from camping → cameras → tech → any niche instantly
 - **🗄️ Directus CMS Integration** - Optional dynamic product management
-- **🔄 Hybrid Data Architecture** - Combines MDX reviews with Directus products
+- **🔄 Hybrid Data Architecture** - Combines MDX reviews with Directus seed_inputs (产品数据)
 - **📱 Fully Responsive** - Mobile-first design with Tailwind CSS 4
 - **🚀 Static Export** - Deploy to any static hosting (Cloudflare, Netlify, Vercel)
 - **🔍 SEO Optimized** - Structured data, sitemaps, and meta tags
@@ -314,8 +314,8 @@ This template integrates with **Directus**, a powerful open-source headless CMS,
 
 ### Key Benefits
 
-- **Dynamic Product Management** - Add/edit/delete products via Directus admin interface
-- **Hybrid Data Architecture** - Seamlessly combines MDX reviews with Directus products
+- **Dynamic Product Management** - Add/edit/delete products via Directus admin interface (seed_inputs)
+- **Hybrid Data Architecture** - Seamlessly combines MDX reviews with Directus seed_inputs
 - **Automatic Categorization** - Smart category inference with manual override support
 - **Real-time Updates** - Changes in Directus reflect immediately on the website
 - **Fallback Mechanism** - Gracefully degrades to local data if Directus is unavailable
@@ -348,7 +348,7 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 - No external dependencies
 
 **When Directus is ENABLED** (`NEXT_PUBLIC_ENABLE_DIRECTUS=true`):
-- Fetches products from Directus `products` table via API
+- Fetches products from Directus `seed_inputs` table via API
 - Automatically transforms Directus data to match Product interface
 - Maps categories from your `site.config.ts` categories
 - Falls back to local data if API fails
@@ -362,7 +362,7 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 
 ### Directus Products Table Schema
 
-Your Directus `products` table should have these fields:
+Your Directus `seed_inputs` table should have these fields:
 
 **Required fields:**
 - `id` (integer, primary key)
@@ -501,7 +501,7 @@ All Amazon links include:
 - `lib/products-data.ts` - **Smart product catalog with Directus integration**
   - Contains fallback product data (30+ camping products)
   - Automatically fetches products from Directus when enabled
-  - Merges Directus products with local fallback data
+  - Merges Directus seed_inputs with local fallback data
   - Handles category mapping from config
 - `lib/theme-generator.ts` - Converts config colors to CSS variables (auto-generated)
 

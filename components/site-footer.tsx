@@ -3,15 +3,17 @@ import { siteConfig } from "@/lib/site.config"
 
 export function SiteFooter() {
   // 动态生成分类链接，从 homepage.categories.items 读取
-  const categoryLinks = siteConfig.homepage.categories.items.map(cat => ({
+  const categoryItems = siteConfig.homepage?.categories?.items ?? []
+  const categoryLinks = categoryItems.map(cat => ({
     name: cat.name,
     href: `/reviews?category=${cat.slug}`
   }))
 
   // 动态生成指南链接，从 pages.guides.categories 读取
+  const guideCategories = siteConfig.pages?.guides?.categories ?? []
   const guideLinks = [
     { name: "All Guides", href: "/guides" },
-    ...siteConfig.pages.guides.categories.map(cat => ({
+    ...guideCategories.map(cat => ({
       name: cat,
       href: `/guides?category=${encodeURIComponent(cat)}`
     }))

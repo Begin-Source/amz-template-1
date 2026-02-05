@@ -2,13 +2,12 @@ import type { Metadata } from "next"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
-import { getProductsByCategory, categoryInfo } from "@/lib/products-data"
+import { getAllCategories, getProductsByCategory, categoryInfo } from "@/lib/products-data"
 import { notFound } from "next/navigation"
 
 export async function generateStaticParams() {
-  const categories = ["camp-essentials", "cooking-dining", "gear-electronics", "safety-navigation"]
-  return categories.map((category) => ({
-    category,
+  return getAllCategories().map(({ slug }) => ({
+    category: slug,
   }))
 }
 

@@ -34,9 +34,22 @@ export default async function GuidesPage() {
   const guides = await getAllGuidesUnified()
 
   // 从配置文件获取页面文案和分类
-  const pageTitle = siteConfig.pages.guides.title
-  const pageDescription = siteConfig.pages.guides.description
-  const categories = siteConfig.pages.guides.categories
+  const guidesConfig = siteConfig.pages?.guides ?? {
+    title: "Guides",
+    description: "",
+    categories: [],
+    cta: {
+      title: "",
+      description: "",
+      primaryButton: {
+        text: "Browse Guides",
+        href: "/guides",
+      },
+    },
+  }
+  const pageTitle = guidesConfig.title
+  const pageDescription = guidesConfig.description
+  const categories = guidesConfig.categories ?? []
 
   return (
     <main className="flex-1">
@@ -94,15 +107,15 @@ export default async function GuidesPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center bg-primary/5 rounded-lg p-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              {siteConfig.pages.guides.cta.title}
+              {guidesConfig.cta.title}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              {siteConfig.pages.guides.cta.description}
+              {guidesConfig.cta.description}
             </p>
             <div className="flex justify-center">
               <Button asChild size="lg">
-                <Link href={siteConfig.pages.guides.cta.primaryButton.href}>
-                  {siteConfig.pages.guides.cta.primaryButton.text}
+                <Link href={guidesConfig.cta.primaryButton.href}>
+                  {guidesConfig.cta.primaryButton.text}
                 </Link>
               </Button>
             </div>
