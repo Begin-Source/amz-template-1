@@ -9,7 +9,7 @@ import { getFeaturedProducts } from "@/lib/products-data"
 import { siteConfig } from "@/lib/site.config"
 
 export default async function HomePage() {
-  const featuredProducts = await getFeaturedProducts(6)
+  const featuredProducts = await getFeaturedProducts(5)
 
   return (
     <main className="flex-1">
@@ -87,7 +87,7 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {siteConfig.homepage.categories.items.map((category) => {
                 const IconComponent = (LucideIcons as any)[category.icon]
                 return (
@@ -130,7 +130,7 @@ export default async function HomePage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard
                   key={product.asin}

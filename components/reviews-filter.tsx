@@ -112,7 +112,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="flex flex-col gap-3 w-full md:w-auto">
             <p className="text-sm font-medium text-foreground">Filter by Category</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1">
               {categories.map((cat) => (
                 <Button
                   key={cat.value}
@@ -160,7 +160,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {sortedReviews.map((review) => (
           <ProductCard
             key={review.slug}

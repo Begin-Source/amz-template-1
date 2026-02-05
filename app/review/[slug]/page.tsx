@@ -118,7 +118,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       reviewItem.frontmatter.category === frontmatter.category &&
       reviewItem.slug !== slug
     )
-    .slice(0, 3)
+    .slice(0, 5)
 
   // Schema.org structured data for SEO
   const jsonLd = {
@@ -283,7 +283,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
                 <span className="h-1 w-12 bg-primary rounded-full"></span>
                 Related Reviews
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 {relatedProducts.map((relatedProduct) => (
                   <ProductCard
                     key={relatedProduct.slug}

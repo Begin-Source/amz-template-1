@@ -11,13 +11,13 @@ export const siteConfig = {
   // 网站的基本品牌信息
   brand: {
     // 网站名称 - 会显示在 header、footer、SEO 标题等位置
-    name: "Camera Lens Pro",
+    name: "Site Name",
 
     // 网站标语 - 简短的品牌口号
-    tagline: "Find Your Perfect Camera & Lens",
+    tagline: "Site Tagline",
 
     // 网站描述 - 用于 SEO 和页脚简介
-    description: "Expert reviews and honest recommendations for digital cameras, lenses, and photography equipment.",
+    description: "Site description placeholder.",
 
     // Logo 配置
     logo: {
@@ -29,7 +29,7 @@ export const siteConfig = {
 
       // 当 type 为 "lucide" 时，指定图标名称
       // 可用图标：https://lucide.dev/icons/
-      icon: "Camera",
+      icon: "Image",
 
       // 当 type 为 "svg" 时，提供 SVG 路径数据
       svgPath: "",
@@ -102,35 +102,30 @@ export const siteConfig = {
   // 搜索引擎优化相关配置
   seo: {
     // 网站标题 - 显示在浏览器标签和搜索结果中
-    title: "Camera Lens Pro - Best Digital Camera & Lens Reviews 2025",
+    title: "Site Title - Placeholder SEO Title",
 
     // 标题模板 - %s 会被页面标题替换
-    titleTemplate: "%s | Camera Lens Pro",
+    titleTemplate: "%s | Site Name",
 
     // 网站描述 - 显示在搜索结果中
-    description: "Expert reviews and buying guides for digital cameras, lenses, and photography equipment. Honest, in-depth analysis to help you make informed decisions.",
+    description: "SEO description placeholder.",
 
     // SEO 关键词 - 帮助搜索引擎理解网站内容
     keywords: [
-      "camera reviews",
-      "lens reviews",
-      "digital camera",
-      "photography equipment",
-      "camera buying guide",
-      "best cameras 2025",
-      "DSLR reviews",
-      "mirrorless camera",
+      "keyword-1",
+      "keyword-2",
+      "keyword-3",
     ],
 
     // 作者信息
-    author: "Camera Lens Pro",
+    author: "Site Name",
 
     // 网站 URL - 修改为你的实际域名
-    siteUrl: "http://localhost:3000",
+    siteUrl: "https://example.com",
 
     // 社交媒体账号
     social: {
-      twitter: "@cameralenspro",
+      twitter: "@example",
     }
   },
 
@@ -152,64 +147,70 @@ export const siteConfig = {
     // Hero 区域（首屏大标题区域）
     hero: {
       // 主标题
-      title: "Find Your Perfect Camera & Lens",
+      title: "Hero Title",
 
       // 副标题/描述
-      subtitle: "Expert reviews and honest recommendations for digital cameras, lenses, and photography equipment. Capture your best moments with confidence.",
+      subtitle: "Hero subtitle placeholder.",
 
       // 搜索框占位符文本
-      searchPlaceholder: "Search for cameras, lenses, accessories...",
+      searchPlaceholder: "Search...",
     },
 
     // 分类区域
     categories: {
       // 分类区域标题
-      title: "Shop by Category",
+      title: "Product Categories",
 
       // 分类区域描述
-      subtitle: "Browse our expertly curated photography equipment collections",
+      subtitle: "Product categories placeholder.",
 
       // 分类列表
       items: [
         {
-          name: "DSLR Cameras",
-          slug: "dslr-cameras",
-          description: "Professional DSLR cameras for all skill levels",
-          icon: "Camera",
+          name: "Product Category 1",
+          slug: "product-category-1",
+          description: "Placeholder description",
+          icon: "Image",
         },
         {
-          name: "Mirrorless Cameras",
-          slug: "mirrorless-cameras",
-          description: "Compact and powerful mirrorless camera systems",
-          icon: "Video",
+          name: "Product Category 2",
+          slug: "product-category-2",
+          description: "Placeholder description",
+          icon: "Image",
         },
         {
-          name: "Camera Lenses",
-          slug: "camera-lenses",
-          description: "Prime, zoom, and specialty lenses for every need",
-          icon: "Focus",
+          name: "Product Category 3",
+          slug: "product-category-3",
+          description: "Placeholder description",
+          icon: "Image",
         },
         {
-          name: "Accessories",
-          slug: "accessories",
-          description: "Tripods, bags, filters, and essential gear",
-          icon: "Package",
+          name: "Product Category 4",
+          slug: "product-category-4",
+          description: "Placeholder description",
+          icon: "Image",
+        },
+        {
+          name: "Product Category 5",
+          slug: "product-category-5",
+          description: "Placeholder description",
+          icon: "Image",
         },
       ],
     },
 
     // 特色产品区域
     featuredProducts: {
-      title: "Featured Cameras & Lenses",
-      subtitle: "Top-rated photography gear from real Amazon data",
+      title: "Featured Products",
+      subtitle: "Featured products placeholder.",
     },
 
     // CTA 区域（邮件订阅）
     cta: {
-      title: "Never Miss a Review",
-      subtitle: "Get our latest camera reviews and buying guides delivered to your inbox",
-      emailPlaceholder: "Enter your email",
-      buttonText: "Subscribe",
+      title: "CTA Title",
+      subtitle: "CTA description placeholder.",
+      emailPlaceholder: "Email",
+      buttonText: "Submit",
     },
   },
 
@@ -218,26 +219,27 @@ export const siteConfig = {
   pages: {
     // Reviews 页面
     reviews: {
-      title: "All Product Reviews",
-      description: "Browse our complete collection of {count} camera and lens reviews, all tested and evaluated by our photography experts.",
+      title: "Reviews Title",
+      description: "Reviews description placeholder.",
     },
 
     // Guides 页面
     guides: {
-      title: "Photography Buying Guides",
-      description: "Expert tips and comprehensive guides to help you choose the perfect camera and lens for your photography needs.",
+      title: "Guides Title",
+      description: "Guides description placeholder.",
       categories: [
-        "Camera Basics",
-        "Photography Techniques",
-        "Gear Maintenance",
-        "Buying Guides",
+        "Guide Category 1",
+        "Guide Category 2",
+        "Guide Category 3",
+        "Guide Category 4",
+        "Guide Category 5",
       ],
       // CTA 区域配置
       cta: {
-        title: "Ready to Gear Up?",
-        description: "Check out our expert reviews to find the perfect equipment for your needs.",
+        title: "Guides CTA Title",
+        description: "Guides CTA description placeholder.",
         primaryButton: {
-          text: "Browse Product Reviews",
+          text: "View Reviews",
           href: "/reviews",
         },
       },
@@ -250,8 +252,8 @@ export const siteConfig = {
   footer: {
     // 关于区域
     about: {
-      title: "Camera Lens Pro",
-      description: "Your trusted source for honest camera and lens reviews. We help photographers find the perfect equipment for their creative vision.",
+      title: "About Title",
+      description: "About description placeholder.",
     },
 
     // 注意：分类链接现在从 homepage.categories.items 动态生成，无需在此配置
@@ -260,7 +262,7 @@ export const siteConfig = {
     // 资源链接
     resources: [
       { name: "About Us", href: "/about" },
-      { name: "Contact", href: "/contact" },
+      { name: "Contact Us", href: "/contact" },
     ],
 
     // 法律链接
@@ -271,10 +273,10 @@ export const siteConfig = {
     ],
 
     // 版权信息
-    copyright: "Camera Lens Pro. All rights reserved.",
+    copyright: "Site Name. All rights reserved.",
 
     // 联盟声明
-    affiliateNotice: "We earn from qualifying purchases as an Amazon Associate.",
+    affiliateNotice: "Affiliate notice placeholder.",
   },
 }
 
