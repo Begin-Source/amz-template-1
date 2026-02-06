@@ -12,15 +12,17 @@ import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 
 export async function generateStaticParams() {
   const products = await getAllProducts()
-  return products.map((product) => ({
-    asin: product.asin,
-  }))
+  return products
+    .filter((product) => product?.asin)
+    .map((product) => ({
+      asin: product.asin,
+    }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ asin: string }> }): Promise<Metadata> {
   const { asin } = await params
   const product = await getProductByAsin(asin)
-  if (!product) {
+  if (!product?.title) {
     return {
       title: "Product Not Found",
     }
@@ -28,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ asin: str
 
   return {
     title: `${product.title} Review - Wild Nature Journey`,
-    description: `Detailed review of ${product.title}. ${product.summary || product.features[0]}`,
+    description: `Detailed review of ${product.title}. ${product.summary || product.features?.[0] || ""}`,
   }
 }
 
@@ -36,11 +38,12 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
   const { asin } = await params
   const product = await getProductByAsin(asin)
 
-  if (!product) {
+  if (!product?.title) {
     notFound()
   }
 
-  const relatedProducts = (await getFeaturedProducts(3)).filter((p) => p.asin !== product.asin)
+  const relatedProducts = (await getFeaturedProducts(3)).filter((p) => p?.asin !== product.asin)
+  const features = Array.isArray(product.features) ? product.features : []
 
   return (
     <main className="flex-1">
@@ -84,7 +87,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
               )}
 
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                {product.summary || product.features[0]}
+                {product.summary || features[0] || ""}
               </p>
 
               <AmazonButton url={product.amazonUrl} size="lg" className="w-full mb-6" />
@@ -114,7 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
             <Card>
               <CardContent className="p-6">
                 <ul className="space-y-3">
-                  {product.features.map((feature, index) => (
+                  {features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0" />
                       <span className="text-foreground leading-relaxed">{feature}</span>
@@ -131,7 +134,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-6">Pros & Cons</h2>
             <ProsCons
-              pros={product.features.slice(0, 4)}
+              pros={features.slice(0, 4)}
               cons={[
                 "Price may vary based on Amazon deals",
                 "Availability depends on stock",
@@ -151,9 +154,9 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard
                   key={relatedProduct.asin}
-                  title={relatedProduct.shortTitle || relatedProduct.title}
+                  title={relatedProduct.shortTitle || relatedProduct.title || ""}
                   image={relatedProduct.imageUrl}
-                  summary={relatedProduct.summary || relatedProduct.features[0]}
+                  summary={relatedProduct.summary || relatedProduct.features?.[0] || ""}
                   amazonUrl={relatedProduct.amazonUrl}
                   asin={relatedProduct.asin}
                 />

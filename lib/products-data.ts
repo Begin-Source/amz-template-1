@@ -595,7 +595,8 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 
 export async function getProductByAsin(asin: string): Promise<Product | undefined> {
   const products = await getProductsData()
-  return products.find((p) => p.asin === asin)
+  const needle = asin?.toLowerCase()
+  return products.find((p) => p?.asin?.toLowerCase() === needle)
 }
 
 export async function getFeaturedProducts(count = 6): Promise<Product[]> {
