@@ -42,7 +42,10 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
     notFound()
   }
 
-  const relatedProducts = (await getFeaturedProducts(3)).filter((p) => p?.asin !== product.asin)
+  const relatedProducts = (await getFeaturedProducts(6))
+    .filter((p) => p?.asin && p?.title)
+    .filter((p) => p.asin !== product.asin)
+    .slice(0, 3)
   const features = Array.isArray(product.features) ? product.features : []
 
   return (

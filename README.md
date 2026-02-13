@@ -412,6 +412,33 @@ Edit `lib/products-data.ts` and add to `productsDataFallback` array:
 }
 ```
 
+### Directus + n8n Operations (Categories Push)
+
+For category synchronization, we now support dedicated manual buttons in Directus that trigger n8n workflows.
+
+**Buttons added**
+- `[站点产品分类] 推送到 GitHub` (collection: `site_categories`)
+  - Flow ID: `407dcb55-c1cf-44d5-bc31-8c39cf1f2f13`
+  - Purpose: Push selected product categories to GitHub (via n8n `site-categories-v1`).
+- `[站点指南分类] 推送到 GitHub` (collection: `site_guide_categories`)
+  - Flow ID: `5a6afc3a-ca40-4cc9-8dc8-326eba72c2e6`
+  - Purpose: Push selected guide categories to GitHub (reuses guide-categories sync flow).
+
+**Sites operations menu integration**
+- `Sites Operations Menu (item)` and `Sites Operations Menu (collection)` both include:
+  - Action: `推送产品分类到 GitHub`
+  - Value: `categories_push`
+
+**Stability notes**
+- Category push request body is serialized with `JSON.stringify(...)` before calling n8n webhook.
+- Selected row IDs are normalized and site IDs are deduplicated before triggering downstream sync.
+
+**How to use**
+1. Open `site_categories` or `site_guide_categories` in Directus.
+2. Select one or multiple rows.
+3. Click the push button and confirm.
+4. Check n8n execution logs and GitHub commit results.
+
 ## 📝 Content Management
 
 ### What's Configurable vs What's Content

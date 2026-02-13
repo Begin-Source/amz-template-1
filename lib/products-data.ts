@@ -562,7 +562,7 @@ export const productsDataFallback: Product[] = [
  * Fetch products from local data (synced from Directus)
  */
 export async function getProductsData(): Promise<Product[]> {
-  return productsDataFallback
+  return productsDataFallback.filter((product) => Boolean(product?.asin && product?.title))
 }
 
 // Backward compatible synchronous version (returns fallback)
