@@ -70,32 +70,55 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
   return (
     <div className="space-y-8">
       {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-          <Button
-            variant={selectedCategory === "all" ? "default" : "outline"}
-            onClick={() => handleCategoryChange("all")}
-            size="sm"
-            className="whitespace-nowrap"
-          >
-            All Guides ({guides.length})
-          </Button>
-          {categories.map((category) => {
-            const count = guides.filter((guide) => guide.frontmatter.category === category).length
-            return (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => handleCategoryChange(category)}
-                size="sm"
-                className="whitespace-nowrap"
-              >
-                {category} ({count})
-              </Button>
-            )
-          })}
+      <div className="flex flex-col md:flex-row gap-4 items-start">
+        <div className="w-full md:flex-1 space-y-3">
+          <p className="text-sm font-medium text-foreground">Filter by Category</p>
+
+          <div className="sm:hidden">
+            <select
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">All Guides ({guides.length})</option>
+              {categories.map((category) => {
+                const count = guides.filter((guide) => guide.frontmatter.category === category).length
+                return (
+                  <option key={category} value={category}>
+                    {category} ({count})
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+
+          <div className="hidden sm:flex flex-wrap gap-2">
+            <Button
+              variant={selectedCategory === "all" ? "default" : "outline"}
+              onClick={() => handleCategoryChange("all")}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              All Guides ({guides.length})
+            </Button>
+            {categories.map((category) => {
+              const count = guides.filter((guide) => guide.frontmatter.category === category).length
+              return (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  onClick={() => handleCategoryChange(category)}
+                  size="sm"
+                  className="whitespace-nowrap"
+                >
+                  {category} ({count})
+                </Button>
+              )
+            })}
+          </div>
         </div>
-        <div className="relative flex-1 w-full">
+
+        <div className="relative w-full md:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
