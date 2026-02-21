@@ -112,12 +112,28 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="flex flex-col gap-3 w-full md:w-auto">
             <p className="text-sm font-medium text-foreground">Filter by Category</p>
-            <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1">
+
+            <div className="sm:hidden">
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="hidden sm:flex flex-wrap gap-2 pb-1">
               {categories.map((cat) => (
                 <Button
                   key={cat.value}
                   variant={selectedCategory === cat.value ? "default" : "outline"}
                   size="sm"
+                  className="whitespace-nowrap"
                   onClick={() => handleCategoryChange(cat.value)}
                 >
                   {cat.label}

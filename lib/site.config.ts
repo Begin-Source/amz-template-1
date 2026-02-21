@@ -196,6 +196,36 @@ export const siteConfig = {
           description: "Placeholder description",
           icon: "Image",
         },
+        {
+          name: "Product Category 6",
+          slug: "product-category-6",
+          description: "Placeholder description",
+          icon: "Image",
+        },
+        {
+          name: "Product Category 7",
+          slug: "product-category-7",
+          description: "Placeholder description",
+          icon: "Image",
+        },
+        {
+          name: "Product Category 8",
+          slug: "product-category-8",
+          description: "Placeholder description",
+          icon: "Image",
+        },
+        {
+          name: "Product Category 9",
+          slug: "product-category-9",
+          description: "Placeholder description",
+          icon: "Image",
+        },
+        {
+          name: "Product Category 10",
+          slug: "product-category-10",
+          description: "Placeholder description",
+          icon: "Image",
+        },
       ],
     },
 
