@@ -24,6 +24,8 @@ export interface DirectusProduct {
   date_created: string
   date_updated: string
   raw_paapi: any
+  featured_home?: string | null
+  featured_rank?: number | null
 }
 
 export interface DirectusProductsResponse {

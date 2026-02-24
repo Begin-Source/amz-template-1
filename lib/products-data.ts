@@ -13,6 +13,8 @@ export interface Product {
   shortTitle?: string
   summary?: string
   slug?: string // Added slug for review article URLs
+  featuredHome?: boolean
+  featuredRank?: number
 }
 
 // Fallback data - kept in sync by the Directus -> GitHub workflow
@@ -592,6 +594,11 @@ export async function getProductsData(): Promise<Product[]> {
             shortTitle: row.title.substring(0, 50),
             summary: summary ? summary.substring(0, 150) : undefined,
             slug: ((row as any).review_slug || row.asin || '').toString().toLowerCase(),
+            featuredHome: (row as any).featured_home === 'yes',
+            featuredRank:
+              typeof (row as any).featured_rank === 'number'
+                ? (row as any).featured_rank
+                : undefined,
           }
         })
 
@@ -643,26 +650,17 @@ export async function getProductByAsin(asin: string): Promise<Product | undefine
 export async function getFeaturedProducts(count = 6): Promise<Product[]> {
   const products = await getProductsData()
 
-  const resolvedSiteId =
-    process.env.NEXT_PUBLIC_SITE_ID || process.env.DIRECTUS_SITE_ID || process.env.SITE_ID
-  const directusToken = process.env.DIRECTUS_API_TOKEN
-  if (directusToken && resolvedSiteId) {
-    try {
-      const featuredCategoryNames = await directusClient.getFeaturedCategoryNames(resolvedSiteId)
-      if (featuredCategoryNames.length > 0) {
-        const featuredSet = new Set(
-          featuredCategoryNames.map((name) => name.trim().toLowerCase())
-        )
-        const matched = products.filter((product) =>
-          featuredSet.has((product.category || '').trim().toLowerCase())
-        )
-        if (matched.length > 0) {
-          return matched.slice(0, count)
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load featured categories from Directus:', error)
-    }
+  const explicitlyFeatured = products
+    .filter((product) => product.featuredHome)
+    .sort((a, b) => {
+      const rankA = a.featuredRank ?? Number.MAX_SAFE_INTEGER
+      const rankB = b.featuredRank ?? Number.MAX_SAFE_INTEGER
+      if (rankA !== rankB) return rankA - rankB
+      return (a.title || '').localeCompare(b.title || '')
+    })
+
+  if (explicitlyFeatured.length > 0) {
+    return explicitlyFeatured.slice(0, count)
   }
 
   return products.slice(0, count)
