@@ -6,10 +6,30 @@ import { Search, ArrowRight } from "lucide-react"
 import * as LucideIcons from "lucide-react"
 import Link from "next/link"
 import { getFeaturedProducts } from "@/lib/products-data"
+import { getAllReviewsUnified } from "@/lib/api"
 import { siteConfig } from "@/lib/site.config"
 
 export default async function HomePage() {
-  const featuredProducts = await getFeaturedProducts(5)
+  const allReviews = await getAllReviewsUnified()
+  const reviewBasedFeatured = allReviews
+    .filter((review) => Boolean(review.frontmatter?.asin))
+    .slice(0, 5)
+    .map((review) => {
+      const asin = review.frontmatter.asin || ""
+      const title = review.frontmatter.title || "Untitled Review"
+      return {
+        asin,
+        title,
+        shortTitle: title.substring(0, 50),
+        imageUrl: review.frontmatter.image || "",
+        summary: review.frontmatter.description || "Expert product review.",
+        amazonUrl: review.frontmatter.amazonUrl || `https://www.amazon.com/dp/${asin}?tag=smartymode-20`,
+        slug: review.slug,
+      }
+    })
+
+  const featuredProducts =
+    reviewBasedFeatured.length > 0 ? reviewBasedFeatured : await getFeaturedProducts(5)
 
   return (
     <main className="flex-1">
@@ -133,12 +153,14 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard
-                  key={product.asin}
+                  key={product.slug || product.asin}
                   title={product.shortTitle || product.title}
                   image={product.imageUrl}
-                  summary={product.summary || `Tested and reviewed for outdoor enthusiasts. ${product.features[0]}`}
+                  summary={product.summary || "Tested and reviewed by our team."}
                   amazonUrl={product.amazonUrl}
                   asin={product.asin}
+                  slug={product.slug}
+                  linkType="review"
                 />
               ))}
             </div>
