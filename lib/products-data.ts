@@ -1,4 +1,5 @@
 import { siteConfig } from './site.config'
+import { directusClient } from './directus-client'
 
 export interface Product {
   asin: string
@@ -562,6 +563,46 @@ export const productsDataFallback: Product[] = [
  * Fetch products from local data (synced from Directus)
  */
 export async function getProductsData(): Promise<Product[]> {
+  const resolvedSiteId =
+    process.env.NEXT_PUBLIC_SITE_ID || process.env.DIRECTUS_SITE_ID || process.env.SITE_ID
+  const directusToken = process.env.DIRECTUS_API_TOKEN
+  if (directusToken && resolvedSiteId) {
+    try {
+      const rows = await directusClient.getProducts({ limit: 300, siteId: resolvedSiteId })
+      const directusProducts: Product[] = rows
+        .filter((row) => Boolean(row?.asin && row?.title))
+        .map((row) => {
+          const raw = row?.raw_paapi || {}
+          const brand = raw?.ItemInfo?.ByLineInfo?.Brand?.DisplayValue || ''
+          const summary = Array.isArray(raw?.ItemInfo?.Features?.DisplayValues)
+            ? raw.ItemInfo.Features.DisplayValues.join(' ')
+            : ''
+          const rating = raw?.CustomerReviews?.StarRating?.Value
+          const imageUrl = row?.images?.large || row?.images?.medium || row?.images?.small || ''
+
+          return {
+            asin: row.asin,
+            title: row.title,
+            brand,
+            features: Array.isArray(row.features) ? row.features : [],
+            amazonUrl: `https://www.amazon.com/dp/${row.asin}?tag=smartymode-20`,
+            imageUrl,
+            rating: typeof rating === 'number' ? rating : undefined,
+            category: (row.category || '').trim() || 'Uncategorized',
+            shortTitle: row.title.substring(0, 50),
+            summary: summary ? summary.substring(0, 150) : undefined,
+            slug: ((row as any).review_slug || row.asin || '').toString().toLowerCase(),
+          }
+        })
+
+      if (directusProducts.length > 0) {
+        return directusProducts
+      }
+    } catch (error) {
+      console.error('Failed to load products from Directus, fallback to local:', error)
+    }
+  }
+
   return productsDataFallback.filter((product) => Boolean(product?.asin && product?.title))
 }
 
@@ -601,6 +642,29 @@ export async function getProductByAsin(asin: string): Promise<Product | undefine
 
 export async function getFeaturedProducts(count = 6): Promise<Product[]> {
   const products = await getProductsData()
+
+  const resolvedSiteId =
+    process.env.NEXT_PUBLIC_SITE_ID || process.env.DIRECTUS_SITE_ID || process.env.SITE_ID
+  const directusToken = process.env.DIRECTUS_API_TOKEN
+  if (directusToken && resolvedSiteId) {
+    try {
+      const featuredCategoryNames = await directusClient.getFeaturedCategoryNames(resolvedSiteId)
+      if (featuredCategoryNames.length > 0) {
+        const featuredSet = new Set(
+          featuredCategoryNames.map((name) => name.trim().toLowerCase())
+        )
+        const matched = products.filter((product) =>
+          featuredSet.has((product.category || '').trim().toLowerCase())
+        )
+        if (matched.length > 0) {
+          return matched.slice(0, count)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load featured categories from Directus:', error)
+    }
+  }
+
   return products.slice(0, count)
 }
 

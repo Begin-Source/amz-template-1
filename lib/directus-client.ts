@@ -107,6 +107,64 @@ export class DirectusClient {
       return null
     }
   }
+
+  /**
+   * Get featured category names from site_categories where featured = yes
+   */
+  async getFeaturedCategoryNames(siteId?: number | string | null): Promise<string[]> {
+    const resolvedSiteId = siteId ?? this.resolveSiteId()
+    if (!resolvedSiteId) return []
+
+    const params = new URLSearchParams()
+    params.append('filter[site_id][_eq]', String(resolvedSiteId))
+    params.append('filter[featured][_eq]', 'yes')
+    params.append('limit', '100')
+    params.append(
+      'fields',
+      [
+        'product_category_1',
+        'product_category_2',
+        'product_category_3',
+        'product_category_4',
+        'product_category_5',
+        'product_category_6',
+        'product_category_7',
+        'product_category_8',
+        'product_category_9',
+        'product_category_10',
+        'product_category_11',
+        'product_category_12',
+        'product_category_overflow',
+      ].join(',')
+    )
+
+    const response = await this.fetch<{ data: Array<Record<string, unknown>> }>(
+      `/items/site_categories?${params.toString()}`
+    )
+
+    const names: string[] = []
+
+    for (const row of response.data || []) {
+      for (let i = 1; i <= 12; i += 1) {
+        const key = `product_category_${i}`
+        const value = row[key]
+        if (typeof value === 'string' && value.trim()) {
+          names.push(value.trim())
+        }
+      }
+
+      const overflow = row.product_category_overflow
+      if (Array.isArray(overflow)) {
+        for (const item of overflow) {
+          if (typeof item === 'string' && item.trim()) {
+            names.push(item.trim())
+          }
+        }
+      }
+    }
+
+    return Array.from(new Set(names))
+  }
 }
 
 // Singleton instance
