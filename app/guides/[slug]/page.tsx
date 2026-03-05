@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
 import { getGuideBySlugUnified, getAllGuidesUnified } from "@/lib/api"
+import { siteConfig } from "@/lib/site.config"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,6 +28,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const guide = getGuideBySlugUnified(slug)
+  const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
 
   if (!guide) {
     return {
@@ -49,9 +51,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ...(guide.frontmatter.tags || []),
       guide.frontmatter.category,
     ],
-    authors: [{ name: "Wild Nature Journey" }],
-    creator: "Wild Nature Journey",
-    publisher: "Wild Nature Journey",
+    authors: [{ name: authorName }],
+    creator: authorName,
+    publisher: authorName,
     openGraph: {
       title: `${guide.frontmatter.title} - Camping Guide`,
       description: guide.frontmatter.description,
@@ -71,7 +73,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       publishedTime: publishedDate,
       modifiedTime: modifiedDate,
-      authors: ["Wild Nature Journey"],
+      authors: [authorName],
     },
     twitter: {
       card: "summary_large_image",
@@ -100,6 +102,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function GuidePage({ params }: PageProps) {
   const { slug } = await params
   const guide = getGuideBySlugUnified(slug)
+  const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
 
   if (!guide) {
     notFound()
@@ -122,12 +125,12 @@ export default async function GuidePage({ params }: PageProps) {
     dateModified: guide.frontmatter.updatedDate || guide.frontmatter.date,
     author: {
       "@type": "Organization",
-      name: "Wild Nature Journey",
+      name: authorName,
       url: "http://localhost:3000",
     },
     publisher: {
       "@type": "Organization",
-      name: "Wild Nature Journey",
+      name: authorName,
       logo: {
         "@type": "ImageObject",
         url: "http://localhost:3000/logo.png",
@@ -186,7 +189,7 @@ export default async function GuidePage({ params }: PageProps) {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4" />
-                      <span>By Wild Nature Journey</span>
+                      <span>By {authorName}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />

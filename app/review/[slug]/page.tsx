@@ -9,6 +9,7 @@ import { Calendar, Clock, User } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { getReviewBySlugUnified, getAllReviewsUnified } from "@/lib/api"
+import { siteConfig } from "@/lib/site.config"
 import { ReviewSidebar } from "@/components/review-sidebar"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { TableOfContents } from "@/components/table-of-contents"
@@ -16,6 +17,7 @@ import { TableOfContents } from "@/components/table-of-contents"
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const review = getReviewBySlugUnified(slug)
+  const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
 
   if (!review) {
     return {
@@ -42,9 +44,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       'expert review',
       'buying guide',
     ].filter(Boolean),
-    authors: [{ name: 'Wild Nature Journey' }],
-    creator: 'Wild Nature Journey',
-    publisher: 'Wild Nature Journey',
+    authors: [{ name: authorName }],
+    creator: authorName,
+    publisher: authorName,
     openGraph: {
       title: `${frontmatter.title} - Expert Review`,
       description: frontmatter.description,
@@ -62,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: 'article',
       publishedTime: publishedDate,
       modifiedTime: modifiedDate,
-      authors: ['Wild Nature Journey'],
+      authors: [authorName],
     },
     twitter: {
       card: 'summary_large_image',
@@ -109,6 +111,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
   }
 
   const { frontmatter, content } = review
+  const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
   const image = frontmatter.image || "/placeholder.svg"
   
   // Get related products from MDX reviews (same category, excluding current)
@@ -135,7 +138,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       '@type': 'Review',
       author: {
       '@type': 'Organization',
-      name: 'Wild Nature Journey',
+      name: authorName,
       url: 'http://localhost:3000',
       },
       datePublished: frontmatter.date,
@@ -201,7 +204,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>By Wild Nature Journey</span>
+                <span>By {authorName}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
