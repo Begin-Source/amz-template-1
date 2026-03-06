@@ -69,70 +69,87 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
 
   return (
     <div className="space-y-8">
-      {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-start">
-        <div className="w-full md:flex-1 space-y-3">
-          <p className="text-sm font-medium text-foreground">Filter by Category</p>
+      {/* Filter and Search Section */}
+      <div className="border-2 border-border rounded-xl p-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            <p className="text-sm font-medium text-foreground">Filter by Category</p>
 
-          <div className="sm:hidden">
-            <select
-              value={selectedCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="all">All Guides ({guides.length})</option>
+            <div className="sm:hidden">
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="all">All Guides ({guides.length})</option>
+                {categories.map((category) => {
+                  const count = guides.filter((guide) => guide.frontmatter.category === category).length
+                  return (
+                    <option key={category} value={category}>
+                      {category} ({count})
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+
+            <div className="hidden sm:flex flex-wrap gap-2 pb-1">
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                onClick={() => handleCategoryChange("all")}
+                size="sm"
+                className="whitespace-nowrap"
+              >
+                All Guides ({guides.length})
+              </Button>
               {categories.map((category) => {
                 const count = guides.filter((guide) => guide.frontmatter.category === category).length
                 return (
-                  <option key={category} value={category}>
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    onClick={() => handleCategoryChange(category)}
+                    size="sm"
+                    className="whitespace-nowrap"
+                  >
                     {category} ({count})
-                  </option>
+                  </Button>
                 )
               })}
-            </select>
+            </div>
           </div>
 
-          <div className="hidden sm:flex flex-wrap gap-2">
-            <Button
-              variant={selectedCategory === "all" ? "default" : "outline"}
-              onClick={() => handleCategoryChange("all")}
-              size="sm"
-              className="whitespace-nowrap"
-            >
-              All Guides ({guides.length})
-            </Button>
-            {categories.map((category) => {
-              const count = guides.filter((guide) => guide.frontmatter.category === category).length
-              return (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  onClick={() => handleCategoryChange(category)}
-                  size="sm"
-                  className="whitespace-nowrap"
-                >
-                  {category} ({count})
-                </Button>
-              )
-            })}
+          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[200px] md:max-w-[220px]">
+            <p className="text-sm font-medium text-foreground">Search Guides</p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search guides..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="relative w-full md:max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search guides..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10 w-full"
-          />
+        <div className="mt-6 pt-6 border-t border-border">
+          <p className="text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{filteredGuides.length}</span>{" "}
+            {filteredGuides.length === 1 ? "article" : "articles"}
+            {searchQuery.trim() && (
+              <span className="ml-2 text-sm">
+                matching "<span className="font-semibold text-foreground">{searchQuery}</span>"
+              </span>
+            )}
+            {selectedCategory !== "all" && (
+              <span className="ml-2 text-sm">
+                in <span className="font-semibold text-foreground">{selectedCategory}</span>
+              </span>
+            )}
+          </p>
         </div>
-      </div>
-
-      {/* Results count */}
-      <div className="text-sm text-muted-foreground">
-        Showing {filteredGuides.length} {filteredGuides.length === 1 ? "article" : "articles"}
       </div>
 
       {/* Guides Grid */}

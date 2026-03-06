@@ -142,7 +142,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[320px]">
+          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[200px] md:max-w-[220px]">
             <p className="text-sm font-medium text-foreground">Search Products</p>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

@@ -53,26 +53,18 @@ export default async function GuidesPage() {
 
   return (
     <main className="flex-1">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-primary/10 to-background py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              {pageTitle}
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              {pageDescription}
-            </p>
-          </div>
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
+            {pageTitle}
+          </h1>
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            {pageDescription}
+          </p>
         </div>
-      </section>
 
-      {/* Guides Grid Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <GuidesFilter guides={guides} categories={categories} />
-        </div>
-      </section>
+        <GuidesFilter guides={guides} categories={categories} />
+      </div>
 
       {/* Categories Overview */}
       <section className="py-16 bg-muted/30">
