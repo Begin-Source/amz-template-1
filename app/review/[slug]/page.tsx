@@ -121,7 +121,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       reviewItem.frontmatter.category === frontmatter.category &&
       reviewItem.slug !== slug
     )
-    .slice(0, 5)
+    .slice(0, 4)
 
   // Schema.org structured data for SEO
   const jsonLd = {
