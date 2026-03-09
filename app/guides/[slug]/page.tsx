@@ -103,6 +103,8 @@ export default async function GuidePage({ params }: PageProps) {
   const { slug } = await params
   const guide = getGuideBySlugUnified(slug)
   const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
+  const outlineSource =
+    typeof guide?.frontmatter?.outline === "string" ? guide.frontmatter.outline.trim() : ""
 
   if (!guide) {
     notFound()
@@ -242,6 +244,20 @@ export default async function GuidePage({ params }: PageProps) {
                     {guide.frontmatter.description}
                   </p>
                 </header>
+
+                {/* Outline */}
+                {outlineSource && (
+                  <section className="my-8">
+                    <Card className="border-primary/20 bg-primary/5">
+                      <CardContent className="p-6">
+                        <h2 className="text-2xl font-bold text-foreground mb-4">Article Outline</h2>
+                        <div className="prose prose-sm md:prose max-w-none dark:prose-invert">
+                          <MDXRemote source={outlineSource} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </section>
+                )}
 
                 {/* MDX Content */}
                 <div className="prose prose-lg max-w-none dark:prose-invert">

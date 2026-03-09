@@ -82,6 +82,7 @@ export interface GuideFrontmatter {
   date: string
   description: string
   category: string
+  outline?: string
   tags?: string[]
   image?: string
   readTime?: string
