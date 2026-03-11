@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Calendar, Clock, ArrowRight, Search } from "lucide-react"
 import type { Guide } from "@/lib/api"
+import { type GuideCategoryItem, slugifyGuideCategory } from "@/lib/guide-categories"
 
 interface GuidesFilterProps {
   guides: Guide[]
-  categories: string[]
+  categories: GuideCategoryItem[]
 }
 
 export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
@@ -21,7 +22,11 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
 
   const [selectedCategory, setSelectedCategory] = useState<string>(() => {
     const categoryParam = searchParams.get("category")
-    return categoryParam && categories.includes(categoryParam) ? categoryParam : "all"
+    if (!categoryParam) return "all"
+    const matched = categories.find(
+      (category) => category.slug === categoryParam || category.name === categoryParam
+    )
+    return matched ? matched.slug : "all"
   })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "")
 
@@ -31,7 +36,9 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
 
     // Category filter
     if (selectedCategory !== "all") {
-      result = result.filter((guide) => guide.frontmatter.category === selectedCategory)
+      result = result.filter(
+        (guide) => slugifyGuideCategory(guide.frontmatter.category) === selectedCategory
+      )
     }
 
     // Search filter
@@ -56,7 +63,7 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
     if (category === "all") {
       params.delete("category")
     } else {
-      params.set("category", encodeURIComponent(category))
+      params.set("category", category)
     }
     const newUrl = params.toString() ? `/guides?${params.toString()}` : "/guides"
     router.replace(newUrl, { scroll: false })
@@ -83,10 +90,12 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
               >
                 <option value="all">All Guides ({guides.length})</option>
                 {categories.map((category) => {
-                  const count = guides.filter((guide) => guide.frontmatter.category === category).length
+                  const count = guides.filter(
+                    (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
+                  ).length
                   return (
-                    <option key={category} value={category}>
-                      {category} ({count})
+                    <option key={category.slug} value={category.slug}>
+                      {category.name} ({count})
                     </option>
                   )
                 })}
@@ -103,16 +112,18 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
                 All Guides ({guides.length})
               </Button>
               {categories.map((category) => {
-                const count = guides.filter((guide) => guide.frontmatter.category === category).length
+                const count = guides.filter(
+                  (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
+                ).length
                 return (
                   <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    onClick={() => handleCategoryChange(category)}
+                    key={category.slug}
+                    variant={selectedCategory === category.slug ? "default" : "outline"}
+                    onClick={() => handleCategoryChange(category.slug)}
                     size="sm"
                     className="whitespace-nowrap"
                   >
-                    {category} ({count})
+                    {category.name} ({count})
                   </Button>
                 )
               })}
@@ -145,7 +156,10 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
             )}
             {selectedCategory !== "all" && (
               <span className="ml-2 text-sm">
-                in <span className="font-semibold text-foreground">{selectedCategory}</span>
+                in{" "}
+                <span className="font-semibold text-foreground">
+                  {categories.find((category) => category.slug === selectedCategory)?.name ?? selectedCategory}
+                </span>
               </span>
             )}
           </p>

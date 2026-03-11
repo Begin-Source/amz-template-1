@@ -3,10 +3,10 @@ import Link from "next/link"
 import { getAllGuidesUnified } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { GuidesFilter } from "@/components/guides-filter"
 import { siteConfig } from "@/lib/site.config"
+import { normalizeGuideCategories, slugifyGuideCategory } from "@/lib/guide-categories"
 
 export const metadata: Metadata = {
   title: "Camping Guides | Expert Outdoor Advice & Tips",
@@ -49,7 +49,7 @@ export default async function GuidesPage() {
   }
   const pageTitle = guidesConfig.title
   const pageDescription = guidesConfig.description
-  const categories = guidesConfig.categories ?? []
+  const categories = normalizeGuideCategories(guidesConfig.categories)
 
   return (
     <main className="flex-1">
@@ -72,16 +72,18 @@ export default async function GuidesPage() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Browse by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
             {categories.map((category) => {
-              const categoryGuides = guides.filter((guide) => guide.frontmatter.category === category)
+              const categoryGuides = guides.filter(
+                (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
+              )
               return (
-                <Card key={category} className="hover:shadow-lg transition-shadow">
+                <Card key={category.slug} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <CardTitle className="text-lg">{category}</CardTitle>
+                    <CardTitle className="text-lg">{category.name}</CardTitle>
                     <CardDescription>{categoryGuides.length} articles</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button asChild variant="outline" className="w-full">
-                      <Link href={`/guides?category=${encodeURIComponent(category)}`}>
+                      <Link href={`/guides?category=${category.slug}`}>
                         View Articles
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>

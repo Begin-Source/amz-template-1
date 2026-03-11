@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { ArrowRight, Lightbulb } from "lucide-react"
 import { getAllGuides } from "@/lib/api"
 import Image from "next/image"
+import { siteConfig } from "@/lib/site.config"
+import { normalizeGuideCategories, slugifyGuideCategory } from "@/lib/guide-categories"
 
 interface GuidesSidebarProps {
   category: string
@@ -13,10 +14,20 @@ interface GuidesSidebarProps {
 
 export function GuidesSidebar({ category, currentSlug }: GuidesSidebarProps) {
   const allGuides = getAllGuides()
+  const categorySlug = slugifyGuideCategory(category)
+  const categoryHref = categorySlug ? `/guides?category=${categorySlug}` : "/guides"
+  const categoryLabel =
+    normalizeGuideCategories(siteConfig.pages?.guides?.categories).find(
+      (item) => item.slug === categorySlug
+    )?.name || category
 
   // Get related guides from same category (excluding current)
   const relatedGuides = allGuides
-    .filter((guide) => guide.frontmatter.category === category && guide.slug !== currentSlug)
+    .filter(
+      (guide) =>
+        slugifyGuideCategory(guide.frontmatter.category) === categorySlug &&
+        guide.slug !== currentSlug
+    )
     .slice(0, 3)
 
   return (
@@ -64,8 +75,8 @@ export function GuidesSidebar({ category, currentSlug }: GuidesSidebarProps) {
               ))}
             </div>
             <Button asChild variant="ghost" size="sm" className="w-full mt-4">
-              <Link href={`/guides?category=${encodeURIComponent(category)}`}>
-                View All {category}
+              <Link href={categoryHref}>
+                View All {categoryLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { siteConfig } from "@/lib/site.config"
+import { normalizeGuideCategories } from "@/lib/guide-categories"
 
 export function SiteFooter() {
   // 动态生成分类链接，从 homepage.categories.items 读取
@@ -10,12 +11,12 @@ export function SiteFooter() {
   }))
 
   // 动态生成指南链接，从 pages.guides.categories 读取
-  const guideCategories = siteConfig.pages?.guides?.categories ?? []
+  const guideCategories = normalizeGuideCategories(siteConfig.pages?.guides?.categories)
   const guideLinks = [
     { name: "All Guides", href: "/guides" },
     ...guideCategories.map(cat => ({
-      name: cat,
-      href: `/guides?category=${encodeURIComponent(cat)}`
+      name: cat.name,
+      href: `/guides?category=${cat.slug}`
     }))
   ]
 
