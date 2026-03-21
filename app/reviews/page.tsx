@@ -17,8 +17,8 @@ export default async function ReviewsPage() {
   const pageDescription = siteConfig.pages.reviews.description.replace('{count}', allReviews.length.toString())
 
   return (
-    <main className="flex-1">
-      <div className="container mx-auto px-4 py-12">
+    <main className="flex-1 min-w-0 overflow-x-clip">
+      <div className="container mx-auto max-w-full px-4 py-8 sm:py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">{pageTitle}</h1>
           <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">

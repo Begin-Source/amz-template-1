@@ -106,18 +106,18 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
   }
 
   return (
-    <>
+    <div className="w-full min-w-0 max-w-full">
       {/* Filter and Search Section */}
-      <div className="border-2 border-border rounded-xl p-6 mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex flex-col gap-3 w-full md:w-auto">
+      <div className="border-2 border-border rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 w-full min-w-0 max-w-full">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8">
+          <div className="flex min-w-0 w-full flex-col gap-3 md:max-w-[min(100%,42rem)] md:flex-1">
             <p className="text-sm font-medium text-foreground">Filter by Category</p>
 
             <div className="sm:hidden">
               <select
                 value={selectedCategory}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="h-10 w-full min-w-0 max-w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
@@ -127,7 +127,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
               </select>
             </div>
 
-            <div className="hidden sm:flex flex-wrap gap-2 pb-1">
+            <div className="hidden min-w-0 flex-wrap gap-2 pb-1 sm:flex">
               {categories.map((cat) => (
                 <Button
                   key={cat.value}
@@ -142,23 +142,23 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[200px] md:max-w-[220px]">
+          <div className="flex w-full min-w-0 shrink-0 flex-col gap-3 md:w-[min(100%,280px)]">
             <p className="text-sm font-medium text-foreground">Search Products</p>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-full min-w-0">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search by name, brand..."
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-9 h-9 text-sm"
+                className="h-10 w-full min-w-0 max-w-full pl-9 text-sm"
               />
             </div>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-muted-foreground">
+        <div className="mt-6 border-t border-border pt-6">
+          <p className="break-words text-muted-foreground text-sm sm:text-base">
             Showing <span className="font-semibold text-foreground">{sortedReviews.length}</span> of{" "}
             {reviews.length} products
             {searchQuery.trim() && (
@@ -176,7 +176,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {sortedReviews.map((review) => (
           <ProductCard
             key={review.slug}
@@ -192,7 +192,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
       </div>
 
       {sortedReviews.length === 0 && (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-muted-foreground text-lg mb-2">
             {searchQuery.trim()
               ? `No products found matching "${searchQuery}"`
@@ -215,7 +215,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
