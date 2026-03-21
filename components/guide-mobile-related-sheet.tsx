@@ -1,8 +1,7 @@
 "use client"
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { Package } from "lucide-react"
+import { ExternalLink, Package } from "lucide-react"
 
 export function GuideMobileRelatedSheet({
   children,
@@ -12,16 +11,15 @@ export function GuideMobileRelatedSheet({
   return (
     <div className="lg:hidden">
       <Sheet>
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur supports-[backdrop-filter]:bg-background/90">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-[#FF9900] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
           <SheetTrigger asChild>
-            <Button
+            <button
               type="button"
-              size="lg"
-              className="h-14 w-full gap-2 rounded-none text-base font-semibold"
+              className="flex min-h-14 w-full items-center justify-center gap-2 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-[#FF9900]/90"
             >
-              <Package className="h-5 w-5" />
-              Recommended gear
-            </Button>
+              View on Amazon
+              <ExternalLink className="h-4 w-4 shrink-0" />
+            </button>
           </SheetTrigger>
         </div>
         <SheetContent
