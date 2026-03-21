@@ -105,70 +105,88 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
     router.push(newUrl, { scroll: false })
   }
 
+  const categoryCount = (value: string) => {
+    if (value === "all") return reviews.length
+    const label = categories.find((c) => c.value === value)?.label
+    if (!label) return 0
+    return reviews.filter((r) => r.frontmatter.category === label).length
+  }
+
+  const categoryLabel = (value: string) => {
+    if (value === "all") return `All Reviews (${reviews.length})`
+    const cat = categories.find((c) => c.value === value)
+    return cat ? `${cat.label} (${categoryCount(value)})` : value
+  }
+
   return (
-    <div className="w-full min-w-0 max-w-full">
-      {/* Filter and Search Section */}
-      <div className="mb-6 w-full min-w-0 max-w-full rounded-xl border-2 border-border p-4 sm:mb-8 sm:p-5 lg:p-6">
-        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-6 lg:gap-8">
-          <div className="flex min-w-0 w-full flex-col gap-2 md:flex-1 md:justify-end">
+    <div className="w-full min-w-0 max-w-full space-y-8">
+      {/* Filter and Search — aligned with guides-filter layout */}
+      <div className="w-full min-w-0 max-w-full rounded-xl border-2 border-border p-6">
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+          <div className="flex w-full flex-col gap-3 md:w-auto">
             <p className="text-sm font-medium text-foreground">Filter by Category</p>
 
             <div className="sm:hidden">
               <select
                 value={selectedCategory}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="h-10 w-full min-w-0 max-w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
-                    {cat.label}
+                    {categoryLabel(cat.value)}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="hidden min-w-0 sm:flex sm:flex-nowrap sm:gap-2 sm:overflow-x-auto sm:overflow-y-hidden sm:pb-1 sm:[scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
+            <div className="hidden flex-wrap gap-2 pb-1 sm:flex">
               {categories.map((cat) => (
                 <Button
                   key={cat.value}
                   variant={selectedCategory === cat.value ? "default" : "outline"}
                   size="sm"
-                  className="shrink-0 whitespace-nowrap"
+                  className="whitespace-nowrap"
                   onClick={() => handleCategoryChange(cat.value)}
                 >
-                  {cat.label}
+                  {categoryLabel(cat.value)}
                 </Button>
               ))}
             </div>
           </div>
 
-          <div className="flex w-full min-w-0 shrink-0 flex-col gap-2 md:w-[min(100%,320px)] lg:w-80">
+          <div className="flex w-full flex-col gap-3 md:w-auto md:min-w-[200px] md:max-w-[220px]">
             <p className="text-sm font-medium text-foreground">Search Products</p>
-            <div className="relative w-full min-w-0">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search by name, brand..."
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="h-10 w-full min-w-0 max-w-full pl-9 text-sm"
+                className="h-9 pl-9 text-sm"
               />
             </div>
           </div>
         </div>
 
-        <div className="mt-4 border-t border-border pt-4 lg:mt-5 lg:pt-5">
-          <p className="break-words text-muted-foreground text-sm sm:text-base">
-            Showing <span className="font-semibold text-foreground">{sortedReviews.length}</span> of{" "}
-            {reviews.length} products
+        <div className="mt-6 border-t border-border pt-6">
+          <p className="text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{sortedReviews.length}</span>{" "}
+            {sortedReviews.length === 1 ? "review" : "reviews"}
             {searchQuery.trim() && (
               <span className="ml-2 text-sm">
-                matching "<span className="font-semibold text-foreground">{searchQuery}</span>"
+                matching &quot;
+                <span className="font-semibold text-foreground">{searchQuery}</span>
+                &quot;
               </span>
             )}
             {selectedCategory !== "all" && (
               <span className="ml-2 text-sm">
-                in <span className="font-semibold text-foreground">{categories.find(cat => cat.value === selectedCategory)?.label}</span>
+                in{" "}
+                <span className="font-semibold text-foreground">
+                  {categories.find((cat) => cat.value === selectedCategory)?.label}
+                </span>
               </span>
             )}
           </p>
