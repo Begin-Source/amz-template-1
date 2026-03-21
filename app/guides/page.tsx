@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react"
 import { GuidesFilter } from "@/components/guides-filter"
 import { siteConfig } from "@/lib/site.config"
 import { normalizeGuideCategories, slugifyGuideCategory } from "@/lib/guide-categories"
+import { absoluteUrl } from "@/lib/site-url"
 
 export const metadata: Metadata = {
   title: "Camping Guides | Expert Outdoor Advice & Tips",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     description:
       "Discover expert camping guides, how-to articles, and seasonal advice for outdoor adventures. Learn from experienced campers and improve your wilderness skills.",
     type: "website",
-    url: "http://localhost:3000/guides",
+    url: absoluteUrl("/guides"),
   },
 }
 

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
+import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 
 interface BreadcrumbItem {
   label: string
@@ -11,6 +12,7 @@ interface BreadcrumbNavProps {
 }
 
 export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
+  const origin = getSiteUrl()
   // Generate Schema.org BreadcrumbList structured data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -20,13 +22,13 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'http://localhost:3000',
+        item: origin,
       },
       ...items.map((item, index) => ({
         '@type': 'ListItem',
         position: index + 2,
         name: item.label,
-        ...(item.href && { item: `http://localhost:3000${item.href}` }),
+        ...(item.href && { item: absoluteUrl(item.href) }),
       })),
     ],
   }

@@ -1,4 +1,4 @@
-﻿# Operations Runbook
+# Operations Runbook
 
 ## Flow Trigger Forbidden (`[FORBIDDEN] You don't have permission to access this`)
 
@@ -105,3 +105,20 @@
 - About red underlines in filter input:
   - In Directus `11.5.1`, UI may show red underline for dynamic tokens even when runtime works.
   - Prefer template-token style (`{{site_id}}`, `{{site_category_id}}`) in interface filters.
+
+## Site URL (`NEXT_PUBLIC_SITE_URL`) — Cloudflare Pages / multi-site
+
+### Purpose
+- Canonical URLs, `openGraph.url`, RSS (`/feed.xml`), `sitemap.xml`, and JSON-LD use **`getSiteUrl()`** in `lib/site-url.ts`.
+- **`NEXT_PUBLIC_SITE_URL`** overrides `lib/site.config.ts` → `seo.siteUrl` for the deployed site.
+
+### Per deployment
+1. In Cloudflare Pages (or your host), set **`NEXT_PUBLIC_SITE_URL`** to the public origin, e.g. `https://project.pages.dev` or `https://example.com` (no trailing `/`).
+2. Redeploy after changing it (Next embeds `NEXT_PUBLIC_*` at build time).
+3. After binding a custom domain, **update the variable to the primary domain** and redeploy so meta tags match the domain users and search engines should index.
+
+### Verify
+- View page source: `<link rel="canonical">`, `og:url`, and JSON-LD `@id` / `url` should use the same origin as `NEXT_PUBLIC_SITE_URL` (or `site.config` fallback).
+- Open `/sitemap.xml`: every `<loc>` should use that origin.
+
+See also: `.env.example` in the repo root.

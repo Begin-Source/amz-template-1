@@ -12,6 +12,7 @@ import { getReviewBySlugUnified, getAllReviewsUnified } from "@/lib/api"
 import { siteConfig } from "@/lib/site.config"
 import { ReviewSidebar } from "@/components/review-sidebar"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
+import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 import { TableOfContents } from "@/components/table-of-contents"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -30,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const modifiedDate = frontmatter.updatedDate 
     ? new Date(frontmatter.updatedDate).toISOString()
     : publishedDate
+
+  const pageUrl = absoluteUrl(`/review/${slug}`)
 
   return {
     title: `${frontmatter.title} - Expert Review 2025 | Wild Nature Journey`,
@@ -50,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${frontmatter.title} - Expert Review`,
       description: frontmatter.description,
-      url: `http://localhost:3000/review/${slug}`,
+      url: pageUrl,
       siteName: 'Wild Nature Journey',
       images: frontmatter.image ? [
         {
@@ -74,7 +77,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       creator: '@wildnaturejourney',
     },
     alternates: {
-      canonical: `http://localhost:3000/review/${slug}`,
+      canonical: pageUrl,
     },
     robots: {
       index: true,
@@ -112,6 +115,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
 
   const { frontmatter, content } = review
   const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
+  const siteOrigin = getSiteUrl()
   const image = frontmatter.image || "/placeholder.svg"
   
   // Get related products from MDX reviews (same category, excluding current)
@@ -139,7 +143,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       author: {
       '@type': 'Organization',
       name: authorName,
-      url: 'http://localhost:3000',
+      url: siteOrigin,
       },
       datePublished: frontmatter.date,
       ...(frontmatter.updatedDate && { dateModified: frontmatter.updatedDate }),

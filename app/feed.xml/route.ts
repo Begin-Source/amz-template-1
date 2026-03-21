@@ -1,9 +1,10 @@
 import { getAllReviews, getAllGuides } from '@/lib/api'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const dynamic = 'force-static'
 
 export async function GET() {
-  const baseUrl = 'http://localhost:3000'
+  const baseUrl = getSiteUrl()
   const reviews = getAllReviews()
   const guides = getAllGuides()
   

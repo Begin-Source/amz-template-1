@@ -6,13 +6,16 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ConfigThemeProvider } from "@/components/config-theme-provider"
 import { siteConfig } from "@/lib/site.config"
+import { getSiteUrl } from "@/lib/site-url"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
+const siteUrl = getSiteUrl()
+
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.seo.siteUrl),
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteConfig.seo.title,
     template: siteConfig.seo.titleTemplate,
@@ -26,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: siteConfig.seo.siteUrl,
+    url: siteUrl,
     siteName: siteConfig.brand.name,
     title: siteConfig.seo.title,
     description: siteConfig.seo.description,
@@ -49,9 +52,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: siteConfig.seo.siteUrl,
+    canonical: siteUrl,
     types: {
-      'application/rss+xml': `${siteConfig.seo.siteUrl}/feed.xml`,
+      'application/rss+xml': `${siteUrl}/feed.xml`,
     },
   },
   icons: {

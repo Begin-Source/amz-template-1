@@ -1,12 +1,12 @@
 import { MetadataRoute } from 'next'
 import { getAllReviews, getAllGuides } from '@/lib/api'
 import { getAllCategories, getAllProducts } from '@/lib/products-data'
-import { siteConfig } from '@/lib/site.config'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const dynamic = 'force-static'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = (siteConfig.seo.siteUrl || 'https://example.com').replace(/\/$/, '')
+  const baseUrl = getSiteUrl()
 
   const reviews = getAllReviews()
   const guides = getAllGuides()

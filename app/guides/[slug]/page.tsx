@@ -11,6 +11,7 @@ import { Calendar, Clock, User } from "lucide-react"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { TableOfContents } from "@/components/table-of-contents"
 import { GuidesSidebar } from "@/components/guides-sidebar"
+import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 
 interface PageProps {
   params: Promise<{
@@ -41,6 +42,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? new Date(guide.frontmatter.updatedDate).toISOString()
     : publishedDate
 
+  const pageUrl = absoluteUrl(`/guides/${slug}`)
+  const siteOrigin = getSiteUrl()
+
   return {
     title: `${guide.frontmatter.title} - Camping Guide 2025 | Wild Nature Journey`,
     description: `${guide.frontmatter.description} Expert camping and outdoor guide. Updated ${new Date(modifiedDate).getFullYear()}.`,
@@ -57,7 +61,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: `${guide.frontmatter.title} - Camping Guide`,
       description: guide.frontmatter.description,
-      url: `http://localhost:3000/guides/${slug}`,
+      url: pageUrl,
       siteName: "Wild Nature Journey",
       images: guide.frontmatter.image
         ? [
@@ -83,7 +87,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       creator: "@wildnaturejourney",
     },
     alternates: {
-      canonical: `http://localhost:3000/guides/${slug}`,
+      canonical: pageUrl,
     },
     robots: {
       index: true,
@@ -110,6 +114,8 @@ export default async function GuidePage({ params }: PageProps) {
     notFound()
   }
 
+  const siteOrigin = getSiteUrl()
+
   // Get related guides from the same category for bottom section
   const allGuides = await getAllGuidesUnified()
   const relatedGuides = allGuides
@@ -128,21 +134,21 @@ export default async function GuidePage({ params }: PageProps) {
     author: {
       "@type": "Organization",
       name: authorName,
-      url: "http://localhost:3000",
+      url: siteOrigin,
     },
     publisher: {
       "@type": "Organization",
       name: authorName,
       logo: {
         "@type": "ImageObject",
-        url: "http://localhost:3000/logo.png",
+        url: absoluteUrl("/logo.png"),
       },
     },
     articleSection: guide.frontmatter.category,
     keywords: guide.frontmatter.tags?.join(", ") || "",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `http://localhost:3000/guides/${slug}`,
+      "@id": absoluteUrl(`/guides/${slug}`),
     },
   }
 
