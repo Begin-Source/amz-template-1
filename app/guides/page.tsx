@@ -2,11 +2,9 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getAllGuidesUnified } from "@/lib/api"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight } from "lucide-react"
 import { GuidesFilter } from "@/components/guides-filter"
 import { siteConfig } from "@/lib/site.config"
-import { normalizeGuideCategories, slugifyGuideCategory } from "@/lib/guide-categories"
+import { normalizeGuideCategories } from "@/lib/guide-categories"
 import { absoluteUrl } from "@/lib/site-url"
 
 export const metadata: Metadata = {
@@ -66,36 +64,6 @@ export default async function GuidesPage() {
 
         <GuidesFilter guides={guides} categories={categories} />
       </div>
-
-      {/* Categories Overview */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Browse by Category</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            {categories.map((category) => {
-              const categoryGuides = guides.filter(
-                (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
-              )
-              return (
-                <Card key={category.slug} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{category.name}</CardTitle>
-                    <CardDescription>{categoryGuides.length} articles</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button asChild variant="outline" className="w-full">
-                      <Link href={`/guides?category=${category.slug}`}>
-                        View Articles
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-16">

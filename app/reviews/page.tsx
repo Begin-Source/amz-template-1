@@ -18,12 +18,12 @@ export default async function ReviewsPage() {
 
   return (
     <main className="flex-1 min-w-0 overflow-x-clip">
-      <div className="container mx-auto px-4 py-6 sm:py-8 lg:py-10">
-        <div className="mb-6 text-center lg:mb-8">
-          <h1 className="mb-3 text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
+      <div className="container mx-auto px-4 py-12">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">
             {pageTitle}
           </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
             {pageDescription}
           </p>
         </div>

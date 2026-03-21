@@ -1,15 +1,18 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useId } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Calendar, Clock, ArrowRight, Search } from "lucide-react"
+import { Calendar, Clock, ArrowRight, Search, ChevronDown } from "lucide-react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { useIsLg } from "@/hooks/use-is-lg"
 import type { Guide } from "@/lib/api"
 import { type GuideCategoryItem, slugifyGuideCategory } from "@/lib/guide-categories"
+import { cn } from "@/lib/utils"
 
 interface GuidesFilterProps {
   guides: Guide[]
@@ -29,6 +32,10 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
     return matched ? matched.slug : "all"
   })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "")
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const isLg = useIsLg()
+  const categoriesExpanded = isLg || categoriesOpen
+  const categoriesPanelId = useId()
 
   // Filter guides based on category and search using useMemo
   const filteredGuides = useMemo(() => {
@@ -76,95 +83,102 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
 
   return (
     <div className="space-y-8">
-      {/* Filter and Search Section */}
-      <div className="border-2 border-border rounded-xl p-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex flex-col gap-3 w-full md:w-auto">
-            <p className="text-sm font-medium text-foreground">Filter by Category</p>
-
-            <div className="sm:hidden">
-              <select
-                value={selectedCategory}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="all">All Guides ({guides.length})</option>
-                {categories.map((category) => {
-                  const count = guides.filter(
-                    (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
-                  ).length
-                  return (
-                    <option key={category.slug} value={category.slug}>
-                      {category.name} ({count})
-                    </option>
-                  )
-                })}
-              </select>
-            </div>
-
-            <div className="hidden sm:flex flex-wrap gap-2 pb-1">
-              <Button
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                onClick={() => handleCategoryChange("all")}
-                size="sm"
-                className="whitespace-nowrap"
-              >
-                All Guides ({guides.length})
-              </Button>
-              {categories.map((category) => {
-                const count = guides.filter(
-                  (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
-                ).length
-                return (
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        {/* Category sidebar — full width on small screens, narrow column on lg+ */}
+        <aside className="w-full shrink-0 lg:w-64 lg:sticky lg:top-24 lg:self-start">
+          <div className="rounded-xl border-2 border-border bg-muted/20 p-4">
+            <Collapsible open={categoriesExpanded} onOpenChange={setCategoriesOpen}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 border-b border-border pb-3 text-left lg:hidden">
+                <span className="text-sm font-medium text-foreground">Categories</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                    categoriesExpanded && "rotate-180"
+                  )}
+                  aria-hidden
+                />
+              </CollapsibleTrigger>
+              <div className="mb-3 hidden lg:block">
+                <p className="text-sm font-medium text-foreground">Categories</p>
+              </div>
+              <CollapsibleContent id={categoriesPanelId}>
+                <nav className="flex max-h-[min(50vh,22rem)] flex-col gap-1 overflow-y-auto pt-2 pr-1 lg:max-h-none lg:overflow-visible lg:pt-0">
                   <Button
-                    key={category.slug}
-                    variant={selectedCategory === category.slug ? "default" : "outline"}
-                    onClick={() => handleCategoryChange(category.slug)}
+                    type="button"
+                    variant={selectedCategory === "all" ? "default" : "ghost"}
                     size="sm"
-                    className="whitespace-nowrap"
+                    className={cn(
+                      "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                      selectedCategory !== "all" && "text-muted-foreground hover:text-foreground"
+                    )}
+                    onClick={() => handleCategoryChange("all")}
                   >
-                    {category.name} ({count})
+                    <span className="min-w-0 flex-1 break-words leading-snug">All Guides</span>
+                    <span className="shrink-0 tabular-nums text-xs opacity-80">({guides.length})</span>
                   </Button>
-                )
-              })}
+                  {categories.map((category) => {
+                    const count = guides.filter(
+                      (guide) => slugifyGuideCategory(guide.frontmatter.category) === category.slug
+                    ).length
+                    const active = selectedCategory === category.slug
+                    return (
+                      <Button
+                        key={category.slug}
+                        type="button"
+                        variant={active ? "default" : "ghost"}
+                        size="sm"
+                        className={cn(
+                          "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                          !active && "text-muted-foreground hover:text-foreground"
+                        )}
+                        onClick={() => handleCategoryChange(category.slug)}
+                      >
+                        <span className="min-w-0 flex-1 break-words leading-snug">{category.name}</span>
+                        <span className="shrink-0 tabular-nums text-xs opacity-80">({count})</span>
+                      </Button>
+                    )
+                  })}
+                </nav>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1 space-y-6">
+          <div className="rounded-xl border-2 border-border p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+              <p className="min-w-0 text-sm text-muted-foreground sm:flex-1">
+                Showing <span className="font-semibold text-foreground">{filteredGuides.length}</span>{" "}
+                {filteredGuides.length === 1 ? "article" : "articles"}
+                {searchQuery.trim() && (
+                  <span className="ml-2">
+                    matching &quot;
+                    <span className="font-semibold text-foreground">{searchQuery}</span>
+                    &quot;
+                  </span>
+                )}
+                {selectedCategory !== "all" && (
+                  <span className="ml-2">
+                    in{" "}
+                    <span className="font-semibold text-foreground">
+                      {categories.find((category) => category.slug === selectedCategory)?.name ?? selectedCategory}
+                    </span>
+                  </span>
+                )}
+              </p>
+              <div className="relative w-full shrink-0 sm:w-72">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search guides..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="h-9 pl-9 text-sm"
+                  aria-label="Search guides"
+                />
+              </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[200px] md:max-w-[220px]">
-            <p className="text-sm font-medium text-foreground">Search Guides</p>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search guides..."
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-9 h-9 text-sm"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{filteredGuides.length}</span>{" "}
-            {filteredGuides.length === 1 ? "article" : "articles"}
-            {searchQuery.trim() && (
-              <span className="ml-2 text-sm">
-                matching "<span className="font-semibold text-foreground">{searchQuery}</span>"
-              </span>
-            )}
-            {selectedCategory !== "all" && (
-              <span className="ml-2 text-sm">
-                in{" "}
-                <span className="font-semibold text-foreground">
-                  {categories.find((category) => category.slug === selectedCategory)?.name ?? selectedCategory}
-                </span>
-              </span>
-            )}
-          </p>
-        </div>
-      </div>
 
       {/* Guides Grid */}
       {filteredGuides.length > 0 ? (
@@ -220,6 +234,8 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
           </Button>
         </div>
       )}
+        </div>
+      </div>
     </div>
   )
 }
