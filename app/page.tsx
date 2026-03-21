@@ -43,7 +43,7 @@ export default async function HomePage() {
             border: 'none'
           }}
         >
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 text-balance">
                 {siteConfig.homepage.hero.title}
@@ -99,7 +99,7 @@ export default async function HomePage() {
 
         {/* Best Gear Picks Categories */}
         <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{siteConfig.homepage.categories.title}</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -139,7 +139,7 @@ export default async function HomePage() {
 
         {/* Featured Reviews Section */}
         <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-12">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{siteConfig.homepage.featuredProducts.title}</h2>
@@ -169,7 +169,7 @@ export default async function HomePage() {
 
         {/* CTA Section */}
         <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center bg-primary rounded-2xl p-8 md:p-12">
               <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4 text-balance">
                 {siteConfig.homepage.cta.title}
