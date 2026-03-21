@@ -14,6 +14,7 @@ import { ReviewSidebar } from "@/components/review-sidebar"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 import { TableOfContents } from "@/components/table-of-contents"
+import { ReviewMobileAmazonBar } from "@/components/review-mobile-amazon-bar"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -117,6 +118,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
   const authorName = siteConfig.brand?.name || siteConfig.seo?.author || "Admin"
   const siteOrigin = getSiteUrl()
   const image = frontmatter.image || "/placeholder.svg"
+  const showMobileAmazonBar = Boolean(frontmatter.amazonUrl?.trim())
   
   // Get related products from MDX reviews (same category, excluding current)
   const allReviews = await getAllReviewsUnified()
@@ -167,7 +169,9 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="flex-1">
+      <main
+        className={`flex-1 min-w-0 overflow-x-clip ${showMobileAmazonBar ? "pb-24 lg:pb-0" : ""}`}
+      >
       <article className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
@@ -309,6 +313,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
         </div>
       </article>
     </main>
+    {showMobileAmazonBar && <ReviewMobileAmazonBar amazonUrl={frontmatter.amazonUrl} />}
     </>
   )
 }

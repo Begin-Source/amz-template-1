@@ -11,6 +11,9 @@ import { Calendar, Clock, User } from "lucide-react"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { TableOfContents } from "@/components/table-of-contents"
 import { GuidesSidebar } from "@/components/guides-sidebar"
+import { GuideMobileRelatedSheet } from "@/components/guide-mobile-related-sheet"
+import { GuideRelatedProductsList } from "@/components/guide-related-products-list"
+import { getGuideRelatedProductsData } from "@/lib/guide-related-products"
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 
 interface PageProps {
@@ -116,6 +119,12 @@ export default async function GuidePage({ params }: PageProps) {
 
   const siteOrigin = getSiteUrl()
 
+  const relatedData = await getGuideRelatedProductsData(
+    guide.frontmatter.category,
+    guide.frontmatter.related_product_category
+  )
+  const showMobileGearBar = relatedData.mode !== "none"
+
   // Get related guides from the same category for bottom section
   const allGuides = await getAllGuidesUnified()
   const relatedGuides = allGuides
@@ -159,7 +168,9 @@ export default async function GuidePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="flex-1">
+      <main
+        className={`flex-1 min-w-0 overflow-x-clip ${showMobileGearBar ? "pb-24 lg:pb-0" : ""}`}
+      >
         <article className="py-12">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
@@ -285,12 +296,14 @@ export default async function GuidePage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Right Sidebar */}
-              <aside className="lg:col-span-3 order-3">
+              {/* Right Sidebar: Related Products card hidden on small screens when mobile drawer is shown */}
+              <aside className="order-3 lg:col-span-3">
                 <GuidesSidebar
                   category={guide.frontmatter.category}
                   currentSlug={slug}
                   relatedProductCategory={guide.frontmatter.related_product_category}
+                  relatedData={relatedData}
+                  hideRelatedProductsOnMobile={showMobileGearBar}
                 />
               </aside>
             </div>
@@ -347,6 +360,11 @@ export default async function GuidePage({ params }: PageProps) {
           </div>
         </article>
       </main>
+      {showMobileGearBar && (
+        <GuideMobileRelatedSheet>
+          <GuideRelatedProductsList data={relatedData} />
+        </GuideMobileRelatedSheet>
+      )}
     </>
   )
 }
