@@ -126,3 +126,10 @@
 - Open `/sitemap.xml`: every `<loc>` should use that origin.
 
 See also: `.env.example` in the repo root.
+
+## Guide frontmatter: `related_product_category` (sidebar products)
+
+- Optional field on MDX guides under `content/guides/`. Build reads **static files only** (no Directus API at build time unless you already use it for product sync).
+- **Value:** a category **slug** from `siteConfig.homepage.categories` (e.g. `product-category-1`), the **display name** in that config, or **exact** `product.category` string from catalog / Directus export (e.g. `Camp Essentials`).
+- `components/guides-sidebar.tsx` loads up to **3** products via `getProductsForRelatedCategory()` in `lib/products-data.ts`. If the field is missing or no products match, the sidebar falls back to **same `category` MDX reviews** (same behavior as before).
+- **View all** appears when the value resolves to a `categoryMap` slug; raw `product.category` strings that are not in `siteConfig` may show products without a category link.

@@ -641,6 +641,37 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
   return products.filter((product) => product.category === categoryName)
 }
 
+/**
+ * Resolve guide frontmatter `related_product_category`: accepts category slug (categoryMap key),
+ * display name (categoryMap value), or exact product.category string (e.g. from Directus export).
+ */
+export async function getProductsForRelatedCategory(key: string): Promise<Product[]> {
+  const products = await getProductsData()
+  const trimmed = key.trim()
+  if (!trimmed) return []
+
+  const fromSlug = categoryMap[trimmed]
+  if (fromSlug) {
+    return products.filter((p) => p.category === fromSlug)
+  }
+
+  const slugEntry = Object.entries(categoryMap).find(([, name]) => name === trimmed)
+  if (slugEntry) {
+    return products.filter((p) => p.category === slugEntry[1])
+  }
+
+  return products.filter((p) => p.category === trimmed)
+}
+
+/** Map frontmatter `related_product_category` to `/category/[slug]` when possible */
+export function resolveCategorySlugForRelatedKey(key: string): string | null {
+  const t = key.trim()
+  if (!t) return null
+  if (categoryMap[t]) return t
+  const byName = Object.entries(categoryMap).find(([, name]) => name === t)
+  return byName ? byName[0] : null
+}
+
 export async function getProductByAsin(asin: string): Promise<Product | undefined> {
   const products = await getProductsData()
   const needle = asin?.toLowerCase()

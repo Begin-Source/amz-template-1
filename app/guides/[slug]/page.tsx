@@ -287,7 +287,11 @@ export default async function GuidePage({ params }: PageProps) {
 
               {/* Right Sidebar */}
               <aside className="lg:col-span-3 order-3">
-                <GuidesSidebar category={guide.frontmatter.category} currentSlug={slug} />
+                <GuidesSidebar
+                  category={guide.frontmatter.category}
+                  currentSlug={slug}
+                  relatedProductCategory={guide.frontmatter.related_product_category}
+                />
               </aside>
             </div>
 

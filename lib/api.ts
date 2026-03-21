@@ -82,6 +82,8 @@ export interface GuideFrontmatter {
   date: string
   description: string
   category: string
+  /** Slug from `siteConfig.homepage.categories` or exact `product.category` string from catalog */
+  related_product_category?: string
   outline?: string
   tags?: string[]
   image?: string
