@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { siteConfig } from "@/lib/site.config"
 import { normalizeGuideCategories } from "@/lib/guide-categories"
+import { FooterLinkSection } from "@/components/footer-link-section"
 
 export function SiteFooter() {
   // 动态生成分类链接，从 homepage.categories.items 读取
@@ -32,9 +33,8 @@ export function SiteFooter() {
             </p>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Product Reviews</h4>
+          {/* Categories — collapsible on small screens */}
+          <FooterLinkSection title="Product Reviews">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -55,11 +55,9 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </FooterLinkSection>
 
-          {/* Guides */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Guides</h4>
+          <FooterLinkSection title="Guides">
             <ul className="space-y-2">
               {guideLinks.map((guide) => (
                 <li key={guide.href}>
@@ -72,11 +70,9 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </FooterLinkSection>
 
-          {/* Resources & Legal */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Resources</h4>
+          <FooterLinkSection title="Resources">
             <ul className="space-y-2">
               {siteConfig.footer.resources.map((resource) => (
                 <li key={resource.href}>
@@ -99,7 +95,7 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </FooterLinkSection>
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center space-y-2">
