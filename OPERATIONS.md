@@ -110,15 +110,19 @@
 
 ### Purpose
 - Canonical URLs, `openGraph.url`, RSS (`/feed.xml`), `sitemap.xml`, and JSON-LD use **`getSiteUrl()`** in `lib/site-url.ts`.
-- **`NEXT_PUBLIC_SITE_URL`** overrides `lib/site.config.ts` → `seo.siteUrl` for the deployed site.
+- Resolution order: **`NEXT_PUBLIC_SITE_URL`** → **`CF_PAGES_URL`** (injected by Cloudflare Pages on each build) → `lib/site.config.ts` → `seo.siteUrl` → placeholder.
+
+### Cloudflare Pages (no env required for `*.pages.dev`)
+- If you **do not** set `NEXT_PUBLIC_SITE_URL`, builds on Cloudflare Pages still get the correct deployment origin via **`CF_PAGES_URL`** (e.g. `https://<branch>.<project>.pages.dev`), so `og:url` and canonicals match that URL after deploy.
+- **Custom domain:** set **`NEXT_PUBLIC_SITE_URL`** to your primary public origin (e.g. `https://www.yoursite.com`, no trailing `/`). `CF_PAGES_URL` may still point at `*.pages.dev`; the explicit variable wins so SEO matches the domain you want indexed.
 
 ### Per deployment
-1. In Cloudflare Pages (or your host), set **`NEXT_PUBLIC_SITE_URL`** to the public origin, e.g. `https://project.pages.dev` or `https://example.com` (no trailing `/`).
-2. Redeploy after changing it (Next embeds `NEXT_PUBLIC_*` at build time).
-3. After binding a custom domain, **update the variable to the primary domain** and redeploy so meta tags match the domain users and search engines should index.
+1. Optional but recommended for a fixed domain: in Cloudflare Pages → **Settings** → **Environment variables**, set **`NEXT_PUBLIC_SITE_URL`** to the public origin visitors should use.
+2. **Redeploy** after changing any build-time URL variable (Next embeds `NEXT_PUBLIC_*` at build time). Saving env vars alone does not change HTML already deployed until a new build runs (use **Retry deployment** or push a commit).
+3. After binding or changing a custom domain, **update `NEXT_PUBLIC_SITE_URL`** to that primary domain and redeploy.
 
 ### Verify
-- View page source: `<link rel="canonical">`, `og:url`, and JSON-LD `@id` / `url` should use the same origin as `NEXT_PUBLIC_SITE_URL` (or `site.config` fallback).
+- View page source: `<link rel="canonical">`, `og:url`, and JSON-LD `@id` / `url` should match the intended origin (`NEXT_PUBLIC_SITE_URL` if set, else the deployment URL from `CF_PAGES_URL` on Pages).
 - Open `/sitemap.xml`: every `<loc>` should use that origin.
 
 See also: `.env.example` in the repo root.

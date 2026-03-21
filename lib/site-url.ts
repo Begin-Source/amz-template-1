@@ -2,14 +2,25 @@ import { siteConfig } from "@/lib/site.config"
 
 const FALLBACK_SITE_URL = "https://example.com"
 
+function firstNonEmpty(...candidates: (string | undefined)[]): string | undefined {
+  for (const c of candidates) {
+    if (typeof c === "string" && c.trim()) return c.trim()
+  }
+  return undefined
+}
+
 /**
- * Canonical site origin for SEO: env NEXT_PUBLIC_SITE_URL (per deploy), else site.config.
- * No trailing slash.
+ * Canonical site origin for SEO. No trailing slash.
+ *
+ * Priority: `NEXT_PUBLIC_SITE_URL` → Cloudflare Pages `CF_PAGES_URL` (per build) →
+ * `site.config` → placeholder.
  */
 export function getSiteUrl(): string {
   const raw =
-    (typeof process.env.NEXT_PUBLIC_SITE_URL === "string" &&
-      process.env.NEXT_PUBLIC_SITE_URL.trim()) ||
+    firstNonEmpty(
+      process.env.NEXT_PUBLIC_SITE_URL,
+      process.env.CF_PAGES_URL,
+    ) ||
     siteConfig.seo.siteUrl ||
     FALLBACK_SITE_URL
   return raw.replace(/\/$/, "")

@@ -308,7 +308,7 @@ Generates static files in the `out/` directory, ready for deployment to:
 
 ### Site URL (SEO canonical & sitemap)
 
-Set **`NEXT_PUBLIC_SITE_URL`** to your public origin (no trailing slash), e.g. your Cloudflare Pages URL or custom domain. This drives canonical tags, Open Graph, `sitemap.xml`, and RSS. If unset, the value in `lib/site.config.ts` → `seo.siteUrl` is used. Copy `.env.example` to `.env.local` for local development. After changing domains, update the variable and rebuild.
+Set **`NEXT_PUBLIC_SITE_URL`** to your public origin (no trailing slash) when you want an explicit domain (especially with a **custom domain** on Cloudflare Pages). On Cloudflare Pages, **`CF_PAGES_URL`** is used automatically when `NEXT_PUBLIC_SITE_URL` is unset, so `*.pages.dev` builds still get correct canonicals and `og:url`. Otherwise the app falls back to `lib/site.config.ts` → `seo.siteUrl`. Copy `.env.example` to `.env.local` for local development. After changing domains, update the variable (if you use it) and rebuild.
 
 ## 🗄️ Directus CMS Integration
 
