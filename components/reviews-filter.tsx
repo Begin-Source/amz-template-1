@@ -108,9 +108,9 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
   return (
     <div className="w-full min-w-0 max-w-full">
       {/* Filter and Search Section */}
-      <div className="border-2 border-border rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 w-full min-w-0 max-w-full">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8">
-          <div className="flex min-w-0 w-full flex-col gap-3 md:max-w-[min(100%,42rem)] md:flex-1">
+      <div className="mb-6 w-full min-w-0 max-w-full rounded-xl border-2 border-border p-4 sm:mb-8 sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-6 lg:gap-8">
+          <div className="flex min-w-0 w-full flex-col gap-2 md:flex-1 md:justify-end">
             <p className="text-sm font-medium text-foreground">Filter by Category</p>
 
             <div className="sm:hidden">
@@ -127,13 +127,13 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
               </select>
             </div>
 
-            <div className="hidden min-w-0 flex-wrap gap-2 pb-1 sm:flex">
+            <div className="hidden min-w-0 sm:flex sm:flex-nowrap sm:gap-2 sm:overflow-x-auto sm:overflow-y-hidden sm:pb-1 sm:[scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
               {categories.map((cat) => (
                 <Button
                   key={cat.value}
                   variant={selectedCategory === cat.value ? "default" : "outline"}
                   size="sm"
-                  className="whitespace-nowrap"
+                  className="shrink-0 whitespace-nowrap"
                   onClick={() => handleCategoryChange(cat.value)}
                 >
                   {cat.label}
@@ -142,7 +142,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
             </div>
           </div>
 
-          <div className="flex w-full min-w-0 shrink-0 flex-col gap-3 md:w-[min(100%,280px)]">
+          <div className="flex w-full min-w-0 shrink-0 flex-col gap-2 md:w-[min(100%,320px)] lg:w-80">
             <p className="text-sm font-medium text-foreground">Search Products</p>
             <div className="relative w-full min-w-0">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -157,7 +157,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
           </div>
         </div>
 
-        <div className="mt-6 border-t border-border pt-6">
+        <div className="mt-4 border-t border-border pt-4 lg:mt-5 lg:pt-5">
           <p className="break-words text-muted-foreground text-sm sm:text-base">
             Showing <span className="font-semibold text-foreground">{sortedReviews.length}</span> of{" "}
             {reviews.length} products
@@ -175,8 +175,8 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {/* Products Grid — desktop: denser columns without oversized single cards */}
+      <div className="grid w-full min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4 2xl:grid-cols-5">
         {sortedReviews.map((review) => (
           <ProductCard
             key={review.slug}

@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { SiteMobileBottomBar, SiteMobileLayoutPad } from "@/components/site-mobile-bottom-bar"
 import { ConfigThemeProvider } from "@/components/config-theme-provider"
 import { siteConfig } from "@/lib/site.config"
 import { getSiteUrl } from "@/lib/site-url"
@@ -91,8 +92,11 @@ export default function RootLayout({
         <ConfigThemeProvider>
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
-            {children}
-            <SiteFooter />
+            <SiteMobileLayoutPad>
+              {children}
+              <SiteFooter />
+            </SiteMobileLayoutPad>
+            <SiteMobileBottomBar />
           </div>
           <Analytics />
         </ConfigThemeProvider>
