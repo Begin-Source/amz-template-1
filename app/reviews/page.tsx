@@ -19,16 +19,18 @@ export default async function ReviewsPage() {
   return (
     <main className="flex-1 min-w-0 overflow-x-clip">
       <div className="container mx-auto px-4 py-12">
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">
-            {pageTitle}
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            {pageDescription}
-          </p>
-        </div>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">
+              {pageTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {pageDescription}
+            </p>
+          </div>
 
-        <ReviewsFilter reviews={allReviews} categories={categories} />
+          <ReviewsFilter reviews={allReviews} categories={categories} />
+        </div>
       </div>
     </main>
   )

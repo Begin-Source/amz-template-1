@@ -124,7 +124,7 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <aside className="w-full shrink-0 lg:w-64 lg:sticky lg:top-24 lg:self-start">
+        <aside className="w-full shrink-0 lg:w-80 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-xl border-2 border-border bg-muted/20 p-4">
             <Collapsible open={categoriesExpanded} onOpenChange={setCategoriesOpen}>
               <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 border-b border-border pb-3 text-left lg:hidden">

@@ -51,36 +51,36 @@ export default async function GuidesPage() {
   const categories = normalizeGuideCategories(guidesConfig.categories)
 
   return (
-    <main className="flex-1">
+    <main className="flex-1 min-w-0 overflow-x-clip">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            {pageTitle}
-          </h1>
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            {pageDescription}
-          </p>
-        </div>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">
+              {pageTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {pageDescription}
+            </p>
+          </div>
 
-        <GuidesFilter guides={guides} categories={categories} />
+          <GuidesFilter guides={guides} categories={categories} />
+        </div>
       </div>
 
-      {/* CTA Section */}
+      {/* CTA Section — same max width as guide article layout */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center bg-primary/5 rounded-lg p-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              {guidesConfig.cta.title}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              {guidesConfig.cta.description}
-            </p>
-            <div className="flex justify-center">
-              <Button asChild size="lg">
-                <Link href={guidesConfig.cta.primaryButton.href}>
-                  {guidesConfig.cta.primaryButton.text}
-                </Link>
-              </Button>
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-4xl rounded-lg bg-primary/5 p-12 text-center">
+              <h2 className="mb-4 text-3xl font-bold text-foreground">{guidesConfig.cta.title}</h2>
+              <p className="mb-8 text-lg text-muted-foreground">{guidesConfig.cta.description}</p>
+              <div className="flex justify-center">
+                <Button asChild size="lg">
+                  <Link href={guidesConfig.cta.primaryButton.href}>
+                    {guidesConfig.cta.primaryButton.text}
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
