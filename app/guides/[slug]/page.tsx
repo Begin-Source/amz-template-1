@@ -245,14 +245,14 @@ export default async function GuidePage({ params }: PageProps) {
                   </div>
 
                   {guide.frontmatter.image && (
-                    <div className="mb-6 rounded-lg overflow-hidden">
+                    <div className="relative mb-6 w-full aspect-square overflow-hidden rounded-lg">
                       <Image
                         src={guide.frontmatter.image}
                         alt={`${guide.frontmatter.title} - Expert Camping Guide${guide.frontmatter.category ? ` | ${guide.frontmatter.category}` : ""}`}
-                        width={800}
-                        height={400}
-                        className="w-full h-[400px] object-cover"
+                        fill
+                        className="object-cover"
                         priority
+                        sizes="(max-width: 1024px) 100vw, min(896px, 50vw)"
                       />
                     </div>
                   )}
@@ -326,7 +326,7 @@ export default async function GuidePage({ params }: PageProps) {
                     >
                       <Card className="h-full flex flex-col hover:shadow-lg transition-all">
                         {relatedGuide.frontmatter.image && (
-                          <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+                          <div className="relative w-full aspect-square overflow-hidden rounded-t-lg">
                             <Image
                               src={relatedGuide.frontmatter.image}
                               alt={relatedGuide.frontmatter.title}

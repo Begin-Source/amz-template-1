@@ -148,7 +148,7 @@ export function SearchResults({ allReviews, allGuides }: SearchResultsProps) {
                               <img
                                 src={guide.frontmatter.image}
                                 alt={guide.frontmatter.title}
-                                className="w-32 h-32 object-cover rounded-lg flex-shrink-0"
+                                className="size-32 aspect-square shrink-0 object-cover rounded-lg"
                               />
                             )}
                             <div className="flex-1">

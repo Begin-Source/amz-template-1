@@ -187,7 +187,7 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
             <Card key={guide.slug} className="flex flex-col hover:shadow-lg transition-shadow">
               {guide.frontmatter.image && (
                 <div
-                  className="h-48 bg-cover bg-center rounded-t-lg"
+                  className="aspect-square w-full bg-cover bg-center rounded-t-lg"
                   style={{ backgroundImage: `url(${guide.frontmatter.image})` }}
                 />
               )}

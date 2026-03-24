@@ -238,13 +238,13 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
             </div>
 
             {image && (
-              <div className="mb-6 rounded-lg overflow-hidden">
+              <div className="relative mb-6 w-full aspect-square overflow-hidden rounded-lg">
                 <Image
                   src={image}
                   alt={`${frontmatter.title} - Detailed Review Photo${frontmatter.brand ? ` | ${frontmatter.brand}` : ''}`}
-                  width={800}
-                  height={400}
-                  className="w-full h-[400px] object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, min(896px, 50vw)"
                 />
               </div>
             )}
