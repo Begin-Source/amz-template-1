@@ -147,12 +147,14 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
                     variant={selectedCategory === "all" ? "default" : "ghost"}
                     size="sm"
                     className={cn(
-                      "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                      "h-auto min-h-9 w-full min-w-0 justify-start gap-2 whitespace-normal px-3 py-2.5 text-left font-normal",
                       selectedCategory !== "all" && "text-muted-foreground hover:text-foreground"
                     )}
                     onClick={() => handleCategoryChange("all")}
                   >
-                    <span className="min-w-0 flex-1 break-words leading-snug">All Reviews</span>
+                    <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere] leading-snug">
+                      All Reviews
+                    </span>
                     <span className="shrink-0 tabular-nums text-xs opacity-80">({reviews.length})</span>
                   </Button>
                   {slugCategories.map((cat) => {
@@ -165,12 +167,14 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
                         variant={active ? "default" : "ghost"}
                         size="sm"
                         className={cn(
-                          "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                          "h-auto min-h-9 w-full min-w-0 justify-start gap-2 whitespace-normal px-3 py-2.5 text-left font-normal",
                           !active && "text-muted-foreground hover:text-foreground"
                         )}
                         onClick={() => handleCategoryChange(cat.value)}
                       >
-                        <span className="min-w-0 flex-1 break-words leading-snug">{cat.label}</span>
+                        <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere] leading-snug">
+                          {cat.label}
+                        </span>
                         <span className="shrink-0 tabular-nums text-xs opacity-80">({count})</span>
                       </Button>
                     )

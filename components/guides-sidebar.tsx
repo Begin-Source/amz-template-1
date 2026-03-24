@@ -111,10 +111,20 @@ export async function GuidesSidebar({
                 </div>
               ))}
             </div>
-            <Button asChild variant="ghost" size="sm" className="mt-4 w-full">
-              <Link href={categoryHref}>
-                View All {categoryLabel}
-                <ArrowRight className="ml-2 h-4 w-4" />
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
+            >
+              <Link
+                href={categoryHref}
+                className="inline-flex items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
+              >
+                <span className="min-w-0 flex-1">
+                  View All {categoryLabel}
+                </span>
+                <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
               </Link>
             </Button>
           </CardContent>

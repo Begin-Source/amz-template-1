@@ -78,10 +78,20 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
                 </div>
               ))}
             </div>
-            <Button asChild variant="ghost" size="sm" className="w-full mt-4">
-              <Link href={`/reviews?category=${category?.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}>
-                View All in {category}
-                <ArrowRight className="ml-2 h-4 w-4" />
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
+            >
+              <Link
+                href={`/reviews?category=${category?.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                className="inline-flex items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
+              >
+                <span className="min-w-0 flex-1">
+                  View All in {category}
+                </span>
+                <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
               </Link>
             </Button>
           </CardContent>
@@ -102,8 +112,16 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
               <Link href="/guides">Buying Guides</Link>
             </Button>
             {category && (
-              <Button asChild variant="ghost" size="sm" className="w-full justify-start">
-                <Link href={`/reviews?category=${category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="h-auto min-h-9 w-full min-w-0 justify-start whitespace-normal py-2"
+              >
+                <Link
+                  href={`/reviews?category=${category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                  className="block w-full break-words text-left [overflow-wrap:anywhere]"
+                >
                   {category} Reviews
                 </Link>
               </Button>

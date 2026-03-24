@@ -108,12 +108,14 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
                     variant={selectedCategory === "all" ? "default" : "ghost"}
                     size="sm"
                     className={cn(
-                      "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                      "h-auto min-h-9 w-full min-w-0 justify-start gap-2 whitespace-normal px-3 py-2.5 text-left font-normal",
                       selectedCategory !== "all" && "text-muted-foreground hover:text-foreground"
                     )}
                     onClick={() => handleCategoryChange("all")}
                   >
-                    <span className="min-w-0 flex-1 break-words leading-snug">All Guides</span>
+                    <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere] leading-snug">
+                      All Guides
+                    </span>
                     <span className="shrink-0 tabular-nums text-xs opacity-80">({guides.length})</span>
                   </Button>
                   {categories.map((category) => {
@@ -128,12 +130,14 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
                         variant={active ? "default" : "ghost"}
                         size="sm"
                         className={cn(
-                          "h-auto min-h-9 w-full justify-start gap-2 px-3 py-2.5 text-left font-normal",
+                          "h-auto min-h-9 w-full min-w-0 justify-start gap-2 whitespace-normal px-3 py-2.5 text-left font-normal",
                           !active && "text-muted-foreground hover:text-foreground"
                         )}
                         onClick={() => handleCategoryChange(category.slug)}
                       >
-                        <span className="min-w-0 flex-1 break-words leading-snug">{category.name}</span>
+                        <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere] leading-snug">
+                          {category.name}
+                        </span>
                         <span className="shrink-0 tabular-nums text-xs opacity-80">({count})</span>
                       </Button>
                     )
@@ -192,8 +196,13 @@ export function GuidesFilter({ guides, categories }: GuidesFilterProps) {
                 />
               )}
               <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="secondary">{guide.frontmatter.category}</Badge>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <Badge
+                    variant="secondary"
+                    className="h-auto min-h-0 max-w-full min-w-0 shrink whitespace-normal break-words [overflow-wrap:anywhere] text-left font-normal leading-snug"
+                  >
+                    {guide.frontmatter.category}
+                  </Badge>
                   {guide.frontmatter.readTime && (
                     <div className="flex items-center text-xs text-muted-foreground">
                       <Clock className="h-3 w-3 mr-1" />
