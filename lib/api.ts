@@ -7,6 +7,7 @@ import {
   getLocalDocuments,
   isDirectusActive,
 } from './content-source'
+import { filterByPublishDate } from './publish-date'
 
 const reviewsDirectory = path.join(process.cwd(), "content/reviews")
 const guidesDirectory = path.join(process.cwd(), "content/guides")
@@ -73,7 +74,7 @@ export function getAllReviews(): Review[] {
       return dateB - dateA
     })
 
-  return reviews
+  return filterByPublishDate(reviews)
 }
 
 // Guides API (formerly Tips)
@@ -149,7 +150,7 @@ export function getAllGuides(): Guide[] {
       return dateB - dateA
     })
 
-  return guides
+  return filterByPublishDate(guides)
 }
 
 export function getGuidesByCategory(category: string): Guide[] {
@@ -272,7 +273,7 @@ export async function getAllReviewsWithDirectus(): Promise<Review[]> {
     return dateB - dateA
   })
 
-  return allReviews
+  return filterByPublishDate(allReviews)
 }
 
 /**
@@ -312,7 +313,7 @@ export async function getAllGuidesUnified(): Promise<Guide[]> {
     return dateB - dateA
   })
 
-  return allGuides
+  return filterByPublishDate(allGuides)
 }
 
 /**
@@ -390,7 +391,7 @@ export async function getAllReviewsUnified(): Promise<Review[]> {
     return dateB - dateA
   })
 
-  return allReviews
+  return filterByPublishDate(allReviews)
 }
 
 /**

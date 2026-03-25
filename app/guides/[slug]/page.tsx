@@ -15,6 +15,7 @@ import { GuideMobileRelatedSheet } from "@/components/guide-mobile-related-sheet
 import { GuideRelatedProductsList } from "@/components/guide-related-products-list"
 import { getGuideRelatedProductsData } from "@/lib/guide-related-products"
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
+import { isPublishedByDate } from "@/lib/publish-date"
 
 interface PageProps {
   params: Promise<{
@@ -38,6 +39,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: "Guide Not Found - Wild Nature Journey",
     }
+  }
+
+  if (!isPublishedByDate(guide.frontmatter.date)) {
+    notFound()
   }
 
   const publishedDate = new Date(guide.frontmatter.date).toISOString()
@@ -114,6 +119,10 @@ export default async function GuidePage({ params }: PageProps) {
     typeof guide?.frontmatter?.outline === "string" ? guide.frontmatter.outline.trim() : ""
 
   if (!guide) {
+    notFound()
+  }
+
+  if (!isPublishedByDate(guide.frontmatter.date)) {
     notFound()
   }
 

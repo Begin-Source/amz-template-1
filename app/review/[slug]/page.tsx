@@ -15,6 +15,7 @@ import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url"
 import { TableOfContents } from "@/components/table-of-contents"
 import { ReviewMobileAmazonBar } from "@/components/review-mobile-amazon-bar"
+import { isPublishedByDate } from "@/lib/publish-date"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -25,6 +26,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
       title: "Review Not Found - Wild Nature Journey",
     }
+  }
+
+  if (!isPublishedByDate(review.frontmatter.date)) {
+    notFound()
   }
 
   const { frontmatter } = review
@@ -111,6 +116,10 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
   const review = getReviewBySlugUnified(slug)
 
   if (!review) {
+    notFound()
+  }
+
+  if (!isPublishedByDate(review.frontmatter.date)) {
     notFound()
   }
 
