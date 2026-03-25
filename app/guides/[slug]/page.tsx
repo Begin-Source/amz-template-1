@@ -245,7 +245,7 @@ export default async function GuidePage({ params }: PageProps) {
                   </div>
 
                   {guide.frontmatter.image && (
-                    <div className="relative mb-6 w-full aspect-square overflow-hidden rounded-lg">
+                    <div className="relative mb-6 w-full aspect-[4/3] overflow-hidden rounded-lg">
                       <Image
                         src={guide.frontmatter.image}
                         alt={`${guide.frontmatter.title} - Expert Camping Guide${guide.frontmatter.category ? ` | ${guide.frontmatter.category}` : ""}`}
@@ -326,7 +326,7 @@ export default async function GuidePage({ params }: PageProps) {
                     >
                       <Card className="h-full flex flex-col hover:shadow-lg transition-all">
                         {relatedGuide.frontmatter.image && (
-                          <div className="relative w-full aspect-square overflow-hidden rounded-t-lg">
+                          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-lg">
                             <Image
                               src={relatedGuide.frontmatter.image}
                               alt={relatedGuide.frontmatter.title}

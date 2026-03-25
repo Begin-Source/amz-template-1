@@ -88,7 +88,7 @@ export async function GuidesSidebar({
                   <Link href={`/guides/${guide.slug}`} className="group block">
                     <div className="mb-2 flex gap-3">
                       {guide.frontmatter.image && (
-                        <div className="relative size-16 aspect-square shrink-0 overflow-hidden rounded">
+                        <div className="relative w-16 shrink-0 aspect-[4/3] overflow-hidden rounded">
                           <Image
                             src={guide.frontmatter.image}
                             alt={guide.frontmatter.title}
