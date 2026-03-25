@@ -1,0 +1,16 @@
+---
+title: "[Build test] Guide canary — scheduled date 2999-01-01"
+date: "2999-01-01"
+description: "Internal canary to verify guides respect the same UTC publish-date filter as reviews. Remove after testing."
+category: "Testing"
+related_product_category: "Camp Essentials"
+tags: ["build-test", "scheduled"]
+image: "/placeholder.svg"
+readTime: "1 min read"
+---
+
+This guide exists only to verify that **`content/guides`** entries with a **future `date`** are excluded from static generation, listings, sitemap, and RSS—same rules as reviews.
+
+**After deploy:** if `/guides/build-schedule-canary-guides-2999` returns **404** and this title does **not** appear on `/guides`, the scheduled-publish logic applies to guides.
+
+Delete this file when you are done testing.
