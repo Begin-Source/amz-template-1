@@ -186,7 +186,7 @@ export default async function GuidePage({ params }: PageProps) {
               {/* Left Sidebar - TOC */}
               <aside className="lg:col-span-3 order-2 lg:order-1">
                 <div className="lg:sticky lg:top-24">
-                  <TableOfContents source={guide.content} maxLevel={2} />
+                  <TableOfContents maxLevel={2} />
                 </div>
               </aside>
 

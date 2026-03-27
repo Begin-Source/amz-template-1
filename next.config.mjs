@@ -6,7 +6,7 @@ const nextConfig = {
   // Production mode: Static export for deployment
   ...(isStaticExport && { output: "export" }),
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     unoptimized: true,

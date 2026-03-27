@@ -1,6 +1,6 @@
 # Affiliate Marketing Website Template
 
-A modern, **fully configuration-driven** affiliate marketing website built with Next.js 16. Transform this template into ANY niche (cameras, camping, tech, fitness, etc.) by simply editing one configuration file - **no code changes required**.
+A modern, **fully configuration-driven** affiliate marketing website built with Next.js 15.3. Transform this template into ANY niche (cameras, camping, tech, fitness, etc.) by simply editing one configuration file - **no code changes required**.
 
 ## 🎯 Project Philosophy: Complete Customization Through Configuration
 
@@ -37,7 +37,7 @@ This template is designed with a **configuration-first architecture**. Every asp
 ## 🛠️ Technology Stack
 
 ### Core Framework
-- **Next.js 16.0.10** - React framework with App Router
+- **Next.js 15.3.3** - React framework with App Router (see `package.json` for exact version)
 - **React 19.2.0** - UI library
 - **TypeScript 5** - Type-safe development (strict mode)
 
@@ -211,7 +211,7 @@ export const siteConfig = {
 
 ### Prerequisites
 - Node.js 18+
-- npm or yarn
+- npm (this repo ships `package-lock.json`; use `npm install`, not a second lockfile)
 
 ### Installation
 
@@ -275,11 +275,12 @@ The project is configured for **conditional static export**:
 
 ```javascript
 // next.config.mjs
+const isStaticExport = process.env.NODE_ENV === "production"
+
 const nextConfig = {
-  // Only use static export for production builds
-  ...(process.env.NODE_ENV === "production" && { output: "export" }),
+  ...(isStaticExport && { output: "export" }),
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     unoptimized: true,
@@ -290,7 +291,7 @@ const nextConfig = {
 **Key features:**
 - ✅ Static export enabled in production (`npm run build`)
 - ✅ Dynamic routes work in development (`npm run dev`)
-- ✅ TypeScript errors don't block builds
+- ✅ TypeScript is type-checked on production builds (`ignoreBuildErrors: false`)
 - ✅ Images are unoptimized for static hosting
 
 ### Build Output

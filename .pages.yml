@@ -7,7 +7,7 @@ media:
 content:
   - name: reviews
     label: Product Reviews
-    path: outstatic/content/reviews
+    path: content/reviews
     type: collection
     fields:
       - name: title
@@ -61,7 +61,7 @@ content:
 
   - name: guides
     label: Camping Guides
-    path: outstatic/content/guides
+    path: content/guides
     type: collection
     fields:
       - name: title

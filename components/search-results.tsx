@@ -118,9 +118,6 @@ export function SearchResults({ allReviews, allGuides }: SearchResultsProps) {
                         key={review.slug}
                         title={review.frontmatter.title}
                         image={review.frontmatter.image || "/placeholder.svg"}
-                        rating={review.frontmatter.rating || 4.5}
-                        reviewCount={0}
-                        price=""
                         summary={review.frontmatter.description}
                         amazonUrl={review.frontmatter.amazonUrl || "#"}
                         asin={review.frontmatter.asin}
