@@ -1,6 +1,6 @@
 # Affiliate Marketing Website Template
 
-A modern, **fully configuration-driven** affiliate marketing website built with Next.js 15.3. Transform this template into ANY niche (cameras, camping, tech, fitness, etc.) by simply editing one configuration file - **no code changes required**.
+A modern, **fully configuration-driven** affiliate marketing website built with Next.js 16. Transform this template into ANY niche (cameras, camping, tech, fitness, etc.) by simply editing one configuration file - **no code changes required**.
 
 ## 🎯 Project Philosophy: Complete Customization Through Configuration
 
@@ -37,7 +37,7 @@ This template is designed with a **configuration-first architecture**. Every asp
 ## 🛠️ Technology Stack
 
 ### Core Framework
-- **Next.js 15.3.3** - React framework with App Router (see `package.json` for exact version)
+- **Next.js 16.2.1** - React framework with App Router (see `package.json` for exact version; production build uses Turbopack by default)
 - **React 19.2.0** - UI library
 - **TypeScript 5** - Type-safe development (strict mode)
 
@@ -293,6 +293,8 @@ const nextConfig = {
 - ✅ Dynamic routes work in development (`npm run dev`)
 - ✅ TypeScript is type-checked on production builds (`ignoreBuildErrors: false`)
 - ✅ Images are unoptimized for static hosting
+
+**Cloudflare Pages / `npm ci`:** Tools required at build time (Tailwind/PostCSS, `typescript`, `@types/*`, `tw-animate-css`) are under `dependencies` so installs that run with `NODE_ENV=production` still receive everything `next build` needs.
 
 ### Build Output
 ```bash
