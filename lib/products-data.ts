@@ -663,6 +663,20 @@ export async function getProductsForRelatedCategory(key: string): Promise<Produc
   return products.filter((p) => p.category === trimmed)
 }
 
+/**
+ * Single display-name string used to match `review.frontmatter.category` (same rules as
+ * `getProductsForRelatedCategory` / product `category` field).
+ */
+export function resolveRelatedCategoryDisplayName(key: string): string | null {
+  const trimmed = key.trim()
+  if (!trimmed) return null
+  const fromSlug = categoryMap[trimmed]
+  if (fromSlug) return fromSlug
+  const slugEntry = Object.entries(categoryMap).find(([, name]) => name === trimmed)
+  if (slugEntry) return slugEntry[1]
+  return trimmed
+}
+
 /** Map frontmatter `related_product_category` to `/category/[slug]` when possible */
 export function resolveCategorySlugForRelatedKey(key: string): string | null {
   const t = key.trim()

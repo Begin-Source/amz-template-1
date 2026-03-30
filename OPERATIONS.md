@@ -129,7 +129,15 @@ See also: `.env.example` in the repo root.
 
 ## Guide frontmatter: `related_product_category` (sidebar products)
 
-- Optional field on MDX guides under `content/guides/`. Build reads **static files only** (no Directus API at build time unless you already use it for product sync).
-- **Value:** a category **slug** from `siteConfig.homepage.categories` (e.g. `product-category-1`), the **display name** in that config, or **exact** `product.category` string from catalog / Directus export (e.g. `Camp Essentials`).
-- `components/guides-sidebar.tsx` loads up to **3** products via `getProductsForRelatedCategory()` in `lib/products-data.ts`. If the field is missing or no products match, the sidebar falls back to **same `category` MDX reviews** (same behavior as before).
-- **View all** appears when the value resolves to a `categoryMap` slug; raw `product.category` strings that are not in `siteConfig` may show products without a category link.
+### Same model as Related Guides (build-time = Git only)
+
+- **Related Guides** (sidebar + bottom section): at build time the app loads all guides from **`content/guides/`** via `getAllGuides()` / unified helpers, then picks peers where `frontmatter.category` matches the current guide. **No Directus call is required** for that list—only files already in the repo.
+- **Related Products** (sidebar): uses the **same idea** as guides—the primary source is **`content/reviews/*.mdx`**. `getGuideRelatedProductsData()` in `lib/guide-related-products.ts` resolves `related_product_category` with the same rules as `resolveRelatedCategoryDisplayName()` / `getProductsForRelatedCategory()` in `lib/products-data.ts`, then picks up to **5** reviews whose `frontmatter.category` equals that resolved display name (newest first). Links go to **`/review/[slug]`**. **No `data/products.json`** is used for this flow.
+- **Fallback order:** (1) reviews matched by `related_product_category`; (2) if none, **catalog** products from `getProductsForRelatedCategory()` → `getProductsData()` (Directus when env is set, else template `productsDataFallback`) for `/product/[asin]` style cards; (3) if still none and `related_product_category` is empty, reviews matched by the guide’s own **`category`** (editorial column), up to **5**.
+
+### Field usage
+
+- Optional field on MDX guides under `content/guides/`. For static Pages builds, **`content/reviews/`** must use **`frontmatter.category`** values that align with this field (slug, display name from `siteConfig.homepage.categories`, or exact category string).
+- **Value:** a category **slug** from `siteConfig.homepage.categories`, the **display name** in that config, or an **exact** string equal to `review.frontmatter.category` / `product.category` (e.g. `Camp Essentials`, `Kitchen Storage Cabinet`).
+- **View all (reviews mode):** uses the resolved category for the reviews filter URL when items came from `related_product_category`; otherwise the guide’s `category` when using the editorial fallback.
+- **View all (catalog mode):** when catalog products are shown, `/category/[slug]` appears if the value resolves via `categoryMap`; otherwise there may be no category link.
