@@ -1,11 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, Lightbulb, Package } from "lucide-react"
-import { getAllGuides } from "@/lib/api"
-import Image from "next/image"
-import { siteConfig } from "@/lib/site.config"
-import { normalizeGuideCategories, slugifyGuideCategory } from "@/lib/guide-categories"
+import { Package } from "lucide-react"
 import {
   getGuideRelatedProductsData,
   type GuideRelatedProductsData,
@@ -24,29 +20,13 @@ interface GuidesSidebarProps {
 
 export async function GuidesSidebar({
   category,
-  currentSlug,
+  currentSlug: _currentSlug,
   relatedProductCategory,
   relatedData: preloaded,
   hideRelatedProductsOnMobile = false,
 }: GuidesSidebarProps) {
   const relatedData =
     preloaded ?? (await getGuideRelatedProductsData(category, relatedProductCategory))
-
-  const allGuides = getAllGuides()
-  const categorySlug = slugifyGuideCategory(category)
-  const categoryHref = categorySlug ? `/guides?category=${categorySlug}` : "/guides"
-  const categoryLabel =
-    normalizeGuideCategories(siteConfig.pages?.guides?.categories).find(
-      (item) => item.slug === categorySlug
-    )?.name || category
-
-  const relatedGuides = allGuides
-    .filter(
-      (guide) =>
-        slugifyGuideCategory(guide.frontmatter.category) === categorySlug &&
-        guide.slug !== currentSlug
-    )
-    .slice(0, 3)
 
   const showRelatedProducts = relatedData.mode !== "none"
 
@@ -66,67 +46,6 @@ export async function GuidesSidebar({
           </CardHeader>
           <CardContent>
             <GuideRelatedProductsList data={relatedData} />
-          </CardContent>
-        </Card>
-      )}
-
-      {relatedGuides.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Lightbulb className="h-5 w-5 text-primary" />
-              Related Guides
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {relatedGuides.map((guide) => (
-                <div
-                  key={guide.slug}
-                  className="rounded-lg border border-border p-3 transition-all hover:border-primary/50"
-                >
-                  <Link href={`/guides/${guide.slug}`} className="group block">
-                    <div className="mb-2 flex gap-3">
-                      {guide.frontmatter.image && (
-                        <div className="relative w-16 shrink-0 aspect-[4/3] overflow-hidden rounded">
-                          <Image
-                            src={guide.frontmatter.image}
-                            alt={guide.frontmatter.title}
-                            fill
-                            className="object-cover"
-                            sizes="64px"
-                          />
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <h5 className="line-clamp-2 text-sm font-medium text-foreground transition-colors group-hover:text-primary">
-                          {guide.frontmatter.title}
-                        </h5>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                          <span>{guide.frontmatter.readTime || "5 min read"}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
-            >
-              <Link
-                href={categoryHref}
-                className="inline-flex items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
-              >
-                <span className="min-w-0 flex-1">
-                  View All {categoryLabel}
-                </span>
-                <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
-              </Link>
-            </Button>
           </CardContent>
         </Card>
       )}
