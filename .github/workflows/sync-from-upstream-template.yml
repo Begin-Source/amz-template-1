@@ -27,11 +27,13 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Must live OUTSIDE $GITHUB_WORKSPACE. If path is `template/` inside the repo,
+      # rsync --delete into ./ removes ./template while reading from it (vanished files / exit 24).
       - name: Checkout upstream template
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEMPLATE_REPO }}
-          path: template
+          path: ../amz-template-upstream
           token: ${{ secrets.TEMPLATE_UPSTREAM_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
@@ -54,8 +56,8 @@ jobs:
             --exclude='.env.local' \
             --exclude='.env.production' \
             --exclude='.env.development' \
-            template/ ./
-          rm -rf template
+            ../amz-template-upstream/ ./
+          rm -rf ../amz-template-upstream
 
       - name: Commit and push if changed
         run: |
