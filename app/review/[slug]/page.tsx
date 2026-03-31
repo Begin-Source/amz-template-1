@@ -17,6 +17,9 @@ import { TableOfContents } from "@/components/table-of-contents"
 import { ReviewMobileAmazonBar } from "@/components/review-mobile-amazon-bar"
 import { isPublishedByDate } from "@/lib/publish-date"
 
+/** Max items in the full-width "Related Reviews" section below the article */
+const RELATED_REVIEWS_LIMIT = 4
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const review = getReviewBySlugUnified(slug)
@@ -136,7 +139,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
       reviewItem.frontmatter.category === frontmatter.category &&
       reviewItem.slug !== slug
     )
-    .slice(0, 4)
+    .slice(0, RELATED_REVIEWS_LIMIT)
 
   // Schema.org structured data for SEO
   const jsonLd = {
@@ -303,7 +306,7 @@ export default async function ReviewArticlePage({ params }: { params: Promise<{ 
                 <span className="h-1 w-12 bg-primary rounded-full"></span>
                 Related Reviews
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedProducts.map((relatedProduct) => (
                   <ProductCard
                     key={relatedProduct.slug}

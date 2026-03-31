@@ -21,7 +21,7 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
           review.frontmatter.category === category &&
           review.slug !== currentSlug
         )
-        .slice(0, 3)
+        .slice(0, 4)
     : []
 
   return (
