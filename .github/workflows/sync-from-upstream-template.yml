@@ -27,14 +27,16 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Must live OUTSIDE $GITHUB_WORKSPACE. If path is `template/` inside the repo,
-      # rsync --delete into ./ removes ./template while reading from it (vanished files / exit 24).
-      - name: Checkout upstream template
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.TEMPLATE_REPO }}
-          path: ../amz-template-upstream
-          token: ${{ secrets.TEMPLATE_UPSTREAM_PAT || secrets.GITHUB_TOKEN }}
+      # actions/checkout `path` must stay under $GITHUB_WORKSPACE`; ../ is rejected.
+      # Clone to /tmp so rsync --delete never removes the live source tree (exit 24 / vanished).
+      - name: Clone upstream template
+        run: |
+          rm -rf /tmp/amz-template-upstream
+          git clone --depth 1 --branch main \
+            "https://x-access-token:${TOKEN}@github.com/${{ env.TEMPLATE_REPO }}.git" \
+            /tmp/amz-template-upstream
+        env:
+          TOKEN: ${{ secrets.TEMPLATE_UPSTREAM_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
         run: |
@@ -56,8 +58,8 @@ jobs:
             --exclude='.env.local' \
             --exclude='.env.production' \
             --exclude='.env.development' \
-            ../amz-template-upstream/ ./
-          rm -rf ../amz-template-upstream
+            /tmp/amz-template-upstream/ ./
+          rm -rf /tmp/amz-template-upstream
 
       - name: Commit and push if changed
         run: |
