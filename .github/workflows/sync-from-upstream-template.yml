@@ -1,0 +1,68 @@
+# Re-sync site repo with BeginOS template (amz-template-1).
+# Trigger: workflow_dispatch only (e.g. from n8n via GitHub Actions API). No schedule.
+# Preserves per-site Markdown under content/ and lib/site.config.ts (re-run Push Design if needed).
+
+name: Sync from upstream template
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-from-upstream-template
+  cancel-in-progress: true
+
+env:
+  TEMPLATE_REPO: Begin-Source/amz-template-1
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout upstream template
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEMPLATE_REPO }}
+          path: template
+          token: ${{ secrets.TEMPLATE_UPSTREAM_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync template into repository
+        run: |
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.next' \
+            --exclude='out' \
+            --exclude='build' \
+            --exclude='.turbo' \
+            --exclude='lib/site.config.ts' \
+            --exclude='content' \
+            --exclude='.env' \
+            --exclude='.env.local' \
+            --exclude='.env.production' \
+            --exclude='.env.development' \
+            template/ ./
+          rm -rf template
+
+      - name: Commit and push if changed
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes after sync."
+            exit 0
+          fi
+          git commit -m "chore: sync from upstream template (${{ env.TEMPLATE_REPO }})"
+          git push origin main
