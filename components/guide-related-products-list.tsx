@@ -47,10 +47,20 @@ export function GuideRelatedProductsList({ data }: { data: GuideRelatedProductsD
           ))}
         </div>
         {data.catalogViewAllHref && data.catalogViewAllLabel && (
-          <Button asChild variant="ghost" size="sm" className="mt-4 w-full">
-            <Link href={data.catalogViewAllHref}>
-              View all in {data.catalogViewAllLabel}
-              <ArrowRight className="ml-2 h-4 w-4" />
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
+          >
+            <Link
+              href={data.catalogViewAllHref}
+              className="inline-flex w-full items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
+            >
+              <span className="min-w-0 flex-1">
+                View all in {data.catalogViewAllLabel}
+              </span>
+              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
             </Link>
           </Button>
         )}
@@ -95,10 +105,20 @@ export function GuideRelatedProductsList({ data }: { data: GuideRelatedProductsD
           </div>
         ))}
       </div>
-      <Button asChild variant="ghost" size="sm" className="mt-4 w-full">
-        <Link href={data.reviewsViewAllHref}>
-          View All in {data.reviewsViewAllLabel}
-          <ArrowRight className="ml-2 h-4 w-4" />
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
+      >
+        <Link
+          href={data.reviewsViewAllHref}
+          className="inline-flex w-full items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
+        >
+          <span className="min-w-0 flex-1">
+            View All in {data.reviewsViewAllLabel}
+          </span>
+          <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
         </Link>
       </Button>
     </>
