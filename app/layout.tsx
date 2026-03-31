@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     template: siteConfig.seo.titleTemplate,
   },
   description: siteConfig.seo.description,
-  keywords: siteConfig.seo.keywords,
+  // Next Metadata expects mutable string[]; siteConfig literals infer readonly tuples
+  keywords: [...siteConfig.seo.keywords],
   authors: [{ name: siteConfig.seo.author }],
   creator: siteConfig.seo.author,
   publisher: siteConfig.seo.author,
