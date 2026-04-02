@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           </div>
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-5">
             {products.map((product) => (
               <ProductCard
                 key={product.asin}
@@ -63,6 +63,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 summary={product.summary || `Expert-tested and reviewed. ${product.features[0]}`}
                 amazonUrl={product.amazonUrl}
                 asin={product.asin}
+                showProductPageLink
               />
             ))}
           </div>
@@ -73,9 +74,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             <p className="text-lg text-primary-foreground/90 mb-6">
               Browse our other categories for more outdoor gear recommendations
             </p>
-            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              <a href="/">Explore All Categories</a>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                <a href="/products">Browse all products</a>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25">
+                <a href="/">Back to home</a>
+              </Button>
+            </div>
           </div>
         </div>
       </main>

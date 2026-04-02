@@ -395,6 +395,18 @@ export async function getAllReviewsUnified(): Promise<Review[]> {
 }
 
 /**
+ * Find the unified review whose frontmatter ASIN matches (case-insensitive).
+ * Used to deep-link /product/[asin] → /review/[slug].
+ */
+export async function findReviewByAsin(asin: string): Promise<Review | null> {
+  const needle = asin?.trim().toLowerCase()
+  if (!needle) return null
+  const allReviews = await getAllReviewsUnified()
+  const found = allReviews.find((r) => r.frontmatter.asin?.trim().toLowerCase() === needle)
+  return found ?? null
+}
+
+/**
  * Get a single guide by slug from multiple sources
  */
 export function getGuideBySlugUnified(slug: string): Guide | null {

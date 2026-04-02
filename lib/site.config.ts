@@ -111,11 +111,7 @@ export const siteConfig = {
     description: "SEO description placeholder.",
 
     // SEO 关键词 - 帮助搜索引擎理解网站内容
-    keywords: [
-      "keyword-1",
-      "keyword-2",
-      "keyword-3",
-    ],
+    keywords: ["keyword-1", "keyword-2", "keyword-3"],
 
     // 作者信息
     author: "Site Name",
@@ -157,43 +153,38 @@ export const siteConfig = {
       searchPlaceholder: "Search...",
     },
 
-    // 分类区域
+    // 分类区域（name/slug 须与商品库 `product.category` / categoryMap 一致，否则分类页无商品）
     categories: {
-      // 分类区域标题
       title: "Product Categories",
-
-      // 分类区域描述
       subtitle: "Product categories placeholder.",
-
-      // 分类列表
       items: [
         {
-          name: "Product Category 1",
-          slug: "product-category-1",
+          name: "Product 1",
+          slug: "product-1",
           description: "Placeholder description",
           icon: "Image",
         },
         {
-          name: "Product Category 2",
-          slug: "product-category-2",
+          name: "Product 2",
+          slug: "product-2",
           description: "Placeholder description",
           icon: "Image",
         },
         {
-          name: "Product Category 3",
-          slug: "product-category-3",
+          name: "Product 3",
+          slug: "product-3",
           description: "Placeholder description",
           icon: "Image",
         },
         {
-          name: "Product Category 4",
-          slug: "product-category-4",
+          name: "Product 4",
+          slug: "product-4",
           description: "Placeholder description",
           icon: "Image",
         },
         {
-          name: "Product Category 5",
-          slug: "product-category-5",
+          name: "Product 5",
+          slug: "product-5",
           description: "Placeholder description",
           icon: "Image",
         },
@@ -227,7 +218,7 @@ export const siteConfig = {
     // Reviews 页面
     reviews: {
       title: "Reviews Title",
-      description: "Reviews description placeholder.",
+      description: "Reviews description placeholder. {count} reviews.",
     },
 
     // Guides 页面

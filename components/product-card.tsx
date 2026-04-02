@@ -13,6 +13,8 @@ interface ProductCardProps {
   asin?: string
   slug?: string
   linkType?: "product" | "review"
+  /** When true with `linkType="product"`, show "View product page". Intended for category listing pages only. */
+  showProductPageLink?: boolean
 }
 
 export function ProductCard({
@@ -23,8 +25,10 @@ export function ProductCard({
   asin,
   slug,
   linkType = "product",
+  showProductPageLink = false,
 }: ProductCardProps) {
-  const linkUrl = linkType === "review" ? `/review/${slug || asin}` : `/product/${asin}`
+  const reviewUrl = slug || asin ? `/review/${slug || asin}` : "#"
+  const productUrl = asin ? `/product/${asin}` : "#"
 
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
@@ -57,7 +61,12 @@ export function ProductCard({
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               size="lg"
             >
-              <Link href={linkUrl}>Read Expert Review</Link>
+              <Link href={reviewUrl}>Read Expert Review</Link>
+            </Button>
+          )}
+          {linkType === "product" && asin && showProductPageLink && (
+            <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" size="lg">
+              <Link href={productUrl}>View product page</Link>
             </Button>
           )}
           <Button
