@@ -209,10 +209,22 @@ export const siteConfig = {
   // ==================== 页面配置 ====================
   // 各个页面的标题和描述文字
   pages: {
-    // Products 汇总页（按分类浏览商品）
+    // Products 汇总页（按分类浏览商品）与 /category/[slug] 文案
     products: {
       title: "Products",
       description: "Browse gear by category. Expert-picked items with affiliate transparency.",
+      /** 可选：显示在 /products 主描述下方 */
+      indexNote: "",
+      /** 分类详情页 H1：`{lead} {分类名} {suffix}`（suffix 可空） */
+      categoryH1Lead: "Best",
+      categoryH1Suffix: "— buying guide",
+      /** 分类索引卡片：有商品时的计数文案，`{count}` 为数字 */
+      categoryProductCountTemplate: "{count} products",
+      /** 分类索引卡片：0 件商品 */
+      categoryProductCountEmpty: "No products yet",
+      /** 分类页底部 CTA */
+      categoryBrowseOtherTitle: "Can't find what you're looking for?",
+      categoryBrowseOtherDescription: "Browse our other categories for more recommendations.",
     },
 
     // Reviews 页面
@@ -256,6 +268,9 @@ export const siteConfig = {
 
     // 注意：分类链接现在从 homepage.categories.items 动态生成，无需在此配置
     // 注意：指南链接现在从 pages.guides.categories 动态生成，无需在此配置
+
+    /** 页脚「Reviews」列中按分类筛选的链接文案。`{name}` 会替换为 homepage.categories 里的分类名（Products 列仍用原名）。 */
+    reviewCategoryNavLabelTemplate: "{name} review",
 
     // 资源链接
     resources: [

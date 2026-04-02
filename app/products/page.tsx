@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
-import Link from "next/link"
-import * as LucideIcons from "lucide-react"
-import { ArrowRight } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { BreadcrumbNav } from "@/components/breadcrumb-nav"
+import { CategoryIndexCard } from "@/components/category-index-card"
+import { getCategoryProductCounts } from "@/lib/products-data"
 import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
 
@@ -19,50 +18,60 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ProductsPage() {
-  const cfg = siteConfig.pages?.products ?? {
-    title: "Products",
-    description: "",
-  }
+export default async function ProductsPage() {
+  const cfg = siteConfig.pages.products
   const items = siteConfig.homepage?.categories?.items ?? []
+  const counts = await getCategoryProductCounts()
+
+  const indexNote = (cfg.indexNote ?? "").trim()
+  const countEmpty = cfg.categoryProductCountEmpty ?? "No products yet"
+  const countTpl = cfg.categoryProductCountTemplate ?? "{count} products"
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((cat, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: cat.name,
+      url: absoluteUrl(`/category/${cat.slug}`),
+    })),
+  }
 
   return (
     <main className="flex-1 min-w-0 overflow-x-clip">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <div className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-7xl">
+          <BreadcrumbNav items={[{ label: cfg.title }]} />
+
           <div className="mb-12 text-center">
-            <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">
-              {cfg.title}
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              {cfg.description}
-            </p>
+            <h1 className="mb-4 text-balance text-4xl font-bold text-foreground md:text-5xl">{cfg.title}</h1>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">{cfg.description}</p>
+            {indexNote ? (
+              <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{indexNote}</p>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {items.map((category) => {
-              const IconComponent = (LucideIcons as any)[category.icon]
-              return (
-                <Link key={category.slug} href={`/category/${category.slug}`} className="group">
-                  <Card className="h-full border-2 transition-all duration-300 hover:border-primary hover:shadow-lg">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col items-center text-center">
-                        <div className="mb-4 rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
-                          {IconComponent && <IconComponent className="h-8 w-8 text-primary" />}
-                        </div>
-                        <h2 className="mb-2 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
-                          {category.name}
-                        </h2>
-                        <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{category.description}</p>
-                        <div className="flex items-center text-sm font-medium text-primary transition-all group-hover:gap-2">
-                          View category <ArrowRight className="ml-1 h-4 w-4 transition-all group-hover:ml-0" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )
-            })}
+            {items.map((category) => (
+              <CategoryIndexCard
+                key={category.slug}
+                slug={category.slug}
+                name={category.name}
+                description={category.description}
+                icon={category.icon}
+                productCount={counts[category.slug] ?? 0}
+                showCount
+                countEmptyLabel={countEmpty}
+                countTemplate={countTpl}
+                linkLabel="View category"
+                titleLevel="h2"
+              />
+            ))}
           </div>
         </div>
       </div>

@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
+import { CategoryIndexCard } from "@/components/category-index-card"
 import { ProductCard } from "@/components/product-card"
-import { Search, ArrowRight } from "lucide-react"
-import * as LucideIcons from "lucide-react"
+import { Search } from "lucide-react"
 import Link from "next/link"
 import { getFeaturedProducts } from "@/lib/products-data"
 import { getAllReviewsUnified } from "@/lib/api"
@@ -108,31 +107,16 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-              {siteConfig.homepage.categories.items.map((category) => {
-                const IconComponent = (LucideIcons as any)[category.icon]
-                return (
-                  <Link key={category.slug} href={`/category/${category.slug}`} className="group">
-                    <Card className="h-full hover:shadow-lg transition-all duration-300 border-2 hover:border-primary">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col items-center text-center">
-                          <div className="mb-4 rounded-full bg-primary/10 p-4 group-hover:bg-primary/20 transition-colors">
-                            {IconComponent && <IconComponent className="h-8 w-8 text-primary" />}
-                          </div>
-                          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                            {category.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                            {category.description}
-                          </p>
-                          <div className="flex items-center text-sm font-medium text-primary group-hover:gap-2 transition-all">
-                            View Products <ArrowRight className="h-4 w-4 ml-1 group-hover:ml-0 transition-all" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )
-              })}
+              {siteConfig.homepage.categories.items.map((category) => (
+                <CategoryIndexCard
+                  key={category.slug}
+                  slug={category.slug}
+                  name={category.name}
+                  description={category.description}
+                  icon={category.icon}
+                  showCount={false}
+                />
+              ))}
             </div>
           </div>
         </section>

@@ -3,6 +3,10 @@ import { siteConfig } from "@/lib/site.config"
 import { normalizeGuideCategories } from "@/lib/guide-categories"
 import { FooterLinkSection } from "@/components/footer-link-section"
 
+function formatReviewNavLabel(categoryName: string, template: string): string {
+  return template.replace(/\{name\}/g, categoryName)
+}
+
 export function SiteFooter() {
   // 动态生成分类链接，从 homepage.categories.items 读取
   const categoryItems = siteConfig.homepage?.categories?.items ?? []
@@ -11,8 +15,11 @@ export function SiteFooter() {
     href: `/category/${cat.slug}`,
   }))
 
+  const reviewNavTpl =
+    siteConfig.footer.reviewCategoryNavLabelTemplate ?? "{name} review"
+
   const reviewCategoryLinks = categoryItems.map((cat) => ({
-    name: cat.name,
+    name: formatReviewNavLabel(cat.name, reviewNavTpl),
     href: `/reviews?category=${encodeURIComponent(cat.slug)}`,
   }))
 

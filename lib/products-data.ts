@@ -724,6 +724,17 @@ export async function getFeaturedProducts(count = 6): Promise<Product[]> {
   return products.slice(0, count)
 }
 
+/** Per-slug product counts for the categories index (`/products`). */
+export async function getCategoryProductCounts(): Promise<Record<string, number>> {
+  const products = await getProductsData()
+  const counts: Record<string, number> = {}
+  for (const slug of Object.keys(categoryMap)) {
+    const name = categoryMap[slug]
+    counts[slug] = products.filter((p) => p.category === name).length
+  }
+  return counts
+}
+
 export function getAllCategories() {
   return Object.keys(categoryMap).map((slug) => ({
     slug,
