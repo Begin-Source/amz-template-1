@@ -135,7 +135,8 @@ export const siteConfig = {
     // 主导航菜单
     main: [
       { label: "Home", href: "/" },
-      { label: "Product Reviews", href: "/reviews" },
+      { label: "Products", href: "/products" },
+      { label: "Reviews", href: "/reviews" },
       { label: "Guides", href: "/guides" },
       { label: "About", href: "/about" },
     ]
@@ -217,6 +218,12 @@ export const siteConfig = {
   // ==================== 页面配置 ====================
   // 各个页面的标题和描述文字
   pages: {
+    // Products 汇总页（按分类浏览商品）
+    products: {
+      title: "Products",
+      description: "Browse gear by category. Expert-picked items with affiliate transparency.",
+    },
+
     // Reviews 页面
     reviews: {
       title: "Reviews Title",
