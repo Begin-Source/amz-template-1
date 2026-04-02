@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { siteConfig } from "@/lib/site.config"
+import { resolveMainNavigation } from "@/lib/resolve-navigation"
 
 export function SiteHeader() {
+  const mainNav = resolveMainNavigation()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -97,7 +99,7 @@ export function SiteHeader() {
 
           {/* Desktop Navigation - Center */}
           <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
-            {siteConfig.navigation.main.map((item) => (
+            {mainNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -150,7 +152,7 @@ export function SiteHeader() {
               {mobileMenuOpen && (
                 <div className="lg:hidden py-4 border-t border-border animate-in slide-in-from-top-2 duration-200">
                   <nav className="flex flex-col gap-4">
-                    {siteConfig.navigation.main.map((item) => (
+                    {mainNav.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
