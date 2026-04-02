@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { CategoryIndexCard } from "@/components/category-index-card"
 import { getCategoryProductCounts } from "@/lib/products-data"
@@ -6,21 +6,21 @@ import { resolveProductsPageConfig } from "@/lib/products-page-config"
 import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
 
-const productsPage = siteConfig.pages.products as { title?: string; description?: string }
+const productsPageConfig = resolveProductsPageConfig()
 
 export const metadata: Metadata = {
-  title: productsPage?.title ?? "Products",
-  description: productsPage?.description ?? "",
+  title: productsPageConfig.title,
+  description: productsPageConfig.description,
   openGraph: {
-    title: productsPage?.title ?? "Products",
-    description: productsPage?.description ?? "",
+    title: productsPageConfig.title,
+    description: productsPageConfig.description,
     type: "website",
     url: absoluteUrl("/products"),
   },
 }
 
 export default async function ProductsPage() {
-  const cfg = resolveProductsPageConfig()
+  const cfg = productsPageConfig
   const items = siteConfig.homepage?.categories?.items ?? []
   const counts = await getCategoryProductCounts()
 

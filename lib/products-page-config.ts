@@ -1,4 +1,4 @@
-﻿import { siteConfig } from "@/lib/site.config"
+import { siteConfig } from "@/lib/site.config"
 
 /**
  * 扩展字段：n8n / Directus 生成的站点可能只包含 `title` + `description`。
@@ -42,7 +42,9 @@ const FALLBACK: Omit<ProductsPageConfigResolved, "title" | "description"> = {
 }
 
 export function resolveProductsPageConfig(): ProductsPageConfigResolved {
-  const p = siteConfig.pages.products as ProductsPageConfigInput
+  /** 部分站点生成的 config 只有 pages.reviews / pages.guides，没有 pages.products */
+  const pages = siteConfig.pages as Record<string, unknown>
+  const p = (pages?.products ?? {}) as Partial<ProductsPageConfigInput>
   return {
     title: typeof p.title === "string" ? p.title : "Products",
     description: typeof p.description === "string" ? p.description : "",
