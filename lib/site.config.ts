@@ -126,7 +126,6 @@ export const siteConfig = {
   },
 
   // ==================== 导航菜单配置 ====================
-  // 渲染见 resolveMainNavigation()：新模板五链为准，与旧配置合并兜底
   // 网站顶部导航栏的菜单项
   navigation: {
     // 主导航菜单
