@@ -16,7 +16,7 @@ export function SiteFooter() {
   }))
 
   const reviewNavTpl =
-    siteConfig.footer.reviewCategoryNavLabelTemplate ?? "{name} review"
+    (siteConfig.footer as { reviewCategoryNavLabelTemplate?: string }).reviewCategoryNavLabelTemplate ?? "{name} review"
 
   const reviewCategoryLinks = categoryItems.map((cat) => ({
     name: formatReviewNavLabel(cat.name, reviewNavTpl),

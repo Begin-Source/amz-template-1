@@ -1,8 +1,9 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { getAllCategories, getProductsByCategory, categoryInfo } from "@/lib/products-data"
+import { resolveProductsPageConfig } from "@/lib/products-page-config"
 import { siteConfig } from "@/lib/site.config"
 import { notFound } from "next/navigation"
 
@@ -15,7 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params
   const info = categoryInfo[category]
-  const pp = siteConfig.pages.products
+  const pp = resolveProductsPageConfig()
   const tpl = siteConfig.seo.titleTemplate
 
   if (!info) {
@@ -24,8 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     }
   }
 
-  const lead = pp.categoryH1Lead?.trim() || "Best"
-  const suffix = pp.categoryH1Suffix?.trim()
+  const lead = pp.categoryH1Lead
+  const suffix = pp.categoryH1Suffix
   const pageTitleBase = suffix ? `${lead} ${info.name} ${suffix}` : `${lead} ${info.name}`
 
   return {
@@ -38,14 +39,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const { category } = await params
   const info = categoryInfo[category]
   const products = await getProductsByCategory(category)
-  const pp = siteConfig.pages.products
+  const pp = resolveProductsPageConfig()
 
   if (!info || products.length === 0) {
     notFound()
   }
 
-  const lead = pp.categoryH1Lead?.trim() || "Best"
-  const suffix = pp.categoryH1Suffix?.trim()
+  const lead = pp.categoryH1Lead
+  const suffix = pp.categoryH1Suffix
   const h1Text = suffix ? `${lead} ${info.name} ${suffix}` : `${lead} ${info.name}`
 
   return (

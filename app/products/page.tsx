@@ -1,11 +1,12 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { CategoryIndexCard } from "@/components/category-index-card"
 import { getCategoryProductCounts } from "@/lib/products-data"
+import { resolveProductsPageConfig } from "@/lib/products-page-config"
 import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
 
-const productsPage = siteConfig.pages.products
+const productsPage = siteConfig.pages.products as { title?: string; description?: string }
 
 export const metadata: Metadata = {
   title: productsPage?.title ?? "Products",
@@ -19,13 +20,13 @@ export const metadata: Metadata = {
 }
 
 export default async function ProductsPage() {
-  const cfg = siteConfig.pages.products
+  const cfg = resolveProductsPageConfig()
   const items = siteConfig.homepage?.categories?.items ?? []
   const counts = await getCategoryProductCounts()
 
-  const indexNote = (cfg.indexNote ?? "").trim()
-  const countEmpty = cfg.categoryProductCountEmpty ?? "No products yet"
-  const countTpl = cfg.categoryProductCountTemplate ?? "{count} products"
+  const indexNote = cfg.indexNote
+  const countEmpty = cfg.categoryProductCountEmpty
+  const countTpl = cfg.categoryProductCountTemplate
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
