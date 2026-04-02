@@ -8,7 +8,7 @@ export function SiteFooter() {
   const categoryItems = siteConfig.homepage?.categories?.items ?? []
   const categoryLinks = categoryItems.map(cat => ({
     name: cat.name,
-    href: `/reviews?category=${cat.slug}`
+    href: `/category/${cat.slug}`
   }))
 
   // 动态生成指南链接，从 pages.guides.categories 读取

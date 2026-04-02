@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Package } from "lucide-react"
 import { getAllReviews } from "@/lib/api"
+import { productCategoryHref } from "@/lib/products-data"
 import { TableOfContents } from "@/components/table-of-contents"
 import { RelatedProductImage } from "@/components/related-product-image"
 
@@ -85,7 +86,7 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
               className="mt-4 h-auto min-h-9 w-full min-w-0 whitespace-normal py-2"
             >
               <Link
-                href={`/reviews?category=${category?.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                href={productCategoryHref(category ?? "")}
                 className="inline-flex items-start gap-2 text-left break-words [overflow-wrap:anywhere]"
               >
                 <span className="min-w-0 flex-1">
@@ -119,7 +120,7 @@ export function ReviewSidebar({ category, currentSlug }: ReviewSidebarProps) {
                 className="h-auto min-h-9 w-full min-w-0 justify-start whitespace-normal py-2"
               >
                 <Link
-                  href={`/reviews?category=${category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                  href={productCategoryHref(category)}
                   className="block w-full break-words text-left [overflow-wrap:anywhere]"
                 >
                   {category} Reviews

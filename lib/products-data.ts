@@ -686,6 +686,19 @@ export function resolveCategorySlugForRelatedKey(key: string): string | null {
   return byName ? byName[0] : null
 }
 
+/**
+ * Product category landing page URL (matches sitemap `/category/[slug]`).
+ * Falls back to `/reviews?category=` only when no categoryMap entry exists.
+ */
+export function productCategoryHref(categoryKey: string): string {
+  const trimmed = String(categoryKey ?? "").trim()
+  if (!trimmed) return "/reviews"
+  const slug = resolveCategorySlugForRelatedKey(trimmed)
+  if (slug) return `/category/${slug}`
+  const fallback = trimmed.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")
+  return `/reviews?category=${fallback}`
+}
+
 export async function getProductByAsin(asin: string): Promise<Product | undefined> {
   const products = await getProductsData()
   const needle = asin?.toLowerCase()

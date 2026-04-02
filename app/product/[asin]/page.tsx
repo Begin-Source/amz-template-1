@@ -5,7 +5,7 @@ import { ProductCard } from "@/components/product-card"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Package, Shield, Truck } from "lucide-react"
-import { getProductByAsin, getFeaturedProducts, getAllProducts } from "@/lib/products-data"
+import { getProductByAsin, getFeaturedProducts, getAllProducts, productCategoryHref } from "@/lib/products-data"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
           {/* Breadcrumbs */}
           <BreadcrumbNav
             items={[
-              { label: product.category, href: `/category/${product.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}` },
+              { label: product.category, href: productCategoryHref(product.category) },
               { label: product.shortTitle || product.title },
             ]}
           />

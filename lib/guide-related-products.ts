@@ -2,6 +2,7 @@ import { getAllReviews } from "@/lib/api"
 import {
   categoryMap,
   getProductsForRelatedCategory,
+  productCategoryHref,
   resolveCategorySlugForRelatedKey,
   resolveRelatedCategoryDisplayName,
 } from "@/lib/products-data"
@@ -9,8 +10,9 @@ import type { Product } from "@/lib/products-data"
 
 const SIDEBAR_RELATED_LIMIT = 5
 
+/** @deprecated Prefer productCategoryHref; kept name for call sites — uses /category/[slug] when mapped */
 export function reviewsCategoryHref(category: string) {
-  return `/reviews?category=${category.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`
+  return productCategoryHref(category)
 }
 
 export type GuideRelatedReviewItem = {
