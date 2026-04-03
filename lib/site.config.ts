@@ -153,7 +153,8 @@ export const siteConfig = {
       searchPlaceholder: "Search...",
     },
 
-    // 分类区域（name/slug 须与商品库 `product.category` / categoryMap 一致，否则分类页无商品）
+    // 分类区域（name/slug 须与商品库 `product.category` / categoryMap 一致，否则分类页无商品）。
+    // Reviews 列表：若评测带 ASIN 且商品库有该 ASIN，筛选分类以商品库的 category 为准（与商品分类页一致）。
     categories: {
       title: "Product Categories",
       subtitle: "Product categories placeholder.",

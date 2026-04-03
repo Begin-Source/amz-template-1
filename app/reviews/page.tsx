@@ -14,7 +14,10 @@ export default async function ReviewsPage() {
 
   // 从配置文件获取页面文案，并替换 {count} 占位符
   const pageTitle = siteConfig.pages.reviews.title
-  const pageDescription = siteConfig.pages.reviews.description.replace('{count}', allReviews.length.toString())
+  const pageDescription = siteConfig.pages.reviews.description.replace(
+    "{count}",
+    String(allReviews.length)
+  )
 
   return (
     <main className="flex-1 min-w-0 overflow-x-clip">

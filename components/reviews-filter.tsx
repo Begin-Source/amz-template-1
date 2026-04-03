@@ -9,6 +9,7 @@ import { Search, ChevronDown } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useIsLg } from "@/hooks/use-is-lg"
 import { cn } from "@/lib/utils"
+import { matchesHomepageCategorySlug } from "@/lib/category-taxonomy"
 
 interface Review {
   slug: string
@@ -67,9 +68,10 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
 
   const categoryFilteredReviews = useMemo(() => {
     if (selectedCategory === "all") return reviews
-    const categoryLabel = categories.find((c) => c.value === selectedCategory)?.label
-    return reviews.filter((r) => r.frontmatter.category === categoryLabel)
-  }, [reviews, selectedCategory, categories])
+    return reviews.filter((r) =>
+      matchesHomepageCategorySlug(r.frontmatter.category, selectedCategory)
+    )
+  }, [reviews, selectedCategory])
 
   const filteredReviews = useMemo(() => {
     if (!searchQuery.trim()) return categoryFilteredReviews
@@ -92,9 +94,10 @@ export function ReviewsFilter({ reviews, categories }: ReviewsFilterProps) {
 
   const categoryCount = (value: string) => {
     if (value === "all") return reviews.length
-    const label = categories.find((c) => c.value === value)?.label
-    if (!label) return 0
-    return reviews.filter((r) => r.frontmatter.category === label).length
+    if (!categories.some((c) => c.value === value)) return 0
+    return reviews.filter((r) =>
+      matchesHomepageCategorySlug(r.frontmatter.category, value)
+    ).length
   }
 
   const handleCategoryChange = (category: string) => {

@@ -1,4 +1,5 @@
 import { getAllReviews } from "@/lib/api"
+import { matchesHomepageCategorySlug } from "@/lib/category-taxonomy"
 import {
   categoryMap,
   getProductsForRelatedCategory,
@@ -69,10 +70,15 @@ export async function getGuideRelatedProductsData(
   })
 
   if (trimmedRelated) {
+    const resolvedSlug = resolveCategorySlugForRelatedKey(trimmedRelated)
     const resolvedName = resolveRelatedCategoryDisplayName(trimmedRelated)
     if (resolvedName) {
       const fromRelatedKey = allReviews
-        .filter((r) => r.frontmatter.category === resolvedName)
+        .filter((r) =>
+          resolvedSlug
+            ? matchesHomepageCategorySlug(r.frontmatter.category, resolvedSlug)
+            : r.frontmatter.category === resolvedName
+        )
         .slice(0, SIDEBAR_RELATED_LIMIT)
       if (fromRelatedKey.length > 0) {
         return {

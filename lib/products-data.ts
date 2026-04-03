@@ -1,5 +1,21 @@
-import { siteConfig } from './site.config'
 import { directusClient } from './directus-client'
+import { getReviewAsinsForCategorySlug } from './category-review-gate'
+import {
+  categoryInfo,
+  categoryMap,
+  matchesHomepageCategorySlug,
+  productCategoryHref,
+  resolveCategorySlugForRelatedKey,
+  resolveRelatedCategoryDisplayName,
+} from './category-taxonomy'
+
+export {
+  categoryInfo,
+  categoryMap,
+  productCategoryHref,
+  resolveCategorySlugForRelatedKey,
+  resolveRelatedCategoryDisplayName,
+} from './category-taxonomy'
 
 export interface Product {
   asin: string
@@ -537,7 +553,7 @@ export const productsDataFallback: Product[] = [
     amazonUrl: "https://www.amazon.com/dp/B0711J9FJP?tag=smartymode-20&linkCode=ogi&th=1&psc=1",
     imageUrl: "https://m.media-amazon.com/images/I/5146zBUdaKL._SL500_.jpg",
     rating: 4.7,
-    category: "Product 4",
+    category: "Product 1",
     summary: "Comprehensive first aid kit for extended trips",
     slug: "adventure-first-aid-kit",
   },
@@ -616,29 +632,16 @@ export async function getProductsData(): Promise<Product[]> {
 // Backward compatible synchronous version (returns fallback)
 export const productsData: Product[] = productsDataFallback
 
-// 从配置文件动态生成分类映射
-export const categoryMap: Record<string, string> = Object.fromEntries(
-  siteConfig.homepage.categories.items.map(cat => [cat.slug, cat.name])
-)
-
-// 从配置文件动态生成分类信息
-export const categoryInfo: Record<string, { name: string; description: string; icon: string }> =
-  Object.fromEntries(
-    siteConfig.homepage.categories.items.map(cat => [
-      cat.slug,
-      {
-        name: cat.name,
-        description: cat.description,
-        icon: cat.icon.toLowerCase(),
-      }
-    ])
-  )
-
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
+  if (!categoryMap[categorySlug]) return []
+  const reviewAsins = await getReviewAsinsForCategorySlug(categorySlug)
+  if (reviewAsins.size === 0) return []
   const products = await getProductsData()
-  const categoryName = categoryMap[categorySlug]
-  if (!categoryName) return []
-  return products.filter((product) => product.category === categoryName)
+  // 与 Reviews 一致：只展示「该分类下已有评测」的 ASIN；不要求商品库 category 与评测一致
+  return products.filter((product) => {
+    const asin = product.asin?.trim().toLowerCase()
+    return Boolean(asin && reviewAsins.has(asin))
+  })
 }
 
 /**
@@ -650,53 +653,17 @@ export async function getProductsForRelatedCategory(key: string): Promise<Produc
   const trimmed = key.trim()
   if (!trimmed) return []
 
-  const fromSlug = categoryMap[trimmed]
-  if (fromSlug) {
-    return products.filter((p) => p.category === fromSlug)
-  }
-
-  const slugEntry = Object.entries(categoryMap).find(([, name]) => name === trimmed)
-  if (slugEntry) {
-    return products.filter((p) => p.category === slugEntry[1])
+  const slug = resolveCategorySlugForRelatedKey(trimmed)
+  if (slug) {
+    const reviewAsins = await getReviewAsinsForCategorySlug(slug)
+    if (reviewAsins.size === 0) return []
+    return products.filter((p) => {
+      const asin = p.asin?.trim().toLowerCase()
+      return Boolean(asin && reviewAsins.has(asin))
+    })
   }
 
   return products.filter((p) => p.category === trimmed)
-}
-
-/**
- * Single display-name string used to match `review.frontmatter.category` (same rules as
- * `getProductsForRelatedCategory` / product `category` field).
- */
-export function resolveRelatedCategoryDisplayName(key: string): string | null {
-  const trimmed = key.trim()
-  if (!trimmed) return null
-  const fromSlug = categoryMap[trimmed]
-  if (fromSlug) return fromSlug
-  const slugEntry = Object.entries(categoryMap).find(([, name]) => name === trimmed)
-  if (slugEntry) return slugEntry[1]
-  return trimmed
-}
-
-/** Map frontmatter `related_product_category` to `/category/[slug]` when possible */
-export function resolveCategorySlugForRelatedKey(key: string): string | null {
-  const t = key.trim()
-  if (!t) return null
-  if (categoryMap[t]) return t
-  const byName = Object.entries(categoryMap).find(([, name]) => name === t)
-  return byName ? byName[0] : null
-}
-
-/**
- * Product category landing page URL (matches sitemap `/category/[slug]`).
- * Falls back to `/reviews?category=` only when no categoryMap entry exists.
- */
-export function productCategoryHref(categoryKey: string): string {
-  const trimmed = String(categoryKey ?? "").trim()
-  if (!trimmed) return "/reviews"
-  const slug = resolveCategorySlugForRelatedKey(trimmed)
-  if (slug) return `/category/${slug}`
-  const fallback = trimmed.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")
-  return `/reviews?category=${fallback}`
 }
 
 export async function getProductByAsin(asin: string): Promise<Product | undefined> {
@@ -724,13 +691,16 @@ export async function getFeaturedProducts(count = 6): Promise<Product[]> {
   return products.slice(0, count)
 }
 
-/** Per-slug product counts for the categories index (`/products`). */
+/** Per-slug product counts（`/products`）：与分类页一致，仅计「该分类下已有评测」的商品。 */
 export async function getCategoryProductCounts(): Promise<Record<string, number>> {
   const products = await getProductsData()
   const counts: Record<string, number> = {}
   for (const slug of Object.keys(categoryMap)) {
-    const name = categoryMap[slug]
-    counts[slug] = products.filter((p) => p.category === name).length
+    const reviewAsins = await getReviewAsinsForCategorySlug(slug)
+    counts[slug] = products.filter((p) => {
+      const asin = p.asin?.trim().toLowerCase()
+      return Boolean(asin && reviewAsins.has(asin))
+    }).length
   }
   return counts
 }

@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const reviews = getAllReviews()
   const guides = getAllGuides()
   const products = await getAllProducts()
-  const categories = getAllCategories()
+  const categoryRoutes = getAllCategories()
   
   // Static pages
   const staticPages = [
@@ -83,9 +83,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     }))
   
-  // Category pages (using path segments)
-  const categoryPages = categories.map((category) => ({
-    url: `${baseUrl}/category/${category.slug}`,
+  const categoryPages = categoryRoutes.map(({ slug }) => ({
+    url: `${baseUrl}/category/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,

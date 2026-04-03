@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
@@ -8,9 +8,7 @@ import { siteConfig } from "@/lib/site.config"
 import { notFound } from "next/navigation"
 
 export async function generateStaticParams() {
-  return getAllCategories().map(({ slug }) => ({
-    category: slug,
-  }))
+  return getAllCategories().map(({ slug }) => ({ category: slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
@@ -41,7 +39,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const products = await getProductsByCategory(category)
   const pp = resolveProductsPageConfig()
 
-  if (!info || products.length === 0) {
+  if (!info) {
     notFound()
   }
 
@@ -64,6 +62,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground">{info.description}</p>
         </div>
 
+        {products.length === 0 ? (
+          <div className="mb-12 rounded-xl border border-border bg-muted/20 p-8 text-center">
+            <p className="mb-4 text-muted-foreground">
+              No catalog products linked yet for this category. Products appear here when a review in this category
+              includes an ASIN that exists in your product catalog.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild variant="default">
+                <a href={`/reviews?category=${encodeURIComponent(category)}`}>View reviews in {info.name}</a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href="/products">All product categories</a>
+              </Button>
+            </div>
+          </div>
+        ) : (
         <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-5">
           {products.map((product) => (
             <ProductCard
@@ -77,6 +91,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             />
           ))}
         </div>
+        )}
 
         <div className="rounded-2xl bg-primary p-8 text-center md:p-12">
           <h2 className="mb-4 text-3xl font-bold text-primary-foreground">{pp.categoryBrowseOtherTitle}</h2>
