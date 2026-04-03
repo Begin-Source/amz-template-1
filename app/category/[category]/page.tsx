@@ -65,8 +65,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         {products.length === 0 ? (
           <div className="mb-12 rounded-xl border border-border bg-muted/20 p-8 text-center">
             <p className="mb-4 text-muted-foreground">
-              No catalog products linked yet for this category. Products appear here when a review in this category
-              includes an ASIN that exists in your product catalog.
+              No reviews with ASINs in this category yet. Add review MDX under{" "}
+              <code className="rounded bg-muted px-1">content/reviews</code> with matching{" "}
+              <code className="rounded bg-muted px-1">category</code> and <code className="rounded bg-muted px-1">asin</code>.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button asChild variant="default">

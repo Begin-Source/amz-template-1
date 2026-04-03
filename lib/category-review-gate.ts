@@ -1,4 +1,5 @@
 import { cache } from "react"
+import type { Review } from "@/lib/api"
 import { getAllReviewsUnified } from "@/lib/api"
 import { categoryMap, matchesHomepageCategorySlug } from "@/lib/category-taxonomy"
 
@@ -41,5 +42,31 @@ export const getReviewAsinsForCategorySlug = cache(
       if (a) asins.add(a)
     }
     return asins
+  }
+)
+
+/**
+ * 某分类下的评测行 + 按 Reviews 列表顺序去重后的 ASIN（用于分类页：商品库缺失时用 MDX 补全）。
+ */
+export const getCategoryReviewRowsForProductMerge = cache(
+  async (
+    slug: string
+  ): Promise<{ reviewsInCategory: Review[]; orderedLowerAsins: string[] }> => {
+    if (!categoryMap[slug]) {
+      return { reviewsInCategory: [], orderedLowerAsins: [] }
+    }
+    const reviews = await getAllReviewsUnified()
+    const reviewsInCategory = reviews.filter((r) =>
+      matchesHomepageCategorySlug(r.frontmatter.category, slug)
+    )
+    const seen = new Set<string>()
+    const orderedLowerAsins: string[] = []
+    for (const r of reviewsInCategory) {
+      const low = r.frontmatter.asin?.trim().toLowerCase()
+      if (!low || seen.has(low)) continue
+      seen.add(low)
+      orderedLowerAsins.push(low)
+    }
+    return { reviewsInCategory, orderedLowerAsins }
   }
 )

@@ -1,5 +1,9 @@
 import { directusClient } from './directus-client'
-import { getReviewAsinsForCategorySlug } from './category-review-gate'
+import type { Review } from './api'
+import {
+  getCategoryReviewRowsForProductMerge,
+  getReviewAsinsForCategorySlug,
+} from './category-review-gate'
 import {
   categoryInfo,
   categoryMap,
@@ -632,16 +636,60 @@ export async function getProductsData(): Promise<Product[]> {
 // Backward compatible synchronous version (returns fallback)
 export const productsData: Product[] = productsDataFallback
 
+/** 无商品库行时，用评测 frontmatter 拼出分类页可用的 Product（GitHub-only 构建） */
+function productFromReviewFrontmatter(
+  review: Review,
+  categorySlug: string
+): Product {
+  const fm = review.frontmatter
+  const asin = String(fm.asin ?? "").trim()
+  const title = fm.title?.trim() || "Product"
+  const desc = fm.description?.trim() || ""
+  return {
+    asin,
+    title,
+    brand: (fm.brand && fm.brand !== "N/A" ? fm.brand : "") || "",
+    features: [],
+    amazonUrl: fm.amazonUrl?.trim() || `https://www.amazon.com/dp/${asin}`,
+    imageUrl: fm.image?.trim() || "",
+    rating: fm.rating,
+    category: fm.category?.trim() || categoryMap[categorySlug] || "",
+    shortTitle: title.length > 100 ? `${title.slice(0, 97)}…` : title,
+    summary: desc,
+    slug: review.slug,
+  }
+}
+
+/**
+ * 分类下要展示的 ASIN：优先用商品库（Directus/本地 JSON）；缺失时用同 ASIN 的评测 MDX 字段填充。
+ * 顺序与 Reviews 列表一致（getAllReviewsUnified 已按日期排序，同 ASIN 取首次出现）。
+ */
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
   if (!categoryMap[categorySlug]) return []
-  const reviewAsins = await getReviewAsinsForCategorySlug(categorySlug)
-  if (reviewAsins.size === 0) return []
-  const products = await getProductsData()
-  // 与 Reviews 一致：只展示「该分类下已有评测」的 ASIN；不要求商品库 category 与评测一致
-  return products.filter((product) => {
-    const asin = product.asin?.trim().toLowerCase()
-    return Boolean(asin && reviewAsins.has(asin))
-  })
+  const { reviewsInCategory, orderedLowerAsins } =
+    await getCategoryReviewRowsForProductMerge(categorySlug)
+  if (orderedLowerAsins.length === 0) return []
+
+  const catalogList = await getProductsData()
+  const catalogByAsin = new Map(
+    catalogList.map((p) => [p.asin.trim().toLowerCase(), p])
+  )
+
+  const out: Product[] = []
+  for (const low of orderedLowerAsins) {
+    const fromCatalog = catalogByAsin.get(low)
+    if (fromCatalog) {
+      out.push(fromCatalog)
+      continue
+    }
+    const review = reviewsInCategory.find(
+      (r) => r.frontmatter.asin?.trim().toLowerCase() === low
+    )
+    if (review) {
+      out.push(productFromReviewFrontmatter(review, categorySlug))
+    }
+  }
+  return out
 }
 
 /**
@@ -655,12 +703,7 @@ export async function getProductsForRelatedCategory(key: string): Promise<Produc
 
   const slug = resolveCategorySlugForRelatedKey(trimmed)
   if (slug) {
-    const reviewAsins = await getReviewAsinsForCategorySlug(slug)
-    if (reviewAsins.size === 0) return []
-    return products.filter((p) => {
-      const asin = p.asin?.trim().toLowerCase()
-      return Boolean(asin && reviewAsins.has(asin))
-    })
+    return getProductsByCategory(slug)
   }
 
   return products.filter((p) => p.category === trimmed)
@@ -691,16 +734,12 @@ export async function getFeaturedProducts(count = 6): Promise<Product[]> {
   return products.slice(0, count)
 }
 
-/** Per-slug product counts（`/products`）：与分类页一致，仅计「该分类下已有评测」的商品。 */
+/** Per-slug product counts（`/products`）：与分类页一致 = 该分类下评测里出现的唯一 ASIN 数（含仅 MDX、无商品库行）。 */
 export async function getCategoryProductCounts(): Promise<Record<string, number>> {
-  const products = await getProductsData()
   const counts: Record<string, number> = {}
   for (const slug of Object.keys(categoryMap)) {
     const reviewAsins = await getReviewAsinsForCategorySlug(slug)
-    counts[slug] = products.filter((p) => {
-      const asin = p.asin?.trim().toLowerCase()
-      return Boolean(asin && reviewAsins.has(asin))
-    }).length
+    counts[slug] = reviewAsins.size
   }
   return counts
 }
