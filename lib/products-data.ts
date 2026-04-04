@@ -672,7 +672,7 @@ function mergeReviewMdxIntoCatalog(catalog: Product[], reviews: Review[]): Produ
   return Array.from(byAsin.values())
 }
 
-/** 无商品库行时，用评测 frontmatter 拼出分类页可用的 Product（GitHub-only 构建） */
+/** 无商品库行时，用评测 frontmatter 拼出分类页可用的 Product（GitHub-only 构建）。`pros` 写入 `features`，供商品页「At a glance」与 Pros 区块。 */
 function productFromReviewFrontmatter(
   review: Review,
   categorySlug: string
@@ -681,11 +681,14 @@ function productFromReviewFrontmatter(
   const asin = String(fm.asin ?? "").trim()
   const title = fm.title?.trim() || "Product"
   const desc = fm.description?.trim() || ""
+  const featuresFromPros = Array.isArray(fm.pros)
+    ? fm.pros.map((p) => String(p).trim()).filter((p) => p.length > 0)
+    : []
   return {
     asin,
     title,
     brand: (fm.brand && fm.brand !== "N/A" ? fm.brand : "") || "",
-    features: [],
+    features: featuresFromPros,
     amazonUrl: fm.amazonUrl?.trim() || `https://www.amazon.com/dp/${asin}`,
     imageUrl: fm.image?.trim() || "",
     rating: fm.rating,
