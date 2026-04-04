@@ -296,9 +296,11 @@ const nextConfig = {
 - ✅ TypeScript is type-checked on production builds (`ignoreBuildErrors: false`)
 - ✅ Images are unoptimized for static hosting
 
-**Product detail URLs (`/product/[asin]`):** At build time, static HTML is generated for every ASIN returned by `getAllProducts()` in `lib/products-data.ts`. That list **merges** the product catalog (`getProductsData()`—Directus or `productsDataFallback`) with **Amazon ASINs found in review MDX frontmatter** (`content/reviews/*.mdx`). If an ASIN appears only in a review and not in the catalog, a lightweight `Product` is still built from that review so the product page does not 404 after deploy. The catalog row wins when the same ASIN exists in both.
+**Product detail URLs (`/product/[asin]`):** At build time, static HTML is generated for every ASIN returned by `getAllProducts()` in `lib/products-data.ts`. That list **merges** the product catalog (`getProductsData()`—Directus or `productsDataFallback`) with **Amazon ASINs found in review MDX frontmatter** (`content/reviews/*.mdx`). If an ASIN appears only in a review and not in the catalog, a lightweight `Product` is still built from that review so the product page does not 404 after deploy. The catalog row wins when the same ASIN exists in both. **Category listing pages** (`/category/[slug]`) use a **narrower** rule: only ASINs from reviews in that category—see **Directus → How It Works** below.
 
 **Cloudflare Pages / `npm ci`:** Tools required at build time (Tailwind/PostCSS, `typescript`, `@types/*`, `tw-animate-css`) are under `dependencies` so installs that run with `NODE_ENV=production` still receive everything `next build` needs.
+
+**Cloudflare Pages + GitHub (no Directus required in CI):** If this repo is **connected to Cloudflare Pages**, a push to your production branch triggers a **new build automatically**—you do not need a separate step to “pull from Directus” for that to happen. The build runs in Cloudflare’s environment and only sees **what you commit** (MDX, `lib/site.config.ts`, etc.) **plus** any **Environment variables** you add in the Cloudflare project. If you **do not** set `DIRECTUS_API_URL` / `DIRECTUS_API_TOKEN` / site id there, the template **does not** fetch the catalog at build time; it uses **`productsDataFallback`** and **review MDX** as documented below—enough for a full static site. Add Directus vars in Cloudflare **only when** you want the live catalog baked into each deploy.
 
 ### Build Output
 ```bash
@@ -327,7 +329,7 @@ This template integrates with **Directus**, a powerful open-source headless CMS,
 
 - **Dynamic Product Management** - Add/edit/delete products via Directus admin interface (seed_inputs)
 - **Hybrid Data Architecture** - Seamlessly combines MDX reviews with Directus seed_inputs
-- **Automatic Categorization** - Smart category inference with manual override support
+- **Shared category taxonomy** - `site.config.ts`, review MDX frontmatter, and Directus `category` resolve through `lib/category-taxonomy.ts` (same slugs/names across the site)
 - **CMS-driven data** - After you deploy or rebuild, catalog and (if enabled) Directus-backed reviews flow into the static site
 - **Fallback Mechanism** - Gracefully degrades to local data if Directus is unavailable
 
@@ -345,7 +347,7 @@ NEXT_PUBLIC_SITE_ID=your-site-uuid
 # or: DIRECTUS_SITE_ID=...  or  SITE_ID=...
 ```
 
-If `DIRECTUS_API_TOKEN` or the site id is missing, the app uses **`productsDataFallback`** in `lib/products-data.ts`.
+If `DIRECTUS_API_TOKEN` or the site id is missing, the app uses **`productsDataFallback`** in `lib/products-data.ts`. On **Cloudflare Pages**, leaving these unset is normal when your workflow is **Git → auto rebuild** and product/review data is already in the repo (or you only need MDX-backed pages).
 
 **Review / MDX content from Directus (optional):** when set, Directus is included as an additional source after local files (see `lib/content-source.ts`):
 
@@ -358,8 +360,8 @@ This flag does **not** gate the product catalog fetch; catalog uses the token + 
 ### How It Works
 
 1. **Catalog fetch**: `getProductsData()` loads products from Directus when `DIRECTUS_API_TOKEN` and a site id (`NEXT_PUBLIC_SITE_ID`, `DIRECTUS_SITE_ID`, or `SITE_ID`) are set; otherwise it uses `productsDataFallback` in the repo.
-2. **Category pages**: `getProductsByCategory()` prefers the catalog; if an ASIN appears in review MDX for that category but not in the catalog, it **fills in** from review frontmatter.
-3. **Product detail + static export**: `getAllProducts()` merges the catalog with **all ASINs from review MDX** (same idea as category fill, but site-wide for `/product/[asin]` and sitemap). **Catalog wins** on duplicate ASINs.
+2. **Category pages (`/category/[slug]`)**: **Which ASINs appear is driven by review MDX**—only ASINs from reviews whose `category` matches that slug (see `lib/category-review-gate.ts`). Order matches the Reviews list. For **each** such ASIN, product **fields** prefer the **catalog**; if there is no catalog row, the row is **built from that review’s frontmatter**. If a category has **no** reviews with a valid ASIN, the page is **empty** even if the catalog has products tagged for that category.
+3. **Product detail + static export**: `getAllProducts()` merges the catalog with **all ASINs from review MDX** (site-wide for `/product/[asin]` and sitemap). **Catalog wins** on duplicate ASINs—broader than category pages, which only list review ASINs per slug.
 4. **Fallback**: If Directus fails or returns no rows, the template falls back to `productsDataFallback`.
 
 ### Product Data Architecture
@@ -377,9 +379,10 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 - `getProductsData()` - Catalog only (Directus or `productsDataFallback`)
 - `getAllProducts()` - Catalog **plus** review MDX ASINs (used for `/product/[asin]` `generateStaticParams` and sitemap)
 - `getProductByAsin(asin)` - Resolves from `getAllProducts()`
-- `getProductsByCategory(slug)` - Category listing; merges catalog + MDX per category
+- `getProductsByCategory(slug)` - **Membership** = review ASINs in that category; **per-ASIN data** = catalog first, else MDX frontmatter
+- `getCategoryProductCounts()` - Per-slug counts for `/products` (unique ASINs from reviews per category; matches category listing scope, not raw catalog counts)
 - `getFeaturedProducts(count)` - Uses **catalog** only (`getProductsData()`)
-- `getAllCategories()` - Get all categories from config
+- `getAllCategories()` - Slugs/names/icons from `site.config.ts` via `lib/category-taxonomy.ts` (`categoryMap`)
 
 ### Directus Products Table Schema
 
@@ -407,7 +410,7 @@ Your Directus `seed_inputs` table should have these fields:
    - Add ASIN, title, images, features
    - Set category to match your config categories
    - Set status to "fetched"
-3. **Products automatically appear on your site** - No code changes needed!
+3. **Catalog rows power product detail pages** (merged with review ASINs as documented above). **Category listing pages** still only show ASINs that appear in **reviews** for that category—adding a product only in Directus does not put it on `/category/[slug]` until a review references that ASIN under the matching `category`.
 
 ### Example: Adding Products Manually
 
@@ -546,11 +549,11 @@ All Amazon links include:
 - `components.json` - shadcn/ui configuration
 
 ### Data Files
-- `lib/products-data.ts` - **Smart product catalog with Directus integration**
-  - Contains fallback product data (30+ camping products)
-  - Automatically fetches products from Directus when enabled
-  - Merges Directus seed_inputs with local fallback data
-  - Handles category mapping from config
+- `lib/products-data.ts` - **Product catalog + merge helpers** (with `lib/category-taxonomy.ts` and `lib/category-review-gate.ts`)
+  - Fallback catalog in repo; optional Directus `seed_inputs` when token + site id are set
+  - `getAllProducts()` merges catalog with ASINs from `content/reviews/*.mdx` for `/product/[asin]`
+  - Category **listings** use **review ASINs per slug**; catalog enriches rows when present
+- `lib/category-taxonomy.ts` / `lib/category-review-gate.ts` - Slugs/names from `site.config.ts`; which ASINs appear on `/category/[slug]` follows reviews
 - `lib/theme-generator.ts` - Converts config colors to CSS variables (auto-generated)
 
 ## 🎯 Customization Workflow
