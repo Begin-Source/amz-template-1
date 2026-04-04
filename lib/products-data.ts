@@ -1,5 +1,5 @@
 import { directusClient } from './directus-client'
-import type { Review } from './api'
+import { getAllReviewsUnified, type Review } from './api'
 import {
   getCategoryReviewRowsForProductMerge,
   getReviewAsinsForCategorySlug,
@@ -636,6 +636,42 @@ export async function getProductsData(): Promise<Product[]> {
 // Backward compatible synchronous version (returns fallback)
 export const productsData: Product[] = productsDataFallback
 
+/**
+ * 从评测 frontmatter 解析 `categoryMap` 的 slug，供 `productFromReviewFrontmatter` 使用。
+ */
+function resolveCategorySlugForReview(review: Review): string {
+  const cat = review.frontmatter.category?.trim()
+  if (!cat) return ''
+  const direct = resolveCategorySlugForRelatedKey(cat)
+  if (direct) return direct
+  for (const slug of Object.keys(categoryMap)) {
+    if (matchesHomepageCategorySlug(cat, slug)) return slug
+  }
+  return ''
+}
+
+/**
+ * 将「仅出现在评测 MDX、不在商品库」的 ASIN 合并进列表，使 `/product/[asin]` 与静态导出与 Review 一致。
+ * 商品库（Directus / fallback）优先；同 ASIN 不覆盖。
+ */
+function mergeReviewMdxIntoCatalog(catalog: Product[], reviews: Review[]): Product[] {
+  const byAsin = new Map<string, Product>()
+  for (const p of catalog) {
+    if (p?.asin?.trim()) {
+      byAsin.set(p.asin.trim().toLowerCase(), p)
+    }
+  }
+  for (const r of reviews) {
+    const raw = r.frontmatter.asin?.trim()
+    if (!raw) continue
+    const low = raw.toLowerCase()
+    if (byAsin.has(low)) continue
+    const slug = resolveCategorySlugForReview(r)
+    byAsin.set(low, productFromReviewFrontmatter(r, slug))
+  }
+  return Array.from(byAsin.values())
+}
+
 /** 无商品库行时，用评测 frontmatter 拼出分类页可用的 Product（GitHub-only 构建） */
 function productFromReviewFrontmatter(
   review: Review,
@@ -710,7 +746,7 @@ export async function getProductsForRelatedCategory(key: string): Promise<Produc
 }
 
 export async function getProductByAsin(asin: string): Promise<Product | undefined> {
-  const products = await getProductsData()
+  const products = await getAllProducts()
   const needle = asin?.toLowerCase()
   return products.find((p) => p?.asin?.toLowerCase() === needle)
 }
@@ -752,5 +788,7 @@ export function getAllCategories() {
 }
 
 export async function getAllProducts(): Promise<Product[]> {
-  return getProductsData()
+  const catalog = await getProductsData()
+  const reviews = await getAllReviewsUnified()
+  return mergeReviewMdxIntoCatalog(catalog, reviews)
 }

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev -H 127.0.0.1 -p 8080",
+    "dev": "next dev -H 127.0.0.1 -p 3000",
     "lint": "eslint .",
     "publish:posts": "node scripts/publish-posts.js",
     "sync:site-config": "node scripts/sync-site-config.js",

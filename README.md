@@ -223,7 +223,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080) to view the site.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
 ### First Steps: Customize Your Site
 
