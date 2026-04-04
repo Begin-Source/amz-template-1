@@ -225,6 +225,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the site.
 
+The dev server binds to `127.0.0.1:3000` (see `package.json` → `npm run dev`). On **Windows**, if you see `EACCES` / permission denied on a port, that port may be in an excluded range—use another port, e.g. `npx next dev -H 127.0.0.1 -p 3001`.
+
 ### First Steps: Customize Your Site
 
 1. **Edit the configuration file:**
@@ -294,6 +296,8 @@ const nextConfig = {
 - ✅ TypeScript is type-checked on production builds (`ignoreBuildErrors: false`)
 - ✅ Images are unoptimized for static hosting
 
+**Product detail URLs (`/product/[asin]`):** At build time, static HTML is generated for every ASIN returned by `getAllProducts()` in `lib/products-data.ts`. That list **merges** the product catalog (`getProductsData()`—Directus or `productsDataFallback`) with **Amazon ASINs found in review MDX frontmatter** (`content/reviews/*.mdx`). If an ASIN appears only in a review and not in the catalog, a lightweight `Product` is still built from that review so the product page does not 404 after deploy. The catalog row wins when the same ASIN exists in both.
+
 **Cloudflare Pages / `npm ci`:** Tools required at build time (Tailwind/PostCSS, `typescript`, `@types/*`, `tw-animate-css`) are under `dependencies` so installs that run with `NODE_ENV=production` still receive everything `next build` needs.
 
 ### Build Output
@@ -324,47 +328,57 @@ This template integrates with **Directus**, a powerful open-source headless CMS,
 - **Dynamic Product Management** - Add/edit/delete products via Directus admin interface (seed_inputs)
 - **Hybrid Data Architecture** - Seamlessly combines MDX reviews with Directus seed_inputs
 - **Automatic Categorization** - Smart category inference with manual override support
-- **Real-time Updates** - Changes in Directus reflect immediately on the website
+- **CMS-driven data** - After you deploy or rebuild, catalog and (if enabled) Directus-backed reviews flow into the static site
 - **Fallback Mechanism** - Gracefully degrades to local data if Directus is unavailable
 
 ### Configuration
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` file in the project root (see also `.env.example` for `NEXT_PUBLIC_SITE_URL`).
+
+**Product catalog (`getProductsData()` → Directus `seed_inputs`):** requires both a token and which site to query:
 
 ```bash
 DIRECTUS_API_URL=https://your-directus-instance.com
 DIRECTUS_API_TOKEN=your-api-token-here
+# One of the following (same value your Directus rows use for site scoping):
+NEXT_PUBLIC_SITE_ID=your-site-uuid
+# or: DIRECTUS_SITE_ID=...  or  SITE_ID=...
+```
+
+If `DIRECTUS_API_TOKEN` or the site id is missing, the app uses **`productsDataFallback`** in `lib/products-data.ts`.
+
+**Review / MDX content from Directus (optional):** when set, Directus is included as an additional source after local files (see `lib/content-source.ts`):
+
+```bash
 NEXT_PUBLIC_ENABLE_DIRECTUS=true
 ```
 
+This flag does **not** gate the product catalog fetch; catalog uses the token + site id above.
+
 ### How It Works
 
-1. **Data Fetching**: System fetches products from Directus API
-2. **Category Assignment**: Uses manual category field or auto-infers from title
-3. **Deduplication**: Merges with MDX reviews (MDX takes priority if same ASIN)
-4. **Sorting**: Displays newest products first
-5. **Fallback**: Uses local data if Directus is unavailable
+1. **Catalog fetch**: `getProductsData()` loads products from Directus when `DIRECTUS_API_TOKEN` and a site id (`NEXT_PUBLIC_SITE_ID`, `DIRECTUS_SITE_ID`, or `SITE_ID`) are set; otherwise it uses `productsDataFallback` in the repo.
+2. **Category pages**: `getProductsByCategory()` prefers the catalog; if an ASIN appears in review MDX for that category but not in the catalog, it **fills in** from review frontmatter.
+3. **Product detail + static export**: `getAllProducts()` merges the catalog with **all ASINs from review MDX** (same idea as category fill, but site-wide for `/product/[asin]` and sitemap). **Catalog wins** on duplicate ASINs.
+4. **Fallback**: If Directus fails or returns no rows, the template falls back to `productsDataFallback`.
 
 ### Product Data Architecture
 
 The `lib/products-data.ts` file provides a **hybrid data system**:
 
-**When Directus is DISABLED** (`NEXT_PUBLIC_ENABLE_DIRECTUS=false` or not set):
-- Uses `productsDataFallback` array (30+ pre-configured camping products)
-- Perfect for development and testing
-- No external dependencies
+**Catalog source (`getProductsData()`):**
+- If **`DIRECTUS_API_TOKEN`** and a **site id** env var are set at build/runtime, products are fetched from Directus (see `directus-client` / `types/directus`).
+- Otherwise the repo uses **`productsDataFallback`** (sample products in code)—good for local dev without CMS.
 
-**When Directus is ENABLED** (`NEXT_PUBLIC_ENABLE_DIRECTUS=true`):
-- Fetches products from Directus `seed_inputs` table via API
-- Automatically transforms Directus data to match Product interface
-- Maps categories from your `site.config.ts` categories
-- Falls back to local data if API fails
+**Merged list (`getAllProducts()`):**
+- Starts from `getProductsData()`, then adds any ASIN **only present in `content/reviews/*.mdx`** frontmatter (so static export builds `/product/[asin]` for reviews that don’t have a catalog row yet).
 
 **Key Functions:**
-- `getProductsData()` - Main function that returns products (Directus or fallback)
-- `getProductByAsin(asin)` - Get single product by Amazon ASIN
-- `getProductsByCategory(slug)` - Filter products by category slug
-- `getFeaturedProducts(count)` - Get featured products for homepage
+- `getProductsData()` - Catalog only (Directus or `productsDataFallback`)
+- `getAllProducts()` - Catalog **plus** review MDX ASINs (used for `/product/[asin]` `generateStaticParams` and sitemap)
+- `getProductByAsin(asin)` - Resolves from `getAllProducts()`
+- `getProductsByCategory(slug)` - Category listing; merges catalog + MDX per category
+- `getFeaturedProducts(count)` - Uses **catalog** only (`getProductsData()`)
 - `getAllCategories()` - Get all categories from config
 
 ### Directus Products Table Schema
