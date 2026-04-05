@@ -6,6 +6,48 @@
 // 2. 配置会自动应用到整个网站
 // 3. 支持的配置包括：品牌、颜色、字体、SEO、导航、首页内容、页脚等
 
+/** 首页 /products 分类卡片；`coverImage` 可选。默认：该分类下商品库中 `featured_home` 的主图（与首页 Featured 商品同源），否则无封面图 */
+export type HomepageCategoryItem = {
+  name: string
+  slug: string
+  description: string
+  icon: string
+  coverImage?: string
+}
+
+const homepageCategoryItems: HomepageCategoryItem[] = [
+  {
+    name: "Product 1",
+    slug: "product-1",
+    description: "Placeholder description",
+    icon: "Image",
+  },
+  {
+    name: "Product 2",
+    slug: "product-2",
+    description: "Placeholder description",
+    icon: "Image",
+  },
+  {
+    name: "Product 3",
+    slug: "product-3",
+    description: "Placeholder description",
+    icon: "Image",
+  },
+  {
+    name: "Product 4",
+    slug: "product-4",
+    description: "Placeholder description",
+    icon: "Image",
+  },
+  {
+    name: "Product 5",
+    slug: "product-5",
+    description: "Placeholder description",
+    icon: "Image",
+  },
+]
+
 export const siteConfig = {
   // ==================== 品牌配置 ====================
   // 网站的基本品牌信息
@@ -158,38 +200,7 @@ export const siteConfig = {
     categories: {
       title: "Product Categories",
       subtitle: "Product categories placeholder.",
-      items: [
-        {
-          name: "Product 1",
-          slug: "product-1",
-          description: "Placeholder description",
-          icon: "Image",
-        },
-        {
-          name: "Product 2",
-          slug: "product-2",
-          description: "Placeholder description",
-          icon: "Image",
-        },
-        {
-          name: "Product 3",
-          slug: "product-3",
-          description: "Placeholder description",
-          icon: "Image",
-        },
-        {
-          name: "Product 4",
-          slug: "product-4",
-          description: "Placeholder description",
-          icon: "Image",
-        },
-        {
-          name: "Product 5",
-          slug: "product-5",
-          description: "Placeholder description",
-          icon: "Image",
-        },
-      ],
+      items: homepageCategoryItems,
     },
 
     // 特色产品区域

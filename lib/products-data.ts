@@ -56,6 +56,8 @@ export const productsDataFallback: Product[] = [
     category: "Product 1",
     summary: "Quick-setup weatherproof tent perfect for camping trips",
     slug: "coleman-sundome-tent",
+    featuredHome: true,
+    featuredRank: 1,
   },
   {
     asin: "B0CS4N63HZ",
@@ -200,6 +202,8 @@ export const productsDataFallback: Product[] = [
     category: "Product 2",
     summary: "Lightning-fast personal camping stove system",
     slug: "jetboil-flash-stove",
+    featuredHome: true,
+    featuredRank: 1,
   },
   {
     asin: "B0006VORDY",
@@ -344,6 +348,8 @@ export const productsDataFallback: Product[] = [
     category: "Product 3",
     summary: "Reliable portable power for camping and emergencies",
     slug: "jackery-explorer-300",
+    featuredHome: true,
+    featuredRank: 1,
   },
   {
     asin: "B0BBM2G4P9",
@@ -452,6 +458,8 @@ export const productsDataFallback: Product[] = [
     category: "Product 5",
     summary: "Ultra-portable camping chair with quick setup",
     slug: "naturehike-camping-chair",
+    featuredHome: true,
+    featuredRank: 1,
   },
   {
     asin: "B003TXVZE0",
@@ -542,6 +550,8 @@ export const productsDataFallback: Product[] = [
     category: "Product 4",
     summary: "Essential safety device for remote adventures",
     slug: "garmin-inreach-mini-2",
+    featuredHome: true,
+    featuredRank: 1,
   },
   {
     asin: "B0711J9FJP",
@@ -580,6 +590,35 @@ export const productsDataFallback: Product[] = [
     slug: "celestron-outland-binoculars",
   },
 ]
+
+/**
+ * Category index card covers: only catalog products marked featured for that category
+ * (`featured_home` / `featuredHome`), same semantics as `getFeaturedProducts` but scoped per slug.
+ * Sorted by `featured_rank`, then title. No review MDX images.
+ */
+export async function getCategoryCoverImagesFromFeaturedCatalog(
+  slugs: string[]
+): Promise<Record<string, string | undefined>> {
+  const products = await getProductsData()
+  const out: Record<string, string | undefined> = {}
+  for (const slug of slugs) {
+    const featuredInCat = products
+      .filter(
+        (p) =>
+          matchesHomepageCategorySlug(p.category, slug) &&
+          p.featuredHome &&
+          Boolean(p.imageUrl?.trim())
+      )
+      .sort((a, b) => {
+        const rankA = a.featuredRank ?? Number.MAX_SAFE_INTEGER
+        const rankB = b.featuredRank ?? Number.MAX_SAFE_INTEGER
+        if (rankA !== rankB) return rankA - rankB
+        return (a.title || '').localeCompare(b.title || '')
+      })
+    out[slug] = featuredInCat[0]?.imageUrl
+  }
+  return out
+}
 
 /**
  * Fetch products from local data (synced from Directus)

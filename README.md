@@ -383,6 +383,14 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 - `getCategoryProductCounts()` - Per-slug counts for `/products` (unique ASINs from reviews per category; matches category listing scope, not raw catalog counts)
 - `getFeaturedProducts(count)` - Uses **catalog** only (`getProductsData()`)
 - `getAllCategories()` - Slugs/names/icons from `site.config.ts` via `lib/category-taxonomy.ts` (`categoryMap`)
+- `getCategoryCoverImagesFromFeaturedCatalog(slugs)` - Cover images for the **homepage** and **`/products`** category grids (see below)
+
+**Category index cards (homepage + `/products`):**
+
+- **`components/category-index-card.tsx`** renders each category. The **cover image** is **not** taken from review MDX; it comes from the **product catalog** only.
+- **`getCategoryCoverImagesFromFeaturedCatalog()`** (in `lib/products-data.ts`) loads `getProductsData()`, then for each category slug keeps products whose `category` matches that slug (via `category-taxonomy`) **and** `featuredHome === true` (Directus **`featured_home`** = `yes`). It picks the **`imageUrl`** from the lowest **`featured_rank`**, then title order. Same “featured” idea as `getFeaturedProducts`, but **scoped per category**.
+- **Override:** optional **`coverImage`** on each item in `site.config.ts` → `homepage.categories.items` (see `HomepageCategoryItem`). If set, it replaces the catalog-derived cover for that category.
+- **Local / no Directus:** `productsDataFallback` includes one **`featuredHome`** row per template category so the grids still show covers out of the box.
 
 ### Directus Products Table Schema
 
@@ -402,6 +410,8 @@ Your Directus `seed_inputs` table should have these fields:
 - `category` (string) - Manual category override (recommended)
   - If not provided, system auto-infers from title
   - Should match category names in `site.config.ts`
+- `featured_home` (string) - Set to **`yes`** to mark a product as featured in the catalog (`Product.featuredHome`). Used by **`getFeaturedProducts`** and by **`getCategoryCoverImagesFromFeaturedCatalog`** (homepage / `/products` category card covers—per category).
+- `featured_rank` (number) - Lower sorts first when multiple featured products exist in the same category or when ordering featured homepage picks.
 
 ### Example: Adding Products via Directus
 
@@ -410,6 +420,7 @@ Your Directus `seed_inputs` table should have these fields:
    - Add ASIN, title, images, features
    - Set category to match your config categories
    - Set status to "fetched"
+   - Optionally set **`featured_home`** = `yes` and **`featured_rank`** so this row can drive the **homepage / `/products` category card image** for that category (and homepage featured picks when not using review-based featured).
 3. **Catalog rows power product detail pages** (merged with review ASINs as documented above). **Category listing pages** still only show ASINs that appear in **reviews** for that category—adding a product only in Directus does not put it on `/category/[slug]` until a review references that ASIN under the matching `category`.
 
 ### Example: Adding Products Manually
@@ -433,6 +444,8 @@ Edit `lib/products-data.ts` and add to `productsDataFallback` array:
   category: "Your Category Name", // Must match category name in site.config.ts
   summary: "Brief product description",
   slug: "product-slug",
+  featuredHome: true, // optional: category card cover + getFeaturedProducts
+  featuredRank: 1,
 }
 ```
 
