@@ -592,16 +592,29 @@ export const productsDataFallback: Product[] = [
 ]
 
 /**
- * Category index card covers: only catalog products marked featured for that category
- * (`featured_home` / `featuredHome`), same semantics as `getFeaturedProducts` but scoped per slug.
- * Sorted by `featured_rank`, then title. No review MDX images.
+ * Category index card covers — same priority as homepage **Featured** strip:
+ * 1) First review in that category with `asin` + `frontmatter.image` (`getAllReviewsUnified` order)
+ * 2) Catalog product with `featuredHome` + `imageUrl` in that category (`featured_rank`, title)
+ * 3) Any catalog product in that category with `imageUrl`
  */
-export async function getCategoryCoverImagesFromFeaturedCatalog(
+export function buildCategoryCoverImagesMap(
+  reviews: Review[],
+  products: Product[],
   slugs: string[]
-): Promise<Record<string, string | undefined>> {
-  const products = await getProductsData()
+): Record<string, string | undefined> {
   const out: Record<string, string | undefined> = {}
   for (const slug of slugs) {
+    const fromReview = reviews.find(
+      (r) =>
+        matchesHomepageCategorySlug(r.frontmatter.category, slug) &&
+        Boolean(r.frontmatter?.asin) &&
+        Boolean(r.frontmatter.image?.trim())
+    )
+    if (fromReview?.frontmatter.image?.trim()) {
+      out[slug] = fromReview.frontmatter.image.trim()
+      continue
+    }
+
     const featuredInCat = products
       .filter(
         (p) =>
@@ -615,9 +628,25 @@ export async function getCategoryCoverImagesFromFeaturedCatalog(
         if (rankA !== rankB) return rankA - rankB
         return (a.title || '').localeCompare(b.title || '')
       })
-    out[slug] = featuredInCat[0]?.imageUrl
+    if (featuredInCat[0]?.imageUrl) {
+      out[slug] = featuredInCat[0].imageUrl
+      continue
+    }
+
+    const anyInCat = products.find(
+      (p) => matchesHomepageCategorySlug(p.category, slug) && Boolean(p.imageUrl?.trim())
+    )
+    out[slug] = anyInCat?.imageUrl
   }
   return out
+}
+
+/** Loads reviews + catalog once; use on `/products` when `buildCategoryCoverImagesMap` inputs are not already available. */
+export async function getCategoryCoverImagesUnified(
+  slugs: string[]
+): Promise<Record<string, string | undefined>> {
+  const [reviews, products] = await Promise.all([getAllReviewsUnified(), getProductsData()])
+  return buildCategoryCoverImagesMap(reviews, products, slugs)
 }
 
 /**

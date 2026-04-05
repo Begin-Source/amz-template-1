@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { CategoryIndexCard } from "@/components/category-index-card"
 import { amazonSearchUrl } from "@/lib/amazon-search-url"
-import { getCategoryCoverImagesFromFeaturedCatalog, getCategoryProductCounts } from "@/lib/products-data"
+import { getCategoryCoverImagesUnified, getCategoryProductCounts } from "@/lib/products-data"
 import { resolveProductsPageConfig } from "@/lib/products-page-config"
 import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
@@ -25,7 +25,7 @@ export default async function ProductsPage() {
   const items = siteConfig.homepage?.categories?.items ?? []
   const [counts, categoryCoverMap] = await Promise.all([
     getCategoryProductCounts(),
-    getCategoryCoverImagesFromFeaturedCatalog(items.map((c) => c.slug)),
+    getCategoryCoverImagesUnified(items.map((c) => c.slug)),
   ])
 
   const indexNote = cfg.indexNote

@@ -383,14 +383,15 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 - `getCategoryProductCounts()` - Per-slug counts for `/products` (unique ASINs from reviews per category; matches category listing scope, not raw catalog counts)
 - `getFeaturedProducts(count)` - Uses **catalog** only (`getProductsData()`)
 - `getAllCategories()` - Slugs/names/icons from `site.config.ts` via `lib/category-taxonomy.ts` (`categoryMap`)
-- `getCategoryCoverImagesFromFeaturedCatalog(slugs)` - Cover images for the **homepage** and **`/products`** category grids (see below)
+- `buildCategoryCoverImagesMap(reviews, products, slugs)` - Sync helper: cover URLs for category grids (see below)
+- `getCategoryCoverImagesUnified(slugs)` - Async: loads `getAllReviewsUnified()` + `getProductsData()` then calls `buildCategoryCoverImagesMap` (used on **`/products`**)
 
 **Category index cards (homepage + `/products`):**
 
-- **`components/category-index-card.tsx`** renders each category. The **cover image** is **not** taken from review MDX; it comes from the **product catalog** only.
-- **`getCategoryCoverImagesFromFeaturedCatalog()`** (in `lib/products-data.ts`) loads `getProductsData()`, then for each category slug keeps products whose `category` matches that slug (via `category-taxonomy`) **and** `featuredHome === true` (Directus **`featured_home`** = `yes`). It picks the **`imageUrl`** from the lowest **`featured_rank`**, then title order. Same “featured” idea as `getFeaturedProducts`, but **scoped per category**.
-- **Override:** optional **`coverImage`** on each item in `site.config.ts` → `homepage.categories.items` (the template exports `HomepageCategoryItem` for reference; forks without that export still work). If set, it replaces the catalog-derived cover for that category.
-- **Local / no Directus:** `productsDataFallback` includes one **`featuredHome`** row per template category so the grids still show covers out of the box.
+- **`components/category-index-card.tsx`** renders each category.
+- **Cover image priority** (aligned with homepage **Featured** reviews): (1) first **review** in that category with **`asin`** + **`frontmatter.image`** (same idea as the Featured strip); (2) catalog product with **`featured_home`** / **`featuredHome`** + **`imageUrl`** in that category; (3) any catalog product in that category with **`imageUrl`**. Homepage uses **`buildCategoryCoverImagesMap(allReviews, products, slugs)`** after one parallel fetch of reviews + catalog; **`/products`** uses **`getCategoryCoverImagesUnified(slugs)`**.
+- **Override:** optional **`coverImage`** on each item in `site.config.ts` → `homepage.categories.items` (the template exports `HomepageCategoryItem` for reference; forks without that export still work). If set, it replaces the resolved cover for that category.
+- **Local / no Directus:** `productsDataFallback` still supplies catalog images when reviews lack images for a category.
 
 ### Directus Products Table Schema
 
@@ -410,7 +411,7 @@ Your Directus `seed_inputs` table should have these fields:
 - `category` (string) - Manual category override (recommended)
   - If not provided, system auto-infers from title
   - Should match category names in `site.config.ts`
-- `featured_home` (string) - Set to **`yes`** to mark a product as featured in the catalog (`Product.featuredHome`). Used by **`getFeaturedProducts`** and by **`getCategoryCoverImagesFromFeaturedCatalog`** (homepage / `/products` category card covers—per category).
+- `featured_home` (string) - Set to **`yes`** to mark a product as featured in the catalog (`Product.featuredHome`). Used by **`getFeaturedProducts`** and as the **second** source for category card covers when no review image exists (**`buildCategoryCoverImagesMap`**).
 - `featured_rank` (number) - Lower sorts first when multiple featured products exist in the same category or when ordering featured homepage picks.
 
 ### Example: Adding Products via Directus

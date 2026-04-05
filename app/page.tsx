@@ -4,16 +4,14 @@ import { CategoryIndexCard } from "@/components/category-index-card"
 import { ProductCard } from "@/components/product-card"
 import { Search } from "lucide-react"
 import Link from "next/link"
-import { getCategoryCoverImagesFromFeaturedCatalog, getFeaturedProducts } from "@/lib/products-data"
+import { buildCategoryCoverImagesMap, getFeaturedProducts, getProductsData } from "@/lib/products-data"
 import { getAllReviewsUnified } from "@/lib/api"
 import { siteConfig } from "@/lib/site.config"
 
 export default async function HomePage() {
   const categorySlugs = siteConfig.homepage.categories.items.map((c) => c.slug)
-  const [allReviews, categoryCoverMap] = await Promise.all([
-    getAllReviewsUnified(),
-    getCategoryCoverImagesFromFeaturedCatalog(categorySlugs),
-  ])
+  const [allReviews, products] = await Promise.all([getAllReviewsUnified(), getProductsData()])
+  const categoryCoverMap = buildCategoryCoverImagesMap(allReviews, products, categorySlugs)
   const reviewBasedFeatured = allReviews
     .filter((review) => Boolean(review.frontmatter?.asin))
     .slice(0, 5)
