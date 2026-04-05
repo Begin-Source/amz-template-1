@@ -6,7 +6,7 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { getCategoryCoverImagesFromFeaturedCatalog, getFeaturedProducts } from "@/lib/products-data"
 import { getAllReviewsUnified } from "@/lib/api"
-import { siteConfig } from "@/lib/site.config"
+import { siteConfig, type HomepageCategoryItem } from "@/lib/site.config"
 
 export default async function HomePage() {
   const categorySlugs = siteConfig.homepage.categories.items.map((c) => c.slug)
@@ -119,7 +119,9 @@ export default async function HomePage() {
                   description={category.description}
                   icon={category.icon}
                   coverImageUrl={
-                    category.coverImage?.trim() || categoryCoverMap[category.slug] || undefined
+                    (category as HomepageCategoryItem).coverImage?.trim() ||
+                    categoryCoverMap[category.slug] ||
+                    undefined
                   }
                   showCount={false}
                 />
