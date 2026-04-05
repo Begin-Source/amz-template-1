@@ -389,7 +389,7 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 
 - **`components/category-index-card.tsx`** renders each category. The **cover image** is **not** taken from review MDX; it comes from the **product catalog** only.
 - **`getCategoryCoverImagesFromFeaturedCatalog()`** (in `lib/products-data.ts`) loads `getProductsData()`, then for each category slug keeps products whose `category` matches that slug (via `category-taxonomy`) **and** `featuredHome === true` (Directus **`featured_home`** = `yes`). It picks the **`imageUrl`** from the lowest **`featured_rank`**, then title order. Same “featured” idea as `getFeaturedProducts`, but **scoped per category**.
-- **Override:** optional **`coverImage`** on each item in `site.config.ts` → `homepage.categories.items` (see `HomepageCategoryItem`). If set, it replaces the catalog-derived cover for that category.
+- **Override:** optional **`coverImage`** on each item in `site.config.ts` → `homepage.categories.items` (the template exports `HomepageCategoryItem` for reference; forks without that export still work). If set, it replaces the catalog-derived cover for that category.
 - **Local / no Directus:** `productsDataFallback` includes one **`featuredHome`** row per template category so the grids still show covers out of the box.
 
 ### Directus Products Table Schema

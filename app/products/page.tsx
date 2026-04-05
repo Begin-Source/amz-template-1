@@ -4,7 +4,7 @@ import { CategoryIndexCard } from "@/components/category-index-card"
 import { amazonSearchUrl } from "@/lib/amazon-search-url"
 import { getCategoryCoverImagesFromFeaturedCatalog, getCategoryProductCounts } from "@/lib/products-data"
 import { resolveProductsPageConfig } from "@/lib/products-page-config"
-import { siteConfig, type HomepageCategoryItem } from "@/lib/site.config"
+import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
 
 const productsPageConfig = resolveProductsPageConfig()
@@ -71,7 +71,7 @@ export default async function ProductsPage() {
                   description={category.description}
                   icon={category.icon}
                   coverImageUrl={
-                    (category as HomepageCategoryItem).coverImage?.trim() ||
+                    (category as { coverImage?: string }).coverImage?.trim() ||
                     categoryCoverMap[category.slug] ||
                     undefined
                   }
