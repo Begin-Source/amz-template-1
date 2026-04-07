@@ -143,7 +143,7 @@ export function CategoryIndexCard({
               rel="noopener noreferrer sponsored"
             >
               <span className="line-clamp-2 text-center">
-                Search {name} on Amazon
+                Search on Amazon
               </span>
               <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
             </a>

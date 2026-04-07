@@ -7,24 +7,27 @@ import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { BadgeCheck, BookOpen, Info, Store, Truck } from "lucide-react"
+import { BookOpen, Info } from "lucide-react"
 import {
   getProductByAsin,
   getFeaturedProducts,
   getAllProducts,
   getProductsForRelatedCategory,
   productCategoryHref,
-  resolveRelatedCategoryDisplayName,
 } from "@/lib/products-data"
-import { findReviewByAsin, getAllReviewsUnified } from "@/lib/api"
+import { findReviewByAsin } from "@/lib/api"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { BreadcrumbNav } from "@/components/breadcrumb-nav"
 import { siteConfig } from "@/lib/site.config"
 import { absoluteUrl } from "@/lib/site-url"
 
-const RELATED_REVIEWS_LIMIT = 4
-const RELATED_PRODUCTS_LIMIT = 3
+const RELATED_PRODUCTS_LIMIT = 4
+
+function normalizeBulletList(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value.map((x) => String(x).trim()).filter((s) => s.length > 0)
+}
 
 export async function generateStaticParams() {
   const products = await getAllProducts()
@@ -94,17 +97,19 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
     }
   }
 
-  const categoryLabel = resolveRelatedCategoryDisplayName(product.category) ?? product.category
-  const allReviews = await getAllReviewsUnified()
-  const relatedReviews = allReviews
-    .filter(
-      (r) =>
-        r.frontmatter.category === categoryLabel &&
-        r.frontmatter.asin?.trim().toLowerCase() !== asinNorm
-    )
-    .slice(0, RELATED_REVIEWS_LIMIT)
-
   const features = Array.isArray(product.features) ? product.features : []
+  const fm = fullReview?.frontmatter
+  const prosFromReview = normalizeBulletList(fm?.pros)
+  const consFromReview = normalizeBulletList(fm?.cons)
+  /** Match the long-form review: prefer MDX pros when present, else catalog `features`. */
+  const atAGlanceBullets = prosFromReview.length > 0 ? prosFromReview : features
+  const prosConsPros =
+    prosFromReview.length > 0 ? prosFromReview : features.slice(0, 4)
+  /** Editorial cons from review frontmatter only (no generic Amazon disclaimers). */
+  const prosConsCons = consFromReview
+  const showAtAGlance = atAGlanceBullets.length > 0
+  const showProsConsBlock = prosConsPros.length > 0 || prosConsCons.length > 0
+
   const brandName = siteConfig.brand.name
 
   const jsonLd = {
@@ -112,7 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
     "@type": "Product",
     name: product.title,
     image: product.imageUrl ? [product.imageUrl] : undefined,
-    description: product.summary || features[0],
+    description: product.summary || atAGlanceBullets[0] || features[0],
     brand: product.brand
       ? {
           "@type": "Brand",
@@ -158,12 +163,28 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
                   className="h-full w-full object-contain p-6 md:p-8"
                 />
               </div>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                Product image from catalog data — see Amazon listing for live photos and variants.
-              </p>
+
+              {fullReview && (
+                <div className="mt-6 rounded-xl border border-primary/35 bg-primary/5 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-start gap-3">
+                      <BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
+                      <div>
+                        <p className="font-semibold text-foreground">Long-form review on {brandName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Testing notes, pros &amp; cons, and who this product fits.
+                        </p>
+                      </div>
+                    </div>
+                    <Button asChild className="shrink-0">
+                      <Link href={`/review/${fullReview.slug}`}>Read full review</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="flex min-w-0 flex-col">
+            <div className="flex min-w-0 flex-col md:h-full">
               <span className="mb-3 inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase text-primary-foreground">
                 {product.category}
               </span>
@@ -185,29 +206,10 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
               )}
 
               <p className="mb-6 text-lg leading-relaxed text-muted-foreground">
-                {product.summary || features[0] || ""}
+                {product.summary || atAGlanceBullets[0] || features[0] || ""}
               </p>
 
-              {fullReview && (
-                <div className="mb-6 rounded-xl border border-primary/35 bg-primary/5 p-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-start gap-3">
-                      <BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
-                      <div>
-                        <p className="font-semibold text-foreground">Long-form review on {brandName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Testing notes, pros &amp; cons, and who this product fits.
-                        </p>
-                      </div>
-                    </div>
-                    <Button asChild className="shrink-0">
-                      <Link href={`/review/${fullReview.slug}`}>Read full review</Link>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <Card className="border-2 border-border/80 shadow-md">
+              <Card className="border-2 border-border/80 shadow-md md:mt-auto">
                 <CardContent className="space-y-4 p-5 md:p-6">
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-foreground">Where to buy</p>
@@ -237,66 +239,45 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
                     </Link>
                     .
                   </p>
-
-                  <div className="grid gap-3 border-t border-border pt-4 sm:grid-cols-3">
-                    <div className="flex gap-2 text-xs text-muted-foreground">
-                      <Store className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                      <span>
-                        <span className="font-medium text-foreground">Amazon checkout</span> — purchase happens on
-                        Amazon.com.
-                      </span>
-                    </div>
-                    <div className="flex gap-2 text-xs text-muted-foreground">
-                      <Truck className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                      <span>
-                        <span className="font-medium text-foreground">Shipping &amp; Prime</span> — shown on the product
-                        page before you pay.
-                      </span>
-                    </div>
-                    <div className="flex gap-2 text-xs text-muted-foreground">
-                      <BadgeCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                      <span>
-                        <span className="font-medium text-foreground">No extra cost to you</span> — commission comes
-                        from Amazon&apos;s side of the sale.
-                      </span>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          <Separator className="my-12 md:my-14" />
+          {(showAtAGlance || showProsConsBlock) && (
+            <>
+              <Separator className="my-12 md:my-14" />
 
-          <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-foreground md:text-3xl">At a glance</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="space-y-3">
-                  {features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                      <span className="leading-relaxed text-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </section>
+              {showAtAGlance && (
+                <section className="mb-12">
+                  <h2 className="mb-6 text-2xl font-bold text-foreground md:text-3xl">At a glance</h2>
+                  <Card>
+                    <CardContent className="p-6">
+                      <ul className="space-y-3">
+                        {atAGlanceBullets.map((feature, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                            <span className="leading-relaxed text-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </section>
+              )}
 
-          <Separator className="my-12" />
+              {showAtAGlance && showProsConsBlock && <Separator className="my-12" />}
 
-          <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-foreground md:text-3xl">Pros &amp; considerations</h2>
-            <ProsCons
-              pros={features.slice(0, 4)}
-              cons={[
-                "Retail price and deals change — confirm on Amazon",
-                "Stock and variants depend on the listing",
-                "Shipping and returns follow Amazon’s policies for that item",
-              ]}
-            />
-          </section>
+              {showProsConsBlock && (
+                <section className="mb-12">
+                  <h2 className="mb-6 text-2xl font-bold text-foreground md:text-3xl">
+                    Pros &amp; considerations
+                  </h2>
+                  <ProsCons pros={prosConsPros} cons={prosConsCons} />
+                </section>
+              )}
+            </>
+          )}
 
           {amazonUrl && (
             <section className="mb-12 rounded-2xl border border-border bg-muted/30 p-6 text-center md:p-8">
@@ -312,33 +293,10 @@ export default async function ProductPage({ params }: { params: Promise<{ asin: 
             </section>
           )}
 
-          {relatedReviews.length > 0 && (
-            <section className="mt-16 border-t border-border pt-12">
-              <h2 className="mb-8 flex items-center gap-3 text-2xl font-bold text-foreground md:text-3xl">
-                <span className="h-1 w-12 rounded-full bg-primary" />
-                Related reviews
-              </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {relatedReviews.map((related) => (
-                  <ProductCard
-                    key={related.slug}
-                    title={related.frontmatter.title}
-                    image={related.frontmatter.image || "/placeholder.svg"}
-                    summary={related.frontmatter.description}
-                    amazonUrl={related.frontmatter.amazonUrl || "#"}
-                    asin={related.frontmatter.asin}
-                    slug={related.slug}
-                    linkType="review"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
           {relatedProducts.length > 0 && (
             <section className="mt-16 border-t border-border pt-12">
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">You might also like</h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {relatedProducts.map((relatedProduct) => (
                   <ProductCard
                     key={relatedProduct.asin}
