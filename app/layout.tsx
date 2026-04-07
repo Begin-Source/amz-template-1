@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@next/third-parties/google"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteMobileBottomBar, SiteMobileLayoutPad } from "@/components/site-mobile-bottom-bar"
@@ -14,6 +15,8 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 const siteUrl = getSiteUrl()
+
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim()
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -100,6 +103,7 @@ export default function RootLayout({
             <SiteMobileBottomBar />
           </div>
           <Analytics />
+          {gaMeasurementId ? <GoogleAnalytics gaId={gaMeasurementId} /> : null}
         </ConfigThemeProvider>
       </body>
     </html>
