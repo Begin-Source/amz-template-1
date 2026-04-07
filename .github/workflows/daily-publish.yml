@@ -1,8 +1,7 @@
-name: Daily Publish (Guides)
+name: Publish Guides from Directus
 
 on:
-  schedule:
-    - cron: "10 2 * * *" # 10:10 UTC
+  # Manual only — was daily 02:10 UTC; trigger from Actions when you want to sync site config + publish draft posts to `draft`.
   workflow_dispatch:
 
 permissions:

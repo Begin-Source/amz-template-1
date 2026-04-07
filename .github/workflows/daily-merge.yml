@@ -1,9 +1,8 @@
-name: Daily Merge to Main
+name: Merge draft to Main
 
 on:
-  schedule:
-    - cron: '0 22 * * *'  # UTC 22:00 = 北京时间 06:00
-  workflow_dispatch:  # 允许手动触发
+  # Manual only — scheduled daily merge disabled to save Actions runs; trigger from Actions tab when needed.
+  workflow_dispatch:
 
 jobs:
   merge:
