@@ -133,7 +133,7 @@ See also: `.env.example` in the repo root.
 
 - **Related Guides** (sidebar + bottom section): at build time the app loads all guides from **`content/guides/`** via `getAllGuides()` / unified helpers, then picks peers where `frontmatter.category` matches the current guide. **No Directus call is required** for that list—only files already in the repo.
 - **Related Products** (sidebar): uses the **same idea** as guides—the primary source is **`content/reviews/*.mdx`**. `getGuideRelatedProductsData()` in `lib/guide-related-products.ts` resolves `related_product_category` with the same rules as `resolveRelatedCategoryDisplayName()` / `getProductsForRelatedCategory()` in `lib/products-data.ts`, then picks up to **5** reviews whose `frontmatter.category` equals that resolved display name (newest first). Links go to **`/review/[slug]`**. **No `data/products.json`** is used for this flow.
-- **Fallback order:** (1) reviews matched by `related_product_category`; (2) if none, **catalog** products from `getProductsForRelatedCategory()` → `getProductsData()` (Directus when env is set, else template `productsDataFallback`) for `/product/[asin]` style cards; (3) if still none and `related_product_category` is empty, reviews matched by the guide’s own **`category`** (editorial column), up to **5**.
+- **Fallback order:** (1) reviews matched by `related_product_category`; (2) if none, **catalog** products from `getProductsForRelatedCategory()` → `getProductsData()` (Directus when env is set, else template `productsDataFallback`) for `/product/[asin]/[slug]` style cards; (3) if still none and `related_product_category` is empty, reviews matched by the guide’s own **`category`** (editorial column), up to **5**.
 
 ### Field usage
 

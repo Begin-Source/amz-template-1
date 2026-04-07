@@ -63,7 +63,7 @@ This template is designed with a **configuration-first architecture**. Every asp
 camping-website-template/
 ├── app/                          # Next.js App Router pages
 │   ├── page.tsx                  # Homepage (reads from config)
-│   ├── product/[asin]/          # Dynamic product pages
+│   ├── product/[asin]/[slug]/   # Dynamic product pages (legacy `/product/[asin]` redirects)
 │   ├── review/[slug]/           # MDX review articles
 │   ├── category/[category]/     # Category listing pages
 │   ├── guides/                  # Buying guides
@@ -296,7 +296,7 @@ const nextConfig = {
 - ✅ TypeScript is type-checked on production builds (`ignoreBuildErrors: false`)
 - ✅ Images are unoptimized for static hosting
 
-**Product detail URLs (`/product/[asin]`):** At build time, static HTML is generated for every ASIN returned by `getAllProducts()` in `lib/products-data.ts`. That list **merges** the product catalog (`getProductsData()`—Directus or `productsDataFallback`) with **Amazon ASINs found in review MDX frontmatter** (`content/reviews/*.mdx`). If an ASIN appears only in a review and not in the catalog, a lightweight `Product` is still built from that review so the product page does not 404 after deploy. The catalog row wins when the same ASIN exists in both. **Category listing pages** (`/category/[slug]`) use a **narrower** rule: only ASINs from reviews in that category—see **Directus → How It Works** below.
+**Product detail URLs (`/product/[asin]/[slug]`):** Canonical paths use **`lib/product-page-url.ts`**: the `slug` matches **`product.slug`** when set (same as `/review/[slug]` for MDX-merged rows); otherwise it is derived from the product title. At build time, static HTML is generated for every pair returned by `getAllProducts()` in `lib/products-data.ts`. That list **merges** the product catalog (`getProductsData()`—Directus or `productsDataFallback`) with **Amazon ASINs found in review MDX frontmatter** (`content/reviews/*.mdx`). If an ASIN appears only in a review and not in the catalog, a lightweight `Product` is still built from that review so the product page does not 404 after deploy. The catalog row wins when the same ASIN exists in both. **`/product/[asin]`** (no slug) still resolves at build time and **redirects** to the canonical URL. **Category listing pages** (`/category/[slug]`) use a **narrower** rule: only ASINs from reviews in that category—see **Directus → How It Works** below.
 
 **Cloudflare Pages / `npm ci`:** Tools required at build time (Tailwind/PostCSS, `typescript`, `@types/*`, `tw-animate-css`) are under `dependencies` so installs that run with `NODE_ENV=production` still receive everything `next build` needs.
 
@@ -361,7 +361,7 @@ This flag does **not** gate the product catalog fetch; catalog uses the token + 
 
 1. **Catalog fetch**: `getProductsData()` loads products from Directus when `DIRECTUS_API_TOKEN` and a site id (`NEXT_PUBLIC_SITE_ID`, `DIRECTUS_SITE_ID`, or `SITE_ID`) are set; otherwise it uses `productsDataFallback` in the repo.
 2. **Category pages (`/category/[slug]`)**: **Which ASINs appear is driven by review MDX**—only ASINs from reviews whose `category` matches that slug (see `lib/category-review-gate.ts`). Order matches the Reviews list. For **each** such ASIN, product **fields** prefer the **catalog**; if there is no catalog row, the row is **built from that review’s frontmatter**. If a category has **no** reviews with a valid ASIN, the page is **empty** even if the catalog has products tagged for that category.
-3. **Product detail + static export**: `getAllProducts()` merges the catalog with **all ASINs from review MDX** (site-wide for `/product/[asin]` and sitemap). **Catalog wins** on duplicate ASINs—broader than category pages, which only list review ASINs per slug.
+3. **Product detail + static export**: `getAllProducts()` merges the catalog with **all ASINs from review MDX** (site-wide for `/product/[asin]/[slug]` and sitemap). **Catalog wins** on duplicate ASINs—broader than category pages, which only list review ASINs per slug.
 4. **Fallback**: If Directus fails or returns no rows, the template falls back to `productsDataFallback`.
 
 ### Product Data Architecture
@@ -373,11 +373,11 @@ The `lib/products-data.ts` file provides a **hybrid data system**:
 - Otherwise the repo uses **`productsDataFallback`** (sample products in code)—good for local dev without CMS.
 
 **Merged list (`getAllProducts()`):**
-- Starts from `getProductsData()`, then adds any ASIN **only present in `content/reviews/*.mdx`** frontmatter (so static export builds `/product/[asin]` for reviews that don’t have a catalog row yet).
+- Starts from `getProductsData()`, then adds any ASIN **only present in `content/reviews/*.mdx`** frontmatter (so static export builds `/product/[asin]/[slug]` for reviews that don’t have a catalog row yet).
 
 **Key Functions:**
 - `getProductsData()` - Catalog only (Directus or `productsDataFallback`)
-- `getAllProducts()` - Catalog **plus** review MDX ASINs (used for `/product/[asin]` `generateStaticParams` and sitemap)
+- `getAllProducts()` - Catalog **plus** review MDX ASINs (used for `/product/[asin]/[slug]` `generateStaticParams` and sitemap)
 - `getProductByAsin(asin)` - Resolves from `getAllProducts()`
 - `getProductsByCategory(slug)` - **Membership** = review ASINs in that category; **per-ASIN data** = catalog first, else MDX frontmatter
 - `getCategoryProductCounts()` - Per-slug counts for `/products` (unique ASINs from reviews per category; matches category listing scope, not raw catalog counts)
@@ -565,8 +565,9 @@ All Amazon links include:
 ### Data Files
 - `lib/products-data.ts` - **Product catalog + merge helpers** (with `lib/category-taxonomy.ts` and `lib/category-review-gate.ts`)
   - Fallback catalog in repo; optional Directus `seed_inputs` when token + site id are set
-  - `getAllProducts()` merges catalog with ASINs from `content/reviews/*.mdx` for `/product/[asin]`
+  - `getAllProducts()` merges catalog with ASINs from `content/reviews/*.mdx` for `/product/[asin]/[slug]`
   - Category **listings** use **review ASINs per slug**; catalog enriches rows when present
+- `lib/product-page-url.ts` - Canonical product paths; **`slug`** aligns with **`product.slug`** / review when present
 - `lib/category-taxonomy.ts` / `lib/category-review-gate.ts` - Slugs/names from `site.config.ts`; which ASINs appear on `/category/[slug]` follows reviews
 - `lib/theme-generator.ts` - Converts config colors to CSS variables (auto-generated)
 

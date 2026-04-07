@@ -719,7 +719,7 @@ function resolveCategorySlugForReview(review: Review): string {
 }
 
 /**
- * 将「仅出现在评测 MDX、不在商品库」的 ASIN 合并进列表，使 `/product/[asin]` 与静态导出与 Review 一致。
+ * 将「仅出现在评测 MDX、不在商品库」的 ASIN 合并进列表，使 `/product/[asin]/[slug]` 与静态导出与 Review 一致。
  * 商品库（Directus / fallback）优先；同 ASIN 不覆盖。
  */
 function mergeReviewMdxIntoCatalog(catalog: Product[], reviews: Review[]): Product[] {

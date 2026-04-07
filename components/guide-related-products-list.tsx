@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RelatedProductImage } from "@/components/related-product-image"
 import type { GuideRelatedProductsData } from "@/lib/guide-related-products"
+import { productPagePath } from "@/lib/product-page-url"
 
 /** Shared markup for guide “Related Products” (catalog or review fallback). Used in sidebar and mobile sheet. */
 export function GuideRelatedProductsList({ data }: { data: GuideRelatedProductsData }) {
@@ -17,7 +18,7 @@ export function GuideRelatedProductsList({ data }: { data: GuideRelatedProductsD
               key={product.asin}
               className="rounded-lg border border-border p-3 transition-all hover:border-primary/50"
             >
-              <Link href={`/product/${product.asin}`} className="group block">
+              <Link href={productPagePath(product)} className="group block">
                 <div className="mb-3 flex gap-3">
                   <RelatedProductImage
                     src={product.imageUrl || "/placeholder.svg"}

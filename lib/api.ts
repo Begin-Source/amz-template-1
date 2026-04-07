@@ -396,7 +396,7 @@ export async function getAllReviewsUnified(): Promise<Review[]> {
 
 /**
  * Find the unified review whose frontmatter ASIN matches (case-insensitive).
- * Used to deep-link /product/[asin] → /review/[slug].
+ * Used to deep-link /product/[asin]/[slug] ↔ /review/[slug] (same `slug` when from MDX).
  */
 export async function findReviewByAsin(asin: string): Promise<Review | null> {
   const needle = asin?.trim().toLowerCase()

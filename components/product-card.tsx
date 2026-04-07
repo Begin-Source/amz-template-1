@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { productPagePathFromFields } from "@/lib/product-page-url"
 
 interface ProductCardProps {
   title: string
@@ -12,6 +13,9 @@ interface ProductCardProps {
   amazonUrl: string
   asin?: string
   slug?: string
+  /** Same source as `/review/[slug]` when from MDX; used for `/product/{asin}/{slug}`. */
+  productSlug?: string
+  shortTitle?: string
   linkType?: "product" | "review"
   /** When true with `linkType="product"`, show "View product page". Intended for category listing pages only. */
   showProductPageLink?: boolean
@@ -24,11 +28,21 @@ export function ProductCard({
   amazonUrl,
   asin,
   slug,
+  productSlug,
+  shortTitle,
   linkType = "product",
   showProductPageLink = false,
 }: ProductCardProps) {
   const reviewUrl = slug || asin ? `/review/${slug || asin}` : "#"
-  const productUrl = asin ? `/product/${asin}` : "#"
+  const productUrl =
+    asin
+      ? productPagePathFromFields({
+          asin,
+          slug: productSlug ?? slug,
+          shortTitle,
+          title,
+        })
+      : "#"
 
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">

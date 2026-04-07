@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getAllReviews, getAllGuides } from '@/lib/api'
 import { getAllCategories, getAllProducts } from '@/lib/products-data'
+import { productPagePath } from '@/lib/product-page-url'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const dynamic = 'force-static'
@@ -77,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages = products
     .filter((product) => Boolean(product?.asin))
     .map((product) => ({
-      url: `${baseUrl}/product/${product.asin}`,
+      url: `${baseUrl}${productPagePath(product)}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.85,

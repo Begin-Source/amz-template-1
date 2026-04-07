@@ -88,6 +88,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
               summary={product.summary || `Expert-tested and reviewed. ${product.features[0]}`}
               amazonUrl={product.amazonUrl}
               asin={product.asin}
+              productSlug={product.slug}
+              shortTitle={product.shortTitle}
               showProductPageLink
             />
           ))}
