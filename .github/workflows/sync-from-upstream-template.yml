@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  # Required when rsync updates files under .github/workflows/ (GITHUB_TOKEN cannot push workflow changes without this).
+  workflows: write
 
 concurrency:
   group: sync-from-upstream-template
