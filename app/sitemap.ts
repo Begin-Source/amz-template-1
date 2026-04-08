@@ -1,18 +1,13 @@
 import { MetadataRoute } from 'next'
 import { getAllReviews, getAllGuides } from '@/lib/api'
-import { getAllCategories, getAllProducts } from '@/lib/products-data'
+import { getAllCategories, getAllProducts, type Product } from '@/lib/products-data'
 import { getProductPathSlug, productPagePath } from '@/lib/product-page-url'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const dynamic = 'force-static'
 
 /** Exclude static-export stub from `productsDataFallback` (not a real listing). */
-function isPlaceholderCatalogProduct(product: {
-  asin?: string
-  slug?: string
-  shortTitle?: string
-  title?: string
-}): boolean {
+function isPlaceholderCatalogProduct(product: Product): boolean {
   if (product.asin?.trim().toLowerCase() === 'amzasin000') return true
   if (getProductPathSlug(product) === 'template-product-placeholder') return true
   return false
