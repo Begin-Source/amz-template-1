@@ -25,11 +25,6 @@ import { absoluteUrl } from "@/lib/site-url"
 
 const RELATED_PRODUCTS_LIMIT = 4
 
-/**
- * See `revalidate` on legacy `/product/[asin]` — empty catalog + static export.
- */
-export const revalidate = 0
-
 function normalizeBulletList(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value.map((x) => String(x).trim()).filter((s) => s.length > 0)

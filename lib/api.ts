@@ -7,7 +7,7 @@ import {
   getLocalDocuments,
   isDirectusActive,
 } from './content-source'
-import { filterByPublishDate } from './publish-date'
+import { filterByPublishDate, isPublishedByDate, parseContentDateToUtcMs } from './publish-date'
 
 const reviewsDirectory = path.join(process.cwd(), "content/reviews")
 const guidesDirectory = path.join(process.cwd(), "content/guides")
@@ -327,6 +327,24 @@ export async function getAllReviewsUnified(): Promise<Review[]> {
 
   // 1. Get local MDX reviews
   const localReviews = getLocalDocuments('reviews')
+  // Deterministic order: published before scheduled, then earlier date first, then slug.
+  // Avoids fs.readdir order where duplicate ASIN (e.g. *-2000 vs *-3000 templates) could
+  // register the future-dated file first and drop the published one before filterByPublishDate.
+  localReviews.sort((a, b) => {
+    const dateA = String(a.date ?? '')
+    const dateB = String(b.date ?? '')
+    const pubA = isPublishedByDate(dateA)
+    const pubB = isPublishedByDate(dateB)
+    if (pubA !== pubB) return pubA ? -1 : 1
+    const ta = parseContentDateToUtcMs(dateA)
+    const tb = parseContentDateToUtcMs(dateB)
+    if (Number.isNaN(ta) && Number.isNaN(tb)) {
+      return String(a.slug ?? '').localeCompare(String(b.slug ?? ''))
+    }
+    if (Number.isNaN(ta)) return 1
+    if (Number.isNaN(tb)) return -1
+    return ta - tb
+  })
   for (const review of localReviews) {
     const asin = review.asin
     if (!seenSlugs.has(review.slug) && (!asin || !seenAsins.has(asin))) {

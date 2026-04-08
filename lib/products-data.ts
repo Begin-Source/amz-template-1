@@ -37,8 +37,26 @@ export interface Product {
   featuredRank?: number
 }
 
-// Empty by default: catalog comes from Directus in production. Local dev without credentials shows an empty catalog (expected).
-export const productsDataFallback: Product[] = []
+/**
+ * When Directus is unset at build time, this stub keeps `output: "export"` from generating
+ * zero `/product/[asin]/[slug]` pages. Uses a dedicated placeholder ASIN (not used in template
+ * review MDX) so `mergeReviewMdxIntoCatalog` can still add real ASINs from published reviews.
+ * Smoke URL: `/product/amzasin000/template-product-placeholder`
+ */
+export const productsDataFallback: Product[] = [
+  {
+    asin: 'amzasin000',
+    title: 'Template product placeholder',
+    brand: '',
+    features: [],
+    amazonUrl: 'https://www.amazon.com/dp/amzasin000',
+    imageUrl: '/placeholder.svg',
+    category: 'General',
+    shortTitle: 'Template product placeholder',
+    summary: 'Placeholder row for static export when no Directus catalog is available.',
+    slug: 'template-product-placeholder',
+  },
+]
 
 /**
  * Category index card covers — same priority as homepage **Featured** strip:
