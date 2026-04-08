@@ -1,10 +1,22 @@
 import { MetadataRoute } from 'next'
 import { getAllReviews, getAllGuides } from '@/lib/api'
 import { getAllCategories, getAllProducts } from '@/lib/products-data'
-import { productPagePath } from '@/lib/product-page-url'
+import { getProductPathSlug, productPagePath } from '@/lib/product-page-url'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const dynamic = 'force-static'
+
+/** Exclude static-export stub from `productsDataFallback` (not a real listing). */
+function isPlaceholderCatalogProduct(product: {
+  asin?: string
+  slug?: string
+  shortTitle?: string
+  title?: string
+}): boolean {
+  if (product.asin?.trim().toLowerCase() === 'amzasin000') return true
+  if (getProductPathSlug(product) === 'template-product-placeholder') return true
+  return false
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl()
@@ -77,6 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Product pages (for internal linking + early crawlable entities)
   const productPages = products
     .filter((product) => Boolean(product?.asin))
+    .filter((product) => !isPlaceholderCatalogProduct(product))
     .map((product) => ({
       url: `${baseUrl}${productPagePath(product)}`,
       lastModified: new Date(),
