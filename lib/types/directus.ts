@@ -98,7 +98,7 @@ export function inferProductCategory(title: string, directusCategory?: string | 
  */
 export function transformDirectusProduct(
   directusProduct: DirectusProduct,
-  category: string = 'Product 1'
+  category: string = 'General'
 ): Product {
   // Extract data from raw_paapi field
   const extracted = extractFromRawPaapi(directusProduct.raw_paapi)

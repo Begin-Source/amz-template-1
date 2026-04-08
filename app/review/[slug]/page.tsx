@@ -20,6 +20,9 @@ import { isPublishedByDate } from "@/lib/publish-date"
 /** Max items in the full-width "Related Reviews" section below the article */
 const RELATED_REVIEWS_LIMIT = 4
 
+/** See `revalidate` on product routes — empty published reviews at build time. */
+export const revalidate = 0
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const review = getReviewBySlugUnified(slug)

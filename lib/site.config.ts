@@ -17,33 +17,9 @@ export type HomepageCategoryItem = {
 
 const homepageCategoryItems: HomepageCategoryItem[] = [
   {
-    name: "Product 1",
-    slug: "product-1",
-    description: "Placeholder description",
-    icon: "Image",
-  },
-  {
-    name: "Product 2",
-    slug: "product-2",
-    description: "Placeholder description",
-    icon: "Image",
-  },
-  {
-    name: "Product 3",
-    slug: "product-3",
-    description: "Placeholder description",
-    icon: "Image",
-  },
-  {
-    name: "Product 4",
-    slug: "product-4",
-    description: "Placeholder description",
-    icon: "Image",
-  },
-  {
-    name: "Product 5",
-    slug: "product-5",
-    description: "Placeholder description",
+    name: "General",
+    slug: "general",
+    description: "Replace with your category description (add more categories here as needed).",
     icon: "Image",
   },
 ]
@@ -249,13 +225,7 @@ export const siteConfig = {
     guides: {
       title: "Guides Title",
       description: "Guides description placeholder.",
-      categories: [
-        "Guide Category 1",
-        "Guide Category 2",
-        "Guide Category 3",
-        "Guide Category 4",
-        "Guide Category 5",
-      ],
+      categories: ["General"],
       // CTA 区域配置
       cta: {
         title: "Guides CTA Title",

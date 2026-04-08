@@ -25,6 +25,12 @@ import { absoluteUrl } from "@/lib/site-url"
 
 const RELATED_PRODUCTS_LIMIT = 4
 
+/**
+ * `revalidate === 0` skips Next.js export check that errors on empty `generateStaticParams()`
+ * when the catalog has no products at build time.
+ */
+export const revalidate = 0
+
 function normalizeBulletList(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value.map((x) => String(x).trim()).filter((s) => s.length > 0)
