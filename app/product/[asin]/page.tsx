@@ -3,8 +3,9 @@ import { productPagePath } from "@/lib/product-page-url"
 import { notFound, permanentRedirect } from "next/navigation"
 
 /**
- * `revalidate === 0` skips Next.js export check that errors on empty `generateStaticParams()`
- * when the catalog has no products at build time.
+ * Required for `output: export` when the product catalog is empty at build time
+ * (`productsDataFallback` is [] and Directus may be unset). Review/guide routes use
+ * `*-2000.mdx` placeholders instead; product routes have no MDX stub.
  */
 export const revalidate = 0
 

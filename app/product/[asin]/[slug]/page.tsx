@@ -26,8 +26,7 @@ import { absoluteUrl } from "@/lib/site-url"
 const RELATED_PRODUCTS_LIMIT = 4
 
 /**
- * `revalidate === 0` skips Next.js export check that errors on empty `generateStaticParams()`
- * when the catalog has no products at build time.
+ * See `revalidate` on legacy `/product/[asin]` — empty catalog + static export.
  */
 export const revalidate = 0
 

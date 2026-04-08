@@ -23,9 +23,6 @@ interface PageProps {
   }>
 }
 
-/** See `revalidate` on product routes — empty published guides at build time. */
-export const revalidate = 0
-
 export async function generateStaticParams() {
   const guides = await getAllGuidesUnified()
   return guides.map((guide) => ({
