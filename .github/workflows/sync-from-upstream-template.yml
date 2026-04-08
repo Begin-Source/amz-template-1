@@ -7,10 +7,9 @@ name: Sync from upstream template
 on:
   workflow_dispatch:
 
+# GITHUB_TOKEN cannot push changes under .github/workflows/; set repo secret SYNC_REPO_PAT (classic PAT: repo + workflow) so checkout credentials allow git push when template updates workflows.
 permissions:
   contents: write
-  # Required when rsync updates files under .github/workflows/ (GITHUB_TOKEN cannot push workflow changes without this).
-  workflows: write
 
 concurrency:
   group: sync-from-upstream-template
@@ -27,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SYNC_REPO_PAT || github.token }}
 
       # actions/checkout `path` must stay under $GITHUB_WORKSPACE`; ../ is rejected.
       # Clone to /tmp so rsync --delete never removes the live source tree (exit 24 / vanished).
